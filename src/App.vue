@@ -215,6 +215,7 @@ const handleFieldSelect = async(fieldCoordinates: CoordinatesInterface) => {
     />
     <Figures />
     <Actions
+      v-if="!isPlaying"
       @start="handleStart"
       @stop="handleStop"
       :start-disabled="isPlaying"
@@ -222,13 +223,24 @@ const handleFieldSelect = async(fieldCoordinates: CoordinatesInterface) => {
   </main>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .app-main {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   width: 100%;
   margin: 0 auto;
   max-width: 340px;
+}
+.actions {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0,0,0,0.8);
 }
 </style>

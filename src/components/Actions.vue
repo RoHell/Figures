@@ -23,12 +23,12 @@ const emit = defineEmits<{
       @click="emit('start')"
       v-text="'start'"
     />
-    <button
+    <!-- <button
       type="button"
       class="actions__stop"
       @click="emit('stop')"
       v-text="'stop'"
-    />
+    /> -->
   </div>
 </template>
 
