@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconEnum } from '../types/icons'
+import { IconEnum } from '../types'
 
 export interface IconProps {
   icon?: IconEnum

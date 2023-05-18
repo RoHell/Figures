@@ -18,13 +18,6 @@ const emit = defineEmits<{
 
 <template>
   <div class="actions">
-    <button
-      type="button"
-      class="actions__start"
-      :disabled="startDisabled"
-      @click="emit('start')"
-      v-text="'start'"
-    />
     <div class="actions__level">
       <button
         type="button"
@@ -45,6 +38,14 @@ const emit = defineEmits<{
         v-text="'insane'"
       />
     </div>
+
+    <button
+      type="button"
+      class="actions__start"
+      :disabled="startDisabled"
+      @click="emit('start')"
+      v-text="'start'"
+    />
     <!-- <button
       type="button"
       class="actions__stop"
@@ -58,7 +59,7 @@ const emit = defineEmits<{
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 4rem;
   margin: auto;
 
   button {
@@ -86,7 +87,7 @@ const emit = defineEmits<{
 
   &__start {
     background-color: green;
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
 
   &__stop {

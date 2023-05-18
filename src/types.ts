@@ -16,6 +16,7 @@ export enum IconEnum {
   queen = 'queen',
   knight = 'knight',
   pawn = 'pawn',
+  king = 'king',
 }
 
 export enum LevelEnum {
