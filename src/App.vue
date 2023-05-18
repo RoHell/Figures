@@ -35,8 +35,6 @@ const handleStart = () => {
   isPlaying.value = true
   clearFiguresFields()
   setFigures()
-  positionFigures()
-  markFiguresMoves()
 }
 
 const handleStop = () => {
@@ -48,41 +46,48 @@ const handleStop = () => {
 
 const setFigures = () => {
   const figuresRange = [...Array(figuresCount.value).keys()]
-  const randomFigures = figuresRange.reduce((figuresAccumulator, _) => {
-    const figure = getRandomFigure()
-    if (isCoordinatesTaken(figuresAccumulator, figure.coordinates)) {
-      setFigures()
-    }
-    figuresAccumulator = [...figuresAccumulator, figure]
+  const randomFigures = figuresRange.reduce((figuresAccumulator: FigureInterface[], _) => {
+    const figure = getRandomFigure(figuresAccumulator)
+    figuresAccumulator = [...figuresAccumulator, figure] as FigureInterface[]
     return figuresAccumulator
-  }, [] as FigureInterface[])
+  }, [])
   figures.value = randomFigures
+  positionFigures()
 }
 
-const isCoordinatesTaken = (figuresToCheck: FigureInterface[], coord: CoordinatesInterface) => {
-  return figuresToCheck.some(({ coordinates: { x, y } }) => x === coord.x && y === coord.y)
-}
-
-const getRandomFigure = (): FigureInterface => {
+const getRandomFigure = (figuresToCheck: FigureInterface[] | null = null) => {
+  const figsToCheck = figuresToCheck ? [...figuresToCheck] : []
   const coordinates = getRandomFigureCoordinates()
   const name = getRandomFigureName()
 
-  return {
+  const randomFigure = {
     name,
     coordinates,
     field: getFieldElement(coordinates),
     element: getFigureElement(name),
   }
+
+  if (figsToCheck?.length && isCoordinatesTaken(figsToCheck, randomFigure.coordinates)) {
+    getRandomFigure()
+  } else {
+    return randomFigure
+  }
+}
+
+const isCoordinatesTaken = (figuresToCheck: FigureInterface[] | null = null, coord: CoordinatesInterface) => {
+  if (!figuresToCheck?.length) { return }
+  return [...figuresToCheck].some(({ coordinates: { x, y } }) => x === coord.x && y === coord.y)
 }
 
 const positionFigures = () => {
-  figures.value?.forEach((figure) => {
+  figures.value?.forEach((figure: FigureInterface) => {
     const { field, element } = figure
     if (field && element) {
       field.innerHTML = element.outerHTML
       field.classList.add('grid__field--figure')
     }
   })
+  markFiguresMoves()
 }
 
 const markFiguresMoves = () => {
