@@ -74,7 +74,7 @@ const setFigures = () => {
 }
 
 const getRandomFigure = (figuresToCheck: FigureInterface[] | null = null) => {
-  const figsToCheck = figuresToCheck ? [...figuresToCheck] : []
+  const figsToCheck = figuresToCheck ? [...figuresToCheck].filter(Boolean) : []
   const coordinates = getRandomFigureCoordinates()
   const name = getRandomFigureName()
 
@@ -87,8 +87,9 @@ const getRandomFigure = (figuresToCheck: FigureInterface[] | null = null) => {
 
   if (!isCoordinatesTaken(figsToCheck, randomFigure.coordinates)) {
     return randomFigure
+  } else {
+    getRandomFigure(figsToCheck)
   }
-  getRandomFigure(figsToCheck)
 }
 
 const isCoordinatesTaken = (
@@ -98,9 +99,9 @@ const isCoordinatesTaken = (
   if (!figuresToCheck?.length) {
     return
   }
-  return [...figuresToCheck].some(
-    ({ coordinates: { x, y } }) => x === coord.x && y === coord.y
-  )
+  return [...figuresToCheck]
+    .filter(Boolean)
+    .some(({ coordinates: { x, y } }) => x === coord.x && y === coord.y)
 }
 
 const positionFigures = () => {
