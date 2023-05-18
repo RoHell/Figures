@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
 import { LevelEnum } from '../types'
 
 interface Props {
@@ -19,11 +17,8 @@ const emit = defineEmits<{
   (e: 'level', value: LevelEnum): void
 }>()
 
-const level = ref<LevelEnum>()
-
 const setLevel = (lvl: LevelEnum) => {
   emit('level', lvl)
-  level.value = lvl
 }
 </script>
 
@@ -34,7 +29,7 @@ const setLevel = (lvl: LevelEnum) => {
         type="button"
         class="actions__level actions__level--easy"
         :class="{
-          ' actions__level--active': level === LevelEnum.easy,
+          ' actions__level--active': activeLevel === LevelEnum.easy,
         }"
         @click="setLevel(LevelEnum.easy)"
         v-text="'easy'"
@@ -43,7 +38,7 @@ const setLevel = (lvl: LevelEnum) => {
         type="button"
         class="actions__level actions__level--hard"
         :class="{
-          ' actions__level--active': level === LevelEnum.hard,
+          ' actions__level--active': activeLevel === LevelEnum.hard,
         }"
         @click="setLevel(LevelEnum.hard)"
         v-text="'hard'"
@@ -52,7 +47,7 @@ const setLevel = (lvl: LevelEnum) => {
         type="button"
         class="actions__level actions__level--insane"
         :class="{
-          ' actions__level--active': level === LevelEnum.insane,
+          ' actions__level--active': activeLevel === LevelEnum.insane,
         }"
         @click="setLevel(LevelEnum.insane)"
         v-text="'insane'"
@@ -107,7 +102,7 @@ const setLevel = (lvl: LevelEnum) => {
     }
 
     &--active {
-      outline-color: white;
+      border: 2px solid white;
     }
   }
 

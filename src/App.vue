@@ -44,7 +44,7 @@ const isPlayerCatched = computed(() => {
 const handleStart = () => {
   isStopped.value = false
   isPlaying.value = true
-  clearFiguresFields()
+  clearFields()
   setFigures()
 }
 
@@ -57,14 +57,11 @@ const handleStop = () => {
 
 const setFigures = () => {
   const figuresRange = [...Array(figuresCount.value).keys()]
-  const randomFigures = figuresRange.reduce(
-    (figuresAccumulator: FigureInterface[], _) => {
-      const figure = getRandomFigure(figuresAccumulator)
-      figuresAccumulator = [...figuresAccumulator, figure] as FigureInterface[]
-      return figuresAccumulator
-    },
-    []
-  )
+  const randomFigures = figuresRange.reduce((figuresAccumulator: FigureInterface[], _) => {
+    const figure = getRandomFigure(figuresAccumulator)
+    figuresAccumulator = [...figuresAccumulator, figure] as FigureInterface[]
+    return figuresAccumulator
+  },[])
   figures.value = randomFigures.filter(Boolean)
   if (figures.value.length === figuresCount.value) {
     positionFigures()
@@ -73,8 +70,8 @@ const setFigures = () => {
   }
 }
 
-const getRandomFigure = (figuresToCheck: FigureInterface[] | null = null) => {
-  const figsToCheck = figuresToCheck ? [...figuresToCheck].filter(Boolean) : []
+const getRandomFigure = (figs: FigureInterface[] | null = null) => {
+  const figuresToCkeck = figs && [...figs].filter(Boolean)
   const coordinates = getRandomFigureCoordinates()
   const name = getRandomFigureName()
 
@@ -85,17 +82,14 @@ const getRandomFigure = (figuresToCheck: FigureInterface[] | null = null) => {
     element: getFigureElement(name),
   }
 
-  if (!isCoordinatesTaken(figsToCheck, randomFigure.coordinates)) {
-    return randomFigure
+  if (!randomFigure || isCoordinatesTaken(figuresToCkeck, randomFigure.coordinates)) {
+    getRandomFigure(figuresToCkeck)
   } else {
-    getRandomFigure(figsToCheck)
+    return randomFigure
   }
 }
 
-const isCoordinatesTaken = (
-  figuresToCheck: FigureInterface[] | null = null,
-  coord: CoordinatesInterface
-) => {
+const isCoordinatesTaken = (figuresToCheck: FigureInterface[] | null = null, coord: CoordinatesInterface) => {
   if (!figuresToCheck?.length) {
     return
   }
@@ -217,40 +211,30 @@ const setMarkedFields = () => {
 }
 
 const clearFields = () => {
-  clearMarkedFields()
   clearFiguresFields()
   clearPlayerField()
-  gridFields.value.forEach((element) => {
-    element.innerHTML = ''
-  })
-  clearAllCoordinates()
-  playerField.value = undefined
-}
-
-const clearAllCoordinates = () => {
-  markedFieldsCoordinates.value = []
-  playerFieldCoordinates.value = undefined
+  clearMarkedFields()
 }
 
 const clearMarkedFields = () => {
-  gridFields.value.forEach((field) =>
-    field.classList.remove('grid__field--marked')
-  )
+  gridFields.value.forEach((element: Element) => {
+    element.classList.remove('grid__field--marked')
+    element.innerHTML = ''
+  })
+  markedFieldsCoordinates.value = []
 }
 
 const clearFiguresFields = () => {
   figures.value?.forEach((figure) => {
-    const { field } = figure
-
-    if (field) {
-      field.classList.remove('grid__field--figure')
-      field.innerHTML = ''
-    }
+    figure.field?.classList.remove('grid__field--figure')
+    figure.field.innerHTML = ''
   })
 }
 
 const clearPlayerField = () => {
   playerField.value && (playerField.value.innerHTML = '')
+  playerFieldCoordinates.value = undefined
+  playerField.value = undefined
 }
 
 const getRandomFigureName = () => Object.values(IconEnum)[getRandomInt()]
