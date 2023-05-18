@@ -20,25 +20,15 @@ const isGameOver = ref(false)
 const figures = ref<FigureInterface[]>()
 const figuresCount = ref(LevelEnum.easy)
 
-const gridFields = computed(
-  (): NodeListOf<Element> => document.querySelectorAll('.grid__field') || []
-)
-const markedFields = computed(() =>
-  [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) =>
-    getFieldElement(coord)
-  )
-)
+const gridFields = computed((): NodeListOf<Element> => document.querySelectorAll('.grid__field') || [])
+const markedFields = computed(() => [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) => getFieldElement(coord)))
 const isPlayerCatched = computed(() => {
-  if (!playerFieldCoordinates.value) {
-    return
-  }
-  return [...markedFieldsCoordinates.value].some(
-    ({ x: markedX, y: markedY }) => {
-      const { x: playerX, y: playerY } =
-        playerFieldCoordinates.value as CoordinatesInterface
-      return playerX === markedX && playerY === markedY
-    }
-  )
+  if (!playerFieldCoordinates.value) { return }
+
+  return [...markedFieldsCoordinates.value].some(({ x: markedX, y: markedY }) => {
+    const { x: playerX, y: playerY } = playerFieldCoordinates.value as CoordinatesInterface
+    return playerX === markedX && playerY === markedY
+  })
 })
 
 const handleStart = () => {
@@ -134,18 +124,11 @@ const markFiguresMoves = () => {
 
 const checkGameResult = () => {
   setTimeout(() => {
-    if (!playerFieldCoordinates.value) {
-      return handleStop()
+    if (!playerFieldCoordinates.value || isPlayerCatched.value) {
+      handleStop()
+    } else {
+      handleStart()
     }
-    if (isPlayerCatched.value) {
-      isGameOver.value = true
-      setTimeout(() => {
-        isGameOver.value = false
-      }, 5000)
-      return handleStop()
-    }
-    clearFields()
-    handleStart()
   }, 3000)
 }
 
@@ -204,11 +187,7 @@ const markKnightFields = ({ x, y }: CoordinatesInterface) => {
   setMarkedFields()
 }
 
-const setMarkedFields = () => {
-  markedFields.value?.forEach((field: Element | null) =>
-    field?.classList.add('grid__field--marked')
-  )
-}
+const setMarkedFields = () => markedFields.value?.forEach((field: Element | null) => field?.classList.add('grid__field--marked'))
 
 const clearFields = () => {
   clearFiguresFields()
@@ -244,20 +223,15 @@ const getRandomFigureCoordinates = () => ({
   y: getRandomInt(),
 })
 
-const getRandomInt = (max: number = 4): number =>
-  Math.floor(Math.random() * max)
+const getRandomInt = (max: number = 4): number => Math.floor(Math.random() * max)
 
-const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element =>
-  document.querySelector(
-    `.grid__field__${fieldCoordinates?.x}-${fieldCoordinates?.y}`
-  ) as Element
+const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element => document.querySelector(`.grid__field__${fieldCoordinates?.x}-${fieldCoordinates?.y}`) as Element
 
-const getFigureElement = (name: IconEnum | string): Element =>
-  document.querySelector(`.figures__${name}`) as Element
+const getFigureElement = (name: IconEnum | string): Element => document.querySelector(`.figures__${name}`) as Element
 
 const handleFieldSelect = async (fieldCoordinates: CoordinatesInterface) => {
-  playerFieldCoordinates.value = fieldCoordinates
   clearPlayerField()
+  playerFieldCoordinates.value = fieldCoordinates
   playerField.value = getFieldElement(fieldCoordinates) as Element
   if (playerField.value) {
     const figure = (await getFigureElement('player')?.outerHTML) as string
