@@ -48,11 +48,19 @@ const handleStop = () => {
 
 const setFigures = () => {
   const figuresRange = [...Array(figuresCount.value).keys()]
-  figures.value = figuresRange.reduce((acc, _) => {
+  const randomFigures = figuresRange.reduce((figuresAccumulator, _) => {
     const figure = getRandomFigure()
-    acc = [...acc, figure]
-    return acc
+    if (isCoordinatesTaken(figuresAccumulator, figure.coordinates)) {
+      setFigures()
+    }
+    figuresAccumulator = [...figuresAccumulator, figure]
+    return figuresAccumulator
   }, [] as FigureInterface[])
+  figures.value = randomFigures
+}
+
+const isCoordinatesTaken = (figuresToCheck: FigureInterface[], coord: CoordinatesInterface) => {
+  return figuresToCheck.some(({ coordinates: { x, y } }) => x === coord.x && y === coord.y)
 }
 
 const getRandomFigure = (): FigureInterface => {
