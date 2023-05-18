@@ -1,40 +1,60 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+
 import { LevelEnum } from '../types'
 
 interface Props {
-  startDisabled: boolean
+  startDisabled?: boolean
+  activeLevel?: LevelEnum
 }
 
 withDefaults(defineProps<Props>(), {
-  startDisabled: false
+  startDisabled: false,
+  activeLevel: LevelEnum.easy,
 })
 
 const emit = defineEmits<{
-  (e: 'start'): void,
-  (e: 'stop'): void,
-  (e: 'level', value: LevelEnum): void,
+  (e: 'start'): void
+  (e: 'stop'): void
+  (e: 'level', value: LevelEnum): void
 }>()
+
+const level = ref<LevelEnum>()
+
+const setLevel = (lvl: LevelEnum) => {
+  emit('level', lvl)
+  level.value = lvl
+}
 </script>
 
 <template>
   <div class="actions">
-    <div class="actions__level">
+    <div class="actions__levels">
       <button
         type="button"
-        class="actions__level-easy"
-        @click="emit('level', LevelEnum.easy)"
+        class="actions__level actions__level--easy"
+        :class="{
+          ' actions__level--active': level === LevelEnum.easy,
+        }"
+        @click="setLevel(LevelEnum.easy)"
         v-text="'easy'"
       />
       <button
         type="button"
-        class="actions__level-hard"
-        @click="emit('level', LevelEnum.hard)"
+        class="actions__level actions__level--hard"
+        :class="{
+          ' actions__level--active': level === LevelEnum.hard,
+        }"
+        @click="setLevel(LevelEnum.hard)"
         v-text="'hard'"
       />
       <button
         type="button"
-        class="actions__level-insane"
-        @click="emit('level', LevelEnum.insane)"
+        class="actions__level actions__level--insane"
+        :class="{
+          ' actions__level--active': level === LevelEnum.insane,
+        }"
+        @click="setLevel(LevelEnum.insane)"
         v-text="'insane'"
       />
     </div>
@@ -67,21 +87,27 @@ const emit = defineEmits<{
     text-transform: uppercase;
   }
 
-  &__level {
+  &__levels {
     display: flex;
     gap: 1rem;
+  }
 
-    &-easy {
+  &__level {
+    &--easy {
       background-color: yellow;
-      color: black
+      color: black;
     }
 
-    &-hard {
+    &--hard {
       background-color: blue;
     }
 
-    &-insane {
+    &--insane {
       background-color: red;
+    }
+
+    &--active {
+      outline-color: white;
     }
   }
 
