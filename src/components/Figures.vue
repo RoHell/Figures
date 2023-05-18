@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Icon from '../components/Icon.vue'
-import { IconEnum } from '../types/icons'
+import { IconEnum } from '../types'
 
 const figures: IconEnum[] = [
   IconEnum.bishop,

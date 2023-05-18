@@ -84,7 +84,7 @@ const isSelectedField = (fieldNumber: number) => {
       pointer-events: none;
     }
 
-    &--marked {
+    &--marked:not(.grid__field--figure) {
       background-color: red;
       pointer-events: none;
     }
