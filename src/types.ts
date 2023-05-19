@@ -38,3 +38,8 @@ export enum GridColsEnum {
   six = 6,
   eight = 8,
 }
+
+export enum MarkEnum {
+  marked = 'marked',
+  hint = 'hint',
+}

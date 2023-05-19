@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'field-select', value: CoordinatesInterface): void
+  (e: 'field', value: CoordinatesInterface): void
 }>()
 
 const fieldsCount = computed(() => props.cols*props.cols)
@@ -33,7 +33,7 @@ const getRowIndex = (index: number) => {
 const getColumnIndex = (index: number) => index%props.cols
 
 const handleFieldSelect = (index: number) => {
-  emit('field-select', getFieldCoordinates(index))
+  emit('field', getFieldCoordinates(index))
 }
 
 const getFieldCoordinates = (index: number) => ({
@@ -81,11 +81,16 @@ const style = computed(() => ({
     cursor: pointer;
 
     &--figure {
-      pointer-events: none;
+      // pointer-events: none;
     }
 
     &--marked:not(.grid__field--figure) {
       background-color: red;
+      pointer-events: none;
+    }
+
+    &--hint:not(.grid__field--figure) {
+      background-color: rgba(red, 0.2);
       pointer-events: none;
     }
   }

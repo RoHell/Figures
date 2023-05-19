@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import {
   IconEnum,
   LevelEnum,
+  MarkEnum,
   type CoordinatesInterface,
   type FigureInterface,
 } from './types'
@@ -89,41 +90,44 @@ const positionFigures = () => {
       field.classList.add('grid__field--figure')
     }
   })
-  // markFiguresMoves(3000)
+  // markAndCheck(3000)
 }
 
-const markFiguresMoves = (timeout: number = 0) => {
+const markAndCheck = (timeout: number = 0) => {
   setTimeout(() => {
     figures.value?.forEach((figure) => {
-      const { name, coordinates } = figure
-
-      switch (name) {
-        case IconEnum.bishop:
-          markBishopFields(coordinates)
-          break
-        case IconEnum.rook:
-          markRookFields(coordinates)
-          break
-        case IconEnum.queen:
-          markQueenFields(coordinates)
-          break
-        default:
-          markKnightFields(coordinates)
-      }
+      markFigureMoves(figure)
     })
     checkGameResult()
   }, timeout)
 }
 
+const markFigureMoves = (figure: FigureInterface, type: MarkEnum = MarkEnum.marked) => {
+  const { name, coordinates } = figure
+  switch (name) {
+    case IconEnum.bishop:
+      markBishopFields(coordinates, type)
+      break
+    case IconEnum.rook:
+      markRookFields(coordinates, type)
+      break
+    case IconEnum.queen:
+      markQueenFields(coordinates, type)
+      break
+    default:
+      markKnightFields(coordinates, type)
+  }
+}
+
 const isPlayerCatched = () => {
   if (!playerFieldCoordinates.value) { return false }
 
-  const isCatched = [...markedFieldsCoordinates.value].some(({ x: markedX, y: markedY }) => {
-    const { x: playerX, y: playerY } = playerFieldCoordinates.value as CoordinatesInterface
-    return (playerX === markedX) && (playerY === markedY)
+  return [...markedFieldsCoordinates.value].some(markedFieldCoordinates => {
+    return isSameCoordinates(markedFieldCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
   }) || false
-  return isCatched
 }
+
+const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA.x === elementB.x) && (elementA.y === elementB.y)
 
 const checkGameResult = () => {
   setTimeout(async() => {
@@ -136,7 +140,7 @@ const checkGameResult = () => {
   }, 3000)
 }
 
-const markBishopFields = ({ x, y }: CoordinatesInterface) => {
+const markBishopFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
   const markedCoordinates = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
@@ -150,10 +154,10 @@ const markBishopFields = ({ x, y }: CoordinatesInterface) => {
     },
     []
   )
-  setMarkedFields(markedCoordinates)
+  setMarkedFields(markedCoordinates, type)
 }
 
-const markRookFields = ({ x, y }: CoordinatesInterface) => {
+const markRookFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
   const markedCoordinates = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
@@ -167,15 +171,15 @@ const markRookFields = ({ x, y }: CoordinatesInterface) => {
     },
     []
   )
-  setMarkedFields(markedCoordinates)
+  setMarkedFields(markedCoordinates, type)
 }
 
-const markQueenFields = (coordinates: CoordinatesInterface) => {
-  markRookFields(coordinates)
-  markBishopFields(coordinates)
+const markQueenFields = (coordinates: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
+  markRookFields(coordinates, type)
+  markBishopFields(coordinates, type)
 }
 
-const markKnightFields = ({ x, y }: CoordinatesInterface) => {
+const markKnightFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
   const markedCoordinates = [
     { x: x + 2, y: y - 1 },
     { x: x + 2, y: y + 1 },
@@ -186,13 +190,13 @@ const markKnightFields = ({ x, y }: CoordinatesInterface) => {
     { x: x - 1, y: y - 2 },
     { x: x - 1, y: y + 2 },
   ]
-  setMarkedFields(markedCoordinates)
+  setMarkedFields(markedCoordinates, type)
 }
 
-const setMarkedFields = (markedCoordinates: CoordinatesInterface[]) => {
+const setMarkedFields = (markedCoordinates: CoordinatesInterface[], type: MarkEnum = MarkEnum.marked) => {
   markedFieldsCoordinates.value = [...markedFieldsCoordinates.value, ...markedCoordinates]
   markedFields.value.forEach((field: Element) => {
-    field.classList.add('grid__field--marked')
+    field.classList.add(`grid__field--${type}`)
   })
 }
 
@@ -202,9 +206,10 @@ const clearFields = () => {
   clearPlayerField()
 }
 
-const clearMarkedFields = () => {
+const clearMarkedFields = (type: MarkEnum = MarkEnum.marked) => {
   markedFields.value.forEach((field: Element) => {
-    field.classList.remove('grid__field--marked')
+    field.classList.remove(`grid__field--${type}`)
+    if (type === MarkEnum.hint) { return }
     field.innerHTML = ''
   })
   markedFieldsCoordinates.value = []
@@ -237,6 +242,20 @@ const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element => doc
 const getFigureElement = (name: IconEnum | string): Element => document.querySelector(`.figures__${name}`) as Element
 
 const handleFieldSelect = (fieldCoordinates: CoordinatesInterface) => {
+  console.log()
+  if (markedFields.value?.length) { return }
+  const selectedFigure = figures.value?.find((figure: FigureInterface) => isSameCoordinates(fieldCoordinates, figure.coordinates))
+  if (selectedFigure) {
+    markFigureMoves(selectedFigure, MarkEnum.hint)
+    setTimeout(() => {
+      clearMarkedFields(MarkEnum.hint)
+    }, 1000)
+  } else {
+    setPlayerField(fieldCoordinates)
+  }
+}
+
+const setPlayerField = (fieldCoordinates: CoordinatesInterface) => {
   if (playerField.value) {
     clearPlayerField()
   }
@@ -263,8 +282,7 @@ const setGrid = (cols: number) => {
   </header>
   <main class="avoid-figures">
     <Grid
-      @field-select="handleFieldSelect"
-      :disabled="!!markedFields.length"
+      @field="handleFieldSelect"
       :cols="gridCols"
     />
     <button
@@ -273,7 +291,7 @@ const setGrid = (cols: number) => {
       class="avoid-figures__check"
       :disabled="!playerFieldCoordinates"
       v-text="'check'"
-      @click="markFiguresMoves()"
+      @click="markAndCheck()"
     />
     <Figures />
     <Actions
