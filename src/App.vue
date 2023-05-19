@@ -89,10 +89,10 @@ const positionFigures = () => {
       field.classList.add('grid__field--figure')
     }
   })
-  markFiguresMoves()
+  // markFiguresMoves(3000)
 }
 
-const markFiguresMoves = () => {
+const markFiguresMoves = (timeout: number = 0) => {
   setTimeout(() => {
     figures.value?.forEach((figure) => {
       const { name, coordinates } = figure
@@ -112,7 +112,7 @@ const markFiguresMoves = () => {
       }
     })
     checkGameResult()
-  }, 3000)
+  }, timeout)
 }
 
 const isPlayerCatched = () => {
@@ -126,7 +126,6 @@ const isPlayerCatched = () => {
 }
 
 const checkGameResult = () => {
-  console.log('playerFieldCoordinates.value', playerFieldCoordinates.value)
   setTimeout(async() => {
     if (!playerFieldCoordinates.value || isPlayerCatched()) {
       await handleStop()
@@ -262,11 +261,19 @@ const setGrid = (cols: number) => {
   <header>
     <h1>Avoid Figures</h1>
   </header>
-  <main class="app-main">
+  <main class="avoid-figures">
     <Grid
       @field-select="handleFieldSelect"
       :disabled="!!markedFields.length"
       :cols="gridCols"
+    />
+    <button
+      v-if="isPlaying"
+      type="button"
+      class="avoid-figures__check"
+      :disabled="!playerFieldCoordinates"
+      v-text="'check'"
+      @click="markFiguresMoves()"
     />
     <Figures />
     <Actions
@@ -283,7 +290,7 @@ const setGrid = (cols: number) => {
 </template>
 
 <style scoped lang="scss">
-.app-main {
+.avoid-figures {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -291,6 +298,17 @@ const setGrid = (cols: number) => {
   width: 100%;
   margin: 0 auto;
   max-width: 340px;
+
+  &__check {
+    display: flex;
+    margin: auto;
+    text-transform: uppercase;
+    border-radius: 0.25rem;
+    border: 2px solid white;
+    background-color: transparent;
+    font-size: 1.25rem;
+    padding: 1rem;
+  }
 }
 .actions {
   position: absolute;
