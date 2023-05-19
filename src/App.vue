@@ -124,17 +124,18 @@ const isPlayerCatched = () => {
 }
 
 const checkGameResult = () => {
-  setTimeout(() => {
+  setTimeout(async() => {
     if (!playerFieldCoordinates.value || isPlayerCatched()) {
       handleStop()
     } else {
+      await clearFields()
       handleStart()
     }
   }, 3000)
 }
 
 const markBishopFields = ({ x, y }: CoordinatesInterface) => {
-  markedFieldsCoordinates.value = figuresOffset.value.reduce(
+  const markedCoordinates = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
         ...coords,
@@ -147,11 +148,11 @@ const markBishopFields = ({ x, y }: CoordinatesInterface) => {
     },
     []
   )
-  setMarkedFields()
+  setMarkedFields(markedCoordinates)
 }
 
 const markRookFields = ({ x, y }: CoordinatesInterface) => {
-  markedFieldsCoordinates.value = figuresOffset.value.reduce(
+  const markedCoordinates = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
         ...coords,
@@ -164,7 +165,7 @@ const markRookFields = ({ x, y }: CoordinatesInterface) => {
     },
     []
   )
-  setMarkedFields()
+  setMarkedFields(markedCoordinates)
 }
 
 const markQueenFields = (coordinates: CoordinatesInterface) => {
@@ -173,7 +174,7 @@ const markQueenFields = (coordinates: CoordinatesInterface) => {
 }
 
 const markKnightFields = ({ x, y }: CoordinatesInterface) => {
-  markedFieldsCoordinates.value = [
+  const markedCoordinates = [
     { x: x + 2, y: y - 1 },
     { x: x + 2, y: y + 1 },
     { x: x - 2, y: y - 1 },
@@ -183,10 +184,11 @@ const markKnightFields = ({ x, y }: CoordinatesInterface) => {
     { x: x - 1, y: y - 2 },
     { x: x - 1, y: y + 2 },
   ]
-  setMarkedFields()
+  setMarkedFields(markedCoordinates)
 }
 
-const setMarkedFields = () => {
+const setMarkedFields = (markedCoordinates: CoordinatesInterface[]) => {
+  markedFieldsCoordinates.value = [...markedFieldsCoordinates.value, ...markedCoordinates]
   markedFields.value.forEach((field: Element) => {
     field.classList.add('grid__field--marked')
   })
@@ -199,11 +201,11 @@ const clearFields = async() => {
 }
 
 const clearMarkedFields = () => {
-  markedFieldsCoordinates.value = []
-  gridFields.value.forEach((field: Element) => {
+  gridFields.value?.forEach((field: Element) => {
     field.classList.remove('grid__field--marked')
     field.innerHTML = ''
   })
+  markedFieldsCoordinates.value = []
 }
 
 const clearFiguresFields = () => {
