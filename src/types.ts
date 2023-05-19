@@ -21,6 +21,20 @@ export enum IconEnum {
 
 export enum LevelEnum {
   easy = 1,
+  medium,
   hard,
-  insane,
+  extreme = 6,
+  insane = 8,
+}
+
+export interface LevelInterface {
+  name: string,
+  hardness: LevelEnum,
+  emoji: string,
+}
+
+export enum GridColsEnum {
+  four = 4,
+  six = 6,
+  eight = 8,
 }

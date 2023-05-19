@@ -1,56 +1,98 @@
 <script setup lang="ts">
-import { LevelEnum } from '../types'
+import { LevelEnum, GridColsEnum } from '../types'
 
 interface Props {
   startDisabled?: boolean
   activeLevel?: LevelEnum
+  activeGridCols?: number
 }
 
 withDefaults(defineProps<Props>(), {
   startDisabled: false,
   activeLevel: LevelEnum.easy,
+  activeGridCols: GridColsEnum.four
 })
 
 const emit = defineEmits<{
   (e: 'start'): void
   (e: 'stop'): void
   (e: 'level', value: LevelEnum): void
+  (e: 'grid', value: number): void
 }>()
 
-const setLevel = (lvl: LevelEnum) => {
-  emit('level', lvl)
-}
+const levels = [
+  {
+    emoji: '&#128512;',
+    name: 'easy',
+    hardness: LevelEnum.easy
+  },
+  {
+    emoji: '&#128524;',
+    name: 'medium',
+    hardness: LevelEnum.medium
+  },
+  {
+    emoji: '&#128528;',
+    name: 'hard',
+    hardness: LevelEnum.hard
+  },
+  {
+    emoji: '&#128552;',
+    name: 'extreme',
+    hardness: LevelEnum.extreme
+  },
+  {
+    emoji: '&#128561;',
+    name: 'insane',
+    hardness: LevelEnum.insane
+  },
+]
+
+const grids = [
+  {
+    name: 'four',
+    count: GridColsEnum.four,
+    emoji: '&#10125;',
+  },
+  {
+    name: 'six',
+    count: GridColsEnum.six,
+    emoji: '&#10127;',
+  },
+  {
+    name: 'eight',
+    count: GridColsEnum.eight,
+    emoji: '&#10129;',
+  },
+]
 </script>
 
 <template>
   <div class="actions">
+    <div class="actions__grids">
+      <button
+        v-for="grid in grids"
+        type="button"
+        :title="grid.name"
+        class="actions__grid"
+        :class="{
+          ' actions__grid--active': activeGridCols === grid.count,
+        }"
+        @click="emit('grid', grid.count)"
+        v-html="grid.emoji"
+      />
+    </div>
     <div class="actions__levels">
       <button
+        v-for="level in levels"
         type="button"
-        class="actions__level actions__level--easy"
+        :title="level.name"
+        class="actions__level"
         :class="{
-          ' actions__level--active': activeLevel === LevelEnum.easy,
+          ' actions__level--active': activeLevel === level.hardness,
         }"
-        @click="setLevel(LevelEnum.easy)"
-        v-text="'easy'"
-      />
-      <button
-        type="button"
-        class="actions__level actions__level--hard"
-        :class="{
-          ' actions__level--active': activeLevel === LevelEnum.hard,
-        }"
-        @click="setLevel(LevelEnum.hard)"
-        v-text="'hard'"
-      />
-      <button
-        type="button"
-        class="actions__level actions__level--insane"
-        :class="{
-          ' actions__level--active': activeLevel === LevelEnum.insane,
-        }"
-        @click="setLevel(LevelEnum.insane)"
-        v-text="'insane'"
+        @click="emit('level', level.hardness)"
+        v-html="level.emoji"
       />
     </div>
 
@@ -74,41 +116,47 @@ const setLevel = (lvl: LevelEnum) => {
 .actions {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 2rem;
   margin: auto;
 
-  button {
-    border-radius: 0.25rem;
-    text-transform: uppercase;
-  }
-
-  &__levels {
+  &__grids {
     display: flex;
     gap: 1rem;
   }
 
-  &__level {
-    &--easy {
-      background-color: yellow;
-      color: black;
-    }
+  &__levels {
+    display: flex;
+    gap: 0.5rem;
+  }
 
-    &--hard {
-      background-color: blue;
-    }
-
-    &--insane {
-      background-color: red;
-    }
+  &__level, &__grid {
+    padding: 0;
+    padding: 0.5rem;
+    line-height: 1;
+    background: none;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    outline: none;
 
     &--active {
       border: 2px solid white;
     }
   }
 
+  &__grid {
+    font-size: 4rem
+  }
+
+  &__level {
+    font-size: 2rem
+  }
+
   &__start {
+    text-transform: uppercase;
+    border-radius: 0.25rem;
     background-color: green;
     font-size: 1.25rem;
+    padding: 1rem;
   }
 
   &__stop {

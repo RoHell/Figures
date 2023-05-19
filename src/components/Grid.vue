@@ -1,50 +1,51 @@
 <script setup lang="ts">
-import { ref, toRef } from 'vue';
-
+import { computed } from 'vue';
 import { type CoordinatesInterface } from '../types'
 
 interface Props {
   disabled: boolean,
-  gameOver: boolean,
+  cols: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
-  gameOver: false,
+  cols: 4,
 })
 
 const emit = defineEmits<{
   (e: 'field-select', value: CoordinatesInterface): void
 }>()
 
-const selectedGridField = ref<CoordinatesInterface>()
-const isGameOver = toRef(props, 'gameOver')
+const fieldsCount = computed(() => props.cols*props.cols)
 
-const getRowNumber = (fieldNumber: number) => {
-  if (fieldNumber <= 4) {
-    return 0
-  } else if (fieldNumber <=8) {
-    return 1 
-  } else if (fieldNumber <=12) {
-    return 2
-  }
-  return 3
+const colsRangeArray = computed((): number[] => Array.from({ length: props.cols }, (_, idx) => idx + 1))
+
+const getRowIndex = (index: number) => {
+  return colsRangeArray.value.reduce((acc: number, r: number) => {
+    if ((index + 1) > r*props.cols) {
+      acc = r
+    }
+    return acc
+  }, 0)
 }
 
-const handleFieldSelect = (fieldNumber: number) => {
-  emit('field-select', getFieldCoordinates(fieldNumber))
+const getColumnIndex = (index: number) => {
+  return index%props.cols
 }
 
-const getFieldCoordinates = (fieldNumber: number) => ({
-  x: (fieldNumber - 1 )%4,
-  y: getRowNumber(fieldNumber),
+const handleFieldSelect = (index: number) => {
+  console.log('getFieldCoordinates(index)', getFieldCoordinates(index))
+  emit('field-select', getFieldCoordinates(index))
+}
+
+const getFieldCoordinates = (index: number) => ({
+  x: getColumnIndex(index),
+  y: getRowIndex(index),
 })
 
-const isSelectedField = (fieldNumber: number) => {
-  const isSelectedColumn = selectedGridField.value?.x === getFieldCoordinates(fieldNumber)?.x
-  const isSelectedRow = selectedGridField.value?.y === getFieldCoordinates(fieldNumber)?.y
-  return isSelectedColumn && isSelectedRow
-}
+const style = computed(() => ({
+  '--cols': props.cols,
+}))
 </script>
 
 <template>
@@ -53,12 +54,13 @@ const isSelectedField = (fieldNumber: number) => {
     :class="{
       'grid--disabled': disabled
     }"
+    :style="style"
   >
     <div
-      v-for="field in 16"
+      v-for="(field, index) in fieldsCount"
       class="grid__field"
-      :class="`grid__field__${getFieldCoordinates(field).x}-${getFieldCoordinates(field).y}`"
-      @click="handleFieldSelect(field)"
+      :class="`grid__field__${getFieldCoordinates(index).x}-${getFieldCoordinates(index).y}`"
+      @click="handleFieldSelect(index)"
     />
   </div>
 </template>
@@ -66,8 +68,8 @@ const isSelectedField = (fieldNumber: number) => {
 <style lang="scss" scoped>
 .grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(1rem, 1fr));
-  grid-template-rows: repeat(4, minmax(1rem, 1fr));
+  grid-template-columns: repeat(var(--cols), minmax(1rem, 1fr));
+  grid-template-rows: repeat(var(--cols), minmax(1rem, 1fr));
   border: 1px solid gray;
 
   &__field {

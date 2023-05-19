@@ -11,35 +11,29 @@ import Figures from './components/Figures.vue'
 import Grid from './components/Grid.vue'
 import Actions from './components/Actions.vue'
 
-const playerFieldCoordinates = ref<CoordinatesInterface>()
+const INITIAL_GRID_COLS = 4
+const INITIAL_FIGURES_COUNT = LevelEnum.easy
+
+const playerFieldCoordinates = ref<CoordinatesInterface | null>(null)
 const markedFieldsCoordinates = ref<CoordinatesInterface[]>([])
-const playerField = ref<Element>()
+const playerField = ref<Element | null>(null)
 const isPlaying = ref(false)
 const isStopped = ref(false)
-const isGameOver = ref(false)
+const gridCols = ref(INITIAL_GRID_COLS)
 const figures = ref<FigureInterface[]>()
-const figuresCount = ref(LevelEnum.easy)
+const figuresCount = ref(INITIAL_FIGURES_COUNT)
 
 const gridFields = computed((): NodeListOf<Element> => document.querySelectorAll('.grid__field') || [])
-const markedFields = computed(() => [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) => getFieldElement(coord)))
-const isPlayerCatched = computed(() => {
-  if (!playerFieldCoordinates.value) { return }
-
-  return [...markedFieldsCoordinates.value].some(({ x: markedX, y: markedY }) => {
-    const { x: playerX, y: playerY } = playerFieldCoordinates.value as CoordinatesInterface
-    return playerX === markedX && playerY === markedY
-  })
-})
+const markedFields = computed(() => [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) => getFieldElement(coord)).filter(Boolean))
+const figuresOffset = computed(() => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
 
 const handleStart = () => {
   isStopped.value = false
   isPlaying.value = true
-  clearFields()
   setFigures()
 }
 
 const handleStop = () => {
-  markedFieldsCoordinates.value = []
   clearFields()
   isStopped.value = true
   isPlaying.value = false
@@ -80,9 +74,7 @@ const getRandomFigure = (figs: FigureInterface[] | null = null) => {
 }
 
 const isCoordinatesTaken = (figuresToCheck: FigureInterface[] | null = null, coord: CoordinatesInterface) => {
-  if (!figuresToCheck?.length) {
-    return
-  }
+  if (!figuresToCheck?.length) { return }
   return [...figuresToCheck]
     .filter(Boolean)
     .some(({ coordinates: { x, y } }) => x === coord.x && y === coord.y)
@@ -122,9 +114,18 @@ const markFiguresMoves = () => {
   }, 3000)
 }
 
+const isPlayerCatched = () => {
+  if (!playerFieldCoordinates.value) { return false }
+
+  return [...markedFieldsCoordinates.value].some(({ x: markedX, y: markedY }) => {
+    const { x: playerX, y: playerY } = playerFieldCoordinates.value as CoordinatesInterface
+    return (playerX === markedX) && (playerY === markedY)
+  }) || false
+}
+
 const checkGameResult = () => {
   setTimeout(() => {
-    if (!playerFieldCoordinates.value || isPlayerCatched.value) {
+    if (!playerFieldCoordinates.value || isPlayerCatched()) {
       handleStop()
     } else {
       handleStart()
@@ -133,8 +134,7 @@ const checkGameResult = () => {
 }
 
 const markBishopFields = ({ x, y }: CoordinatesInterface) => {
-  const offsets = [1, 2, 3]
-  markedFieldsCoordinates.value = offsets.reduce(
+  markedFieldsCoordinates.value = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
         ...coords,
@@ -151,8 +151,7 @@ const markBishopFields = ({ x, y }: CoordinatesInterface) => {
 }
 
 const markRookFields = ({ x, y }: CoordinatesInterface) => {
-  const offsets = [1, 2, 3]
-  markedFieldsCoordinates.value = offsets.reduce(
+  markedFieldsCoordinates.value = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
         ...coords,
@@ -187,20 +186,24 @@ const markKnightFields = ({ x, y }: CoordinatesInterface) => {
   setMarkedFields()
 }
 
-const setMarkedFields = () => markedFields.value?.forEach((field: Element | null) => field?.classList.add('grid__field--marked'))
+const setMarkedFields = () => {
+  markedFields.value.forEach((field: Element) => {
+    field.classList.add('grid__field--marked')
+  })
+}
 
-const clearFields = () => {
-  clearFiguresFields()
-  clearPlayerField()
-  clearMarkedFields()
+const clearFields = async() => {
+  await clearMarkedFields()
+  await clearFiguresFields()
+  await clearPlayerField()
 }
 
 const clearMarkedFields = () => {
-  gridFields.value.forEach((element: Element) => {
-    element.classList.remove('grid__field--marked')
-    element.innerHTML = ''
-  })
   markedFieldsCoordinates.value = []
+  gridFields.value.forEach((field: Element) => {
+    field.classList.remove('grid__field--marked')
+    field.innerHTML = ''
+  })
 }
 
 const clearFiguresFields = () => {
@@ -212,15 +215,15 @@ const clearFiguresFields = () => {
 
 const clearPlayerField = () => {
   playerField.value && (playerField.value.innerHTML = '')
-  playerFieldCoordinates.value = undefined
-  playerField.value = undefined
+  playerFieldCoordinates.value = null
+  playerField.value = null
 }
 
 const getRandomFigureName = () => Object.values(IconEnum)[getRandomInt()]
 
 const getRandomFigureCoordinates = () => ({
-  x: getRandomInt(),
-  y: getRandomInt(),
+  x: getRandomInt(gridCols.value),
+  y: getRandomInt(gridCols.value),
 })
 
 const getRandomInt = (max: number = 4): number => Math.floor(Math.random() * max)
@@ -230,7 +233,9 @@ const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element => doc
 const getFigureElement = (name: IconEnum | string): Element => document.querySelector(`.figures__${name}`) as Element
 
 const handleFieldSelect = async (fieldCoordinates: CoordinatesInterface) => {
-  clearPlayerField()
+  if (playerField.value) {
+    clearPlayerField()
+  }
   playerFieldCoordinates.value = fieldCoordinates
   playerField.value = getFieldElement(fieldCoordinates) as Element
   if (playerField.value) {
@@ -242,6 +247,10 @@ const handleFieldSelect = async (fieldCoordinates: CoordinatesInterface) => {
 const setLevel = (level: LevelEnum) => {
   figuresCount.value = level
 }
+
+const setGrid = (cols: number) => {
+  gridCols.value = cols
+}
 </script>
 
 <template>
@@ -252,7 +261,7 @@ const setLevel = (level: LevelEnum) => {
     <Grid
       @field-select="handleFieldSelect"
       :disabled="!!markedFields.length"
-      :game-over="isGameOver"
+      :cols="gridCols"
     />
     <Figures />
     <Actions
@@ -260,8 +269,10 @@ const setLevel = (level: LevelEnum) => {
       @start="handleStart"
       @stop="handleStop"
       @level="setLevel"
+      @grid="setGrid"
       :start-disabled="isPlaying"
       :active-level="figuresCount"
+      :active-grid-cols="gridCols"
     />
   </main>
 </template>
@@ -284,6 +295,6 @@ const setLevel = (level: LevelEnum) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 </style>
