@@ -27,15 +27,15 @@ const gridFields = computed((): NodeListOf<Element> => document.querySelectorAll
 const markedFields = computed(() => [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) => getFieldElement(coord)).filter(Boolean))
 const figuresOffset = computed(() => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
 
-const handleStart = async() => {
-  await clearFields()
+const handleStart = () => {
+  clearFields()
   isStopped.value = false
   isPlaying.value = true
   setFigures()
 }
 
-const handleStop = async() => {
-  await clearFields()
+const handleStop = () => {
+  clearFields()
   isStopped.value = true
   isPlaying.value = false
 }
@@ -118,13 +118,15 @@ const markFiguresMoves = () => {
 const isPlayerCatched = () => {
   if (!playerFieldCoordinates.value) { return false }
 
-  return [...markedFieldsCoordinates.value].some(({ x: markedX, y: markedY }) => {
+  const isCatched = [...markedFieldsCoordinates.value].some(({ x: markedX, y: markedY }) => {
     const { x: playerX, y: playerY } = playerFieldCoordinates.value as CoordinatesInterface
     return (playerX === markedX) && (playerY === markedY)
   }) || false
+  return isCatched
 }
 
 const checkGameResult = () => {
+  console.log('playerFieldCoordinates.value', playerFieldCoordinates.value)
   setTimeout(async() => {
     if (!playerFieldCoordinates.value || isPlayerCatched()) {
       await handleStop()
@@ -195,22 +197,22 @@ const setMarkedFields = (markedCoordinates: CoordinatesInterface[]) => {
   })
 }
 
-const clearFields = async() => {
-  await clearMarkedFields()
-  await clearFiguresFields()
-  await clearPlayerField()
+const clearFields = () => {
+  clearMarkedFields()
+  clearFiguresFields()
+  clearPlayerField()
 }
 
-const clearMarkedFields = async() => {
-  await gridFields.value?.forEach((field: Element) => {
+const clearMarkedFields = () => {
+  markedFields.value.forEach((field: Element) => {
     field.classList.remove('grid__field--marked')
     field.innerHTML = ''
   })
   markedFieldsCoordinates.value = []
 }
 
-const clearFiguresFields = async() => {
-  await figures.value?.forEach((figure) => {
+const clearFiguresFields = () => {
+  figures.value?.forEach((figure) => {
     figure.field?.classList.remove('grid__field--figure')
     figure.field.innerHTML = ''
   })
@@ -229,20 +231,20 @@ const getRandomFigureCoordinates = () => ({
   y: getRandomInt(gridCols.value),
 })
 
-const getRandomInt = (max: number = 4): number => Math.floor(Math.random() * max)
+const getRandomInt = (max: number = INITIAL_GRID_COLS): number => Math.floor(Math.random() * max)
 
 const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element => document.querySelector(`.grid__field__${fieldCoordinates?.x}-${fieldCoordinates?.y}`) as Element
 
 const getFigureElement = (name: IconEnum | string): Element => document.querySelector(`.figures__${name}`) as Element
 
-const handleFieldSelect = async (fieldCoordinates: CoordinatesInterface) => {
+const handleFieldSelect = (fieldCoordinates: CoordinatesInterface) => {
   if (playerField.value) {
     clearPlayerField()
   }
   playerFieldCoordinates.value = fieldCoordinates
   playerField.value = getFieldElement(fieldCoordinates) as Element
   if (playerField.value) {
-    const figure = (await getFigureElement('player')?.outerHTML) as string
+    const figure = getFigureElement('player')?.outerHTML as string
     playerField.value.innerHTML = figure
   }
 }

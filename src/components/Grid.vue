@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+
 import { type CoordinatesInterface } from '../types'
 
 interface Props {
   disabled: boolean,
-  cols: number
+  cols?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,12 +30,9 @@ const getRowIndex = (index: number) => {
   }, 0)
 }
 
-const getColumnIndex = (index: number) => {
-  return index%props.cols
-}
+const getColumnIndex = (index: number) => index%props.cols
 
 const handleFieldSelect = (index: number) => {
-  console.log('getFieldCoordinates(index)', getFieldCoordinates(index))
   emit('field-select', getFieldCoordinates(index))
 }
 

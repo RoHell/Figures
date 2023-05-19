@@ -129,7 +129,7 @@ const grids = [
   &__level, &__grid {
     padding: 0;
     padding: 0.5rem;
-    line-height: 1;
+    line-height: 0;
     background: none;
     border: 2px solid transparent;
     border-radius: 50%;
