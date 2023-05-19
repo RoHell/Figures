@@ -119,14 +119,10 @@ const grids = [
   gap: 2rem;
   margin: auto;
 
-  &__grids {
-    display: flex;
-    gap: 1rem;
-  }
-
-  &__levels {
+  &__levels, &__grids {
     display: flex;
     gap: 0.5rem;
+    justify-content: space-around;
   }
 
   &__level, &__grid {
@@ -137,6 +133,7 @@ const grids = [
     border: 2px solid transparent;
     border-radius: 50%;
     outline: none;
+    aspect-ratio: 1;
 
     &--active {
       border: 2px solid white;
@@ -154,7 +151,8 @@ const grids = [
   &__start {
     text-transform: uppercase;
     border-radius: 0.25rem;
-    background-color: green;
+    border: 2px solid white;
+    background-color: transparent;
     font-size: 1.25rem;
     padding: 1rem;
   }
