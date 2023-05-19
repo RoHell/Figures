@@ -121,8 +121,9 @@ const grids = [
 
   &__levels, &__grids {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.25rem;
     justify-content: space-around;
+    align-items: center;
   }
 
   &__level, &__grid {
