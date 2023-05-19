@@ -27,7 +27,8 @@ const gridFields = computed((): NodeListOf<Element> => document.querySelectorAll
 const markedFields = computed(() => [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) => getFieldElement(coord)).filter(Boolean))
 const figuresOffset = computed(() => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
 
-const handleStart = () => {
+const handleStart = async() => {
+  await clearFields()
   isStopped.value = false
   isPlaying.value = true
   setFigures()
@@ -126,7 +127,7 @@ const isPlayerCatched = () => {
 const checkGameResult = () => {
   setTimeout(async() => {
     if (!playerFieldCoordinates.value || isPlayerCatched()) {
-      handleStop()
+      await handleStop()
     } else {
       await clearFields()
       handleStart()
@@ -200,16 +201,16 @@ const clearFields = async() => {
   await clearPlayerField()
 }
 
-const clearMarkedFields = () => {
-  gridFields.value?.forEach((field: Element) => {
+const clearMarkedFields = async() => {
+  await gridFields.value?.forEach((field: Element) => {
     field.classList.remove('grid__field--marked')
     field.innerHTML = ''
   })
   markedFieldsCoordinates.value = []
 }
 
-const clearFiguresFields = () => {
-  figures.value?.forEach((figure) => {
+const clearFiguresFields = async() => {
+  await figures.value?.forEach((figure) => {
     figure.field?.classList.remove('grid__field--figure')
     figure.field.innerHTML = ''
   })
