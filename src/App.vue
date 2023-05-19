@@ -33,8 +33,8 @@ const handleStart = () => {
   setFigures()
 }
 
-const handleStop = () => {
-  clearFields()
+const handleStop = async() => {
+  await clearFields()
   isStopped.value = true
   isPlaying.value = false
 }
