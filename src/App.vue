@@ -24,9 +24,17 @@ const gridCols = ref(INITIAL_GRID_COLS)
 const figures = ref<FigureInterface[]>()
 const figuresCount = ref(INITIAL_FIGURES_COUNT)
 
-const gridFields = computed((): NodeListOf<Element> => document.querySelectorAll('.grid__field') || [])
-const markedFields = computed(() => [...markedFieldsCoordinates.value].map((coord: CoordinatesInterface) => getFieldElement(coord)).filter(Boolean))
-const figuresOffset = computed(() => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
+const gridFields = computed(
+  (): NodeListOf<Element> => document.querySelectorAll('.grid__field') || []
+)
+const markedFields = computed(() =>
+  [...markedFieldsCoordinates.value]
+    .map((coord: CoordinatesInterface) => getFieldElement(coord))
+    .filter(Boolean)
+)
+const figuresOffset = computed(() =>
+  Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1)
+)
 
 const handleStart = () => {
   clearFields()
@@ -43,11 +51,14 @@ const handleStop = () => {
 
 const setFigures = () => {
   const figuresRange = [...Array(figuresCount.value).keys()]
-  const randomFigures = figuresRange.reduce((figuresAccumulator: FigureInterface[], _) => {
-    const figure = getRandomFigure(figuresAccumulator)
-    figuresAccumulator = [...figuresAccumulator, figure] as FigureInterface[]
-    return figuresAccumulator
-  },[])
+  const randomFigures = figuresRange.reduce(
+    (figuresAccumulator: FigureInterface[], _) => {
+      const figure = getRandomFigure(figuresAccumulator)
+      figuresAccumulator = [...figuresAccumulator, figure] as FigureInterface[]
+      return figuresAccumulator
+    },
+    []
+  )
   figures.value = randomFigures.filter(Boolean)
   if (figures.value.length === figuresCount.value) {
     positionFigures()
@@ -68,15 +79,23 @@ const getRandomFigure = (figs: FigureInterface[] | null = null) => {
     element: getFigureElement(name),
   }
 
-  if (!randomFigure || isCoordinatesTaken(figuresToCkeck, randomFigure.coordinates)) {
+  if (
+    !randomFigure ||
+    isCoordinatesTaken(figuresToCkeck, randomFigure.coordinates)
+  ) {
     getRandomFigure(figuresToCkeck)
   } else {
     return randomFigure
   }
 }
 
-const isCoordinatesTaken = (figuresToCheck: FigureInterface[] | null = null, coord: CoordinatesInterface) => {
-  if (!figuresToCheck?.length) { return }
+const isCoordinatesTaken = (
+  figuresToCheck: FigureInterface[] | null = null,
+  coord: CoordinatesInterface
+) => {
+  if (!figuresToCheck?.length) {
+    return
+  }
   return [...figuresToCheck]
     .filter(Boolean)
     .some(({ coordinates: { x, y } }) => x === coord.x && y === coord.y)
@@ -120,17 +139,27 @@ const markFigureMoves = (figure: FigureInterface) => {
 }
 
 const isPlayerCatched = () => {
-  if (!playerFieldCoordinates.value) { return false }
+  if (!playerFieldCoordinates.value) {
+    return false
+  }
 
-  return [...markedFieldsCoordinates.value].some(markedFieldCoordinates => {
-    return isSameCoordinates(markedFieldCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
-  }) || false
+  return (
+    [...markedFieldsCoordinates.value].some((markedFieldCoordinates) => {
+      return isSameCoordinates(
+        markedFieldCoordinates,
+        playerFieldCoordinates.value as CoordinatesInterface
+      )
+    }) || false
+  )
 }
 
-const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA.x === elementB.x) && (elementA.y === elementB.y)
+const isSameCoordinates = (
+  elementA: CoordinatesInterface,
+  elementB: CoordinatesInterface
+): boolean => elementA.x === elementB.x && elementA.y === elementB.y
 
 const checkGameResult = () => {
-  setTimeout(async() => {
+  setTimeout(async () => {
     if (!playerFieldCoordinates.value || isPlayerCatched()) {
       await handleStop()
     } else {
@@ -194,7 +223,10 @@ const markKnightFields = ({ x, y }: CoordinatesInterface) => {
 }
 
 const setMarkedFields = (markedCoordinates: CoordinatesInterface[]) => {
-  markedFieldsCoordinates.value = [...markedFieldsCoordinates.value, ...markedCoordinates]
+  markedFieldsCoordinates.value = [
+    ...markedFieldsCoordinates.value,
+    ...markedCoordinates,
+  ]
   markedFields.value.forEach((field: Element) => {
     field.classList.add('grid__field--marked')
   })
@@ -209,7 +241,9 @@ const clearFields = () => {
 const clearMarkedFields = (onlyClass: boolean = false) => {
   markedFields.value.forEach((field: Element) => {
     field.classList.remove('grid__field--marked')
-    if (onlyClass) { return }
+    if (onlyClass) {
+      return
+    }
     field.innerHTML = ''
   })
   markedFieldsCoordinates.value = []
@@ -235,15 +269,22 @@ const getRandomFigureCoordinates = () => ({
   y: getRandomInt(gridCols.value),
 })
 
-const getRandomInt = (max: number = INITIAL_GRID_COLS): number => Math.floor(Math.random() * max)
+const getRandomInt = (max: number = INITIAL_GRID_COLS): number =>
+  Math.floor(Math.random() * max)
 
-const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element => document.querySelector(`.grid__field__${fieldCoordinates?.x}-${fieldCoordinates?.y}`) as Element
+const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element =>
+  document.querySelector(
+    `.grid__field__${fieldCoordinates?.x}-${fieldCoordinates?.y}`
+  ) as Element
 
-const getFigureElement = (name: IconEnum | string): Element => document.querySelector(`.figures__${name}`) as Element
+const getFigureElement = (name: IconEnum | string): Element =>
+  document.querySelector(`.figures__${name}`) as Element
 
 const handleFieldSelect = (fieldCoordinates: CoordinatesInterface) => {
-  if (markedFields.value?.length) { return }
-    setPlayerField(fieldCoordinates)
+  if (markedFields.value?.length) {
+    return
+  }
+  setPlayerField(fieldCoordinates)
 }
 
 const setPlayerField = (fieldCoordinates: CoordinatesInterface) => {
@@ -267,8 +308,13 @@ const setGrid = (cols: number) => {
 }
 
 const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
-  if (markedFields.value?.length) { return }
-  const selectedFigure = figures.value?.find((figure: FigureInterface) => isSameCoordinates(fieldCoordinates, figure.coordinates))
+  console.log('fieldCoordinates', fieldCoordinates)
+  if (markedFields.value?.length) {
+    return
+  }
+  const selectedFigure = figures.value?.find((figure: FigureInterface) =>
+    isSameCoordinates(fieldCoordinates, figure.coordinates)
+  )
   if (selectedFigure) {
     markFigureMoves(selectedFigure)
   } else {
@@ -276,7 +322,7 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
   }
 }
 
-const handleMouseUp = (fieldCoordinates: CoordinatesInterface) => {
+const handleMouseUp = () => {
   setTimeout(() => {
     clearMarkedFields(true)
   }, 1000)
@@ -288,12 +334,7 @@ const handleMouseUp = (fieldCoordinates: CoordinatesInterface) => {
     <h1>Avoid Figures</h1>
   </header>
   <main class="avoid-figures">
-    <Grid
-      @field="handleFieldSelect"
-      @up="handleMouseDown"
-      @down="handleMouseUp"
-      :cols="gridCols"
-    />
+    <Grid @up="handleMouseUp" @down="handleMouseDown" :cols="gridCols" />
     <button
       v-if="isPlaying"
       type="button"

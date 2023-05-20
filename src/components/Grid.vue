@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'field', value: CoordinatesInterface): void
   (e: 'down', value: CoordinatesInterface): void
-  (e: 'up', value: CoordinatesInterface): void
+  (e: 'up'): void
 }>()
 
 const fieldsCount = computed(() => props.cols * props.cols)
@@ -56,11 +56,8 @@ const handleMouseDown = (index?: number) => {
   emit('down', getFieldCoordinates(index))
 }
 
-const handleMouseUp = (index?: number) => {
-  if (!index) {
-    return
-  }
-  emit('up', getFieldCoordinates(index))
+const handleMouseUp = () => {
+  emit('up')
 }
 </script>
 
@@ -80,7 +77,7 @@ const handleMouseUp = (index?: number) => {
       }`"
       @click="handleFieldSelect(index)"
       @mousedown="handleMouseDown(index)"
-      @mouseup="handleMouseUp(index)"
+      @mouseup="handleMouseUp()"
     />
   </div>
 </template>
