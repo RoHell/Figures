@@ -151,7 +151,7 @@ const grids = [
   &__start {
     text-transform: uppercase;
     border-radius: 0.25rem;
-    border: 1px solid white;
+    border: 2px solid white;
     background-color: transparent;
     font-size: 1.25rem;
     padding: 1rem;

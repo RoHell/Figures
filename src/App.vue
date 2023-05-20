@@ -382,11 +382,13 @@ const handleMouseUp = () => {
   &__check,
   &__stop {
     text-transform: uppercase;
-    border-radius: 0.25rem;
-    border: 2px solid white;
     background-color: transparent;
     font-size: 1.25rem;
     padding: 1rem;
+  }
+  &__check {
+    border-radius: 0.25rem;
+    border: 2px solid white;
   }
 }
 .actions {
