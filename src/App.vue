@@ -338,16 +338,16 @@ const handleMouseUp = () => {
     <div v-if="isPlaying" class="avoid-figures__controls">
       <button
         type="button"
+        class="avoid-figures__stop"
+        @click="handleStop()"
+        v-text="'stop'"
+      />
+      <button
+        type="button"
         class="avoid-figures__check"
         :disabled="!playerFieldCoordinates"
         v-text="'check'"
         @click="markAndCheck()"
-      />
-      <button
-        type="button"
-        class="avoid-figures__stop"
-        @click="handleStop()"
-        v-text="'stop'"
       />
     </div>
     <Figures />

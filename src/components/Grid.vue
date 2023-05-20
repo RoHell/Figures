@@ -78,6 +78,8 @@ const handleMouseUp = () => {
       @click="handleFieldSelect(index)"
       @mousedown="handleMouseDown(index)"
       @mouseup="handleMouseUp()"
+      @touchstart="handleMouseDown(index)"
+      @touchend="handleMouseUp()"
     />
   </div>
 </template>
