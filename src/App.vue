@@ -102,20 +102,20 @@ const markAndCheck = (timeout: number = 0) => {
   }, timeout)
 }
 
-const markFigureMoves = (figure: FigureInterface, type: MarkEnum = MarkEnum.marked) => {
+const markFigureMoves = (figure: FigureInterface) => {
   const { name, coordinates } = figure
   switch (name) {
     case IconEnum.bishop:
-      markBishopFields(coordinates, type)
+      markBishopFields(coordinates)
       break
     case IconEnum.rook:
-      markRookFields(coordinates, type)
+      markRookFields(coordinates)
       break
     case IconEnum.queen:
-      markQueenFields(coordinates, type)
+      markQueenFields(coordinates)
       break
     default:
-      markKnightFields(coordinates, type)
+      markKnightFields(coordinates)
   }
 }
 
@@ -140,7 +140,7 @@ const checkGameResult = () => {
   }, 3000)
 }
 
-const markBishopFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
+const markBishopFields = ({ x, y }: CoordinatesInterface) => {
   const markedCoordinates = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
@@ -154,10 +154,10 @@ const markBishopFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkE
     },
     []
   )
-  setMarkedFields(markedCoordinates, type)
+  setMarkedFields(markedCoordinates)
 }
 
-const markRookFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
+const markRookFields = ({ x, y }: CoordinatesInterface) => {
   const markedCoordinates = figuresOffset.value.reduce(
     (coords: CoordinatesInterface[], offset: number) => {
       coords = [
@@ -171,15 +171,15 @@ const markRookFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnu
     },
     []
   )
-  setMarkedFields(markedCoordinates, type)
+  setMarkedFields(markedCoordinates)
 }
 
-const markQueenFields = (coordinates: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
-  markRookFields(coordinates, type)
-  markBishopFields(coordinates, type)
+const markQueenFields = (coordinates: CoordinatesInterface) => {
+  markRookFields(coordinates)
+  markBishopFields(coordinates)
 }
 
-const markKnightFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkEnum.marked) => {
+const markKnightFields = ({ x, y }: CoordinatesInterface) => {
   const markedCoordinates = [
     { x: x + 2, y: y - 1 },
     { x: x + 2, y: y + 1 },
@@ -190,13 +190,13 @@ const markKnightFields = ({ x, y }: CoordinatesInterface, type: MarkEnum = MarkE
     { x: x - 1, y: y - 2 },
     { x: x - 1, y: y + 2 },
   ]
-  setMarkedFields(markedCoordinates, type)
+  setMarkedFields(markedCoordinates)
 }
 
-const setMarkedFields = (markedCoordinates: CoordinatesInterface[], type: MarkEnum = MarkEnum.marked) => {
+const setMarkedFields = (markedCoordinates: CoordinatesInterface[]) => {
   markedFieldsCoordinates.value = [...markedFieldsCoordinates.value, ...markedCoordinates]
   markedFields.value.forEach((field: Element) => {
-    field.classList.add(`grid__field--${type}`)
+    field.classList.add('grid__field--marked')
   })
 }
 
@@ -206,10 +206,10 @@ const clearFields = () => {
   clearPlayerField()
 }
 
-const clearMarkedFields = (type: MarkEnum = MarkEnum.marked) => {
+const clearMarkedFields = (onlyClass: boolean = false) => {
   markedFields.value.forEach((field: Element) => {
-    field.classList.remove(`grid__field--${type}`)
-    if (type === MarkEnum.hint) { return }
+    field.classList.remove('grid__field--marked')
+    if (onlyClass) { return }
     field.innerHTML = ''
   })
   markedFieldsCoordinates.value = []
@@ -242,17 +242,8 @@ const getFieldElement = (fieldCoordinates: CoordinatesInterface): Element => doc
 const getFigureElement = (name: IconEnum | string): Element => document.querySelector(`.figures__${name}`) as Element
 
 const handleFieldSelect = (fieldCoordinates: CoordinatesInterface) => {
-  console.log()
   if (markedFields.value?.length) { return }
-  const selectedFigure = figures.value?.find((figure: FigureInterface) => isSameCoordinates(fieldCoordinates, figure.coordinates))
-  if (selectedFigure) {
-    markFigureMoves(selectedFigure, MarkEnum.hint)
-    setTimeout(() => {
-      clearMarkedFields(MarkEnum.hint)
-    }, 1000)
-  } else {
     setPlayerField(fieldCoordinates)
-  }
 }
 
 const setPlayerField = (fieldCoordinates: CoordinatesInterface) => {
@@ -274,6 +265,22 @@ const setLevel = (level: LevelEnum) => {
 const setGrid = (cols: number) => {
   gridCols.value = cols
 }
+
+const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
+  if (markedFields.value?.length) { return }
+  const selectedFigure = figures.value?.find((figure: FigureInterface) => isSameCoordinates(fieldCoordinates, figure.coordinates))
+  if (selectedFigure) {
+    markFigureMoves(selectedFigure)
+  } else {
+    setPlayerField(fieldCoordinates)
+  }
+}
+
+const handleMouseUp = (fieldCoordinates: CoordinatesInterface) => {
+  setTimeout(() => {
+    clearMarkedFields(true)
+  }, 1000)
+}
 </script>
 
 <template>
@@ -283,6 +290,8 @@ const setGrid = (cols: number) => {
   <main class="avoid-figures">
     <Grid
       @field="handleFieldSelect"
+      @up="handleMouseDown"
+      @down="handleMouseUp"
       :cols="gridCols"
     />
     <button

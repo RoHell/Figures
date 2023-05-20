@@ -15,6 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'field', value: CoordinatesInterface): void
+  (e: 'down', value: CoordinatesInterface): void
+  (e: 'up', value: CoordinatesInterface): void
 }>()
 
 const fieldsCount = computed(() => props.cols*props.cols)
@@ -44,6 +46,14 @@ const getFieldCoordinates = (index: number) => ({
 const style = computed(() => ({
   '--cols': props.cols,
 }))
+
+const handleMouseDown = (index: number) => {
+  emit('down', getFieldCoordinates(index))
+}
+
+const handleMouseUp = (index: number) => {
+  emit('up', getFieldCoordinates(index))
+}
 </script>
 
 <template>
@@ -59,6 +69,10 @@ const style = computed(() => ({
       class="grid__field"
       :class="`grid__field__${getFieldCoordinates(index).x}-${getFieldCoordinates(index).y}`"
       @click="handleFieldSelect(index)"
+      @touchstart="handleMouseDown(index)"
+      @touchend="handleMouseUp(index)"
+      @mousedown="handleMouseDown(index)"
+      @mouseup="handleMouseUp(index)"
     />
   </div>
 </template>
