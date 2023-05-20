@@ -335,19 +335,25 @@ const handleMouseUp = () => {
   </header>
   <main class="avoid-figures">
     <Grid @up="handleMouseUp" @down="handleMouseDown" :cols="gridCols" />
-    <button
-      v-if="isPlaying"
-      type="button"
-      class="avoid-figures__check"
-      :disabled="!playerFieldCoordinates"
-      v-text="'check'"
-      @click="markAndCheck()"
-    />
+    <div v-if="isPlaying" class="avoid-figures__controls">
+      <button
+        type="button"
+        class="avoid-figures__check"
+        :disabled="!playerFieldCoordinates"
+        v-text="'check'"
+        @click="markAndCheck()"
+      />
+      <button
+        type="button"
+        class="avoid-figures__stop"
+        @click="handleStop()"
+        v-text="'stop'"
+      />
+    </div>
     <Figures />
     <Actions
       v-if="!isPlaying"
       @start="handleStart"
-      @stop="handleStop"
       @level="setLevel"
       @grid="setGrid"
       :start-disabled="isPlaying"
@@ -367,9 +373,14 @@ const handleMouseUp = () => {
   margin: 0 auto;
   max-width: 340px;
 
-  &__check {
+  &__controls {
     display: flex;
     margin: auto;
+    gap: 1rem;
+  }
+
+  &__check,
+  &__stop {
     text-transform: uppercase;
     border-radius: 0.25rem;
     border: 2px solid white;

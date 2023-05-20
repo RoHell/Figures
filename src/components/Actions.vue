@@ -10,7 +10,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   startDisabled: false,
   activeLevel: LevelEnum.easy,
-  activeGridCols: GridColsEnum.four
+  activeGridCols: GridColsEnum.four,
 })
 
 const emit = defineEmits<{
@@ -24,27 +24,27 @@ const levels = [
   {
     emoji: '&#128512;',
     name: 'easy',
-    hardness: LevelEnum.easy
+    hardness: LevelEnum.easy,
   },
   {
     emoji: '&#128524;',
     name: 'medium',
-    hardness: LevelEnum.medium
+    hardness: LevelEnum.medium,
   },
   {
     emoji: '&#128528;',
     name: 'hard',
-    hardness: LevelEnum.hard
+    hardness: LevelEnum.hard,
   },
   {
     emoji: '&#128552;',
     name: 'extreme',
-    hardness: LevelEnum.extreme
+    hardness: LevelEnum.extreme,
   },
   {
     emoji: '&#128561;',
     name: 'insane',
-    hardness: LevelEnum.insane
+    hardness: LevelEnum.insane,
   },
 ]
 
@@ -103,12 +103,6 @@ const grids = [
       @click="emit('start')"
       v-text="'start'"
     />
-    <!-- <button
-      type="button"
-      class="actions__stop"
-      @click="emit('stop')"
-      v-text="'stop'"
-    /> -->
   </div>
 </template>
 
@@ -119,14 +113,16 @@ const grids = [
   gap: 2rem;
   margin: auto;
 
-  &__levels, &__grids {
+  &__levels,
+  &__grids {
     display: flex;
     gap: 0.25rem;
     justify-content: space-around;
     align-items: center;
   }
 
-  &__level, &__grid {
+  &__level,
+  &__grid {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -145,24 +141,20 @@ const grids = [
   }
 
   &__grid {
-    font-size: 4rem
+    font-size: 4rem;
   }
 
   &__level {
-    font-size: 2rem
+    font-size: 2rem;
   }
 
   &__start {
     text-transform: uppercase;
     border-radius: 0.25rem;
-    border: 2px solid white;
+    border: 1px solid white;
     background-color: transparent;
     font-size: 1.25rem;
     padding: 1rem;
-  }
-
-  &__stop {
-    background-color: blue;
   }
 }
 </style>
