@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 import { type CoordinatesInterface } from '../types'
 
 interface Props {
-  disabled: boolean,
+  disabled: boolean
   cols?: number
 }
 
@@ -19,20 +19,22 @@ const emit = defineEmits<{
   (e: 'up', value: CoordinatesInterface): void
 }>()
 
-const fieldsCount = computed(() => props.cols*props.cols)
+const fieldsCount = computed(() => props.cols * props.cols)
 
-const colsRangeArray = computed((): number[] => Array.from({ length: props.cols }, (_, idx) => idx + 1))
+const colsRangeArray = computed((): number[] =>
+  Array.from({ length: props.cols }, (_, idx) => idx + 1)
+)
 
 const getRowIndex = (index: number) => {
   return colsRangeArray.value.reduce((acc: number, r: number) => {
-    if ((index + 1) > r*props.cols) {
+    if (index + 1 > r * props.cols) {
       acc = r
     }
     return acc
   }, 0)
 }
 
-const getColumnIndex = (index: number) => index%props.cols
+const getColumnIndex = (index: number) => index % props.cols
 
 const handleFieldSelect = (index: number) => {
   emit('field', getFieldCoordinates(index))
@@ -48,12 +50,16 @@ const style = computed(() => ({
 }))
 
 const handleMouseDown = (index?: number) => {
-  if (!index) { return }
+  if (!index) {
+    return
+  }
   emit('down', getFieldCoordinates(index))
 }
 
 const handleMouseUp = (index?: number) => {
-  if (!index) { return }
+  if (!index) {
+    return
+  }
   emit('up', getFieldCoordinates(index))
 }
 </script>
@@ -62,19 +68,19 @@ const handleMouseUp = (index?: number) => {
   <div
     class="grid"
     :class="{
-      'grid--disabled': disabled
+      'grid--disabled': disabled,
     }"
     :style="style"
   >
     <div
       v-for="(field, index) in fieldsCount"
       class="grid__field"
-      :class="`grid__field__${getFieldCoordinates(index).x}-${getFieldCoordinates(index).y}`"
+      :class="`grid__field__${getFieldCoordinates(index).x}-${
+        getFieldCoordinates(index).y
+      }`"
       @click="handleFieldSelect(index)"
-      @touchstart="handleMouseDown(index)"
-      @touchend="handleMouseUp(index)"
-      @mousedown="handleMouseDown()"
-      @mouseup="handleMouseUp()"
+      @mousedown="handleMouseDown(index)"
+      @mouseup="handleMouseUp(index)"
     />
   </div>
 </template>
