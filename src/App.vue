@@ -23,6 +23,7 @@ const isStopped = ref(false)
 const gridCols = ref(INITIAL_GRID_COLS)
 const figures = ref<FigureInterface[]>()
 const figuresCount = ref(INITIAL_FIGURES_COUNT)
+const selectedFigure = ref<FigureInterface>()
 
 const gridFields = computed(
   (): NodeListOf<Element> => document.querySelectorAll('.grid__field') || []
@@ -312,20 +313,20 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
   if (markedFields.value?.length) {
     return
   }
-  const selectedFigure = figures.value?.find((figure: FigureInterface) =>
+  selectedFigure.value = figures.value?.find((figure: FigureInterface) =>
     isSameCoordinates(fieldCoordinates, figure.coordinates)
   )
-  if (selectedFigure) {
-    markFigureMoves(selectedFigure)
+  if (selectedFigure.value) {
+    markFigureMoves(selectedFigure.value)
   } else {
     setPlayerField(fieldCoordinates)
   }
 }
 
 const handleMouseUp = () => {
-  setTimeout(() => {
+  if (selectedFigure.value) {
     clearMarkedFields(true)
-  }, 1000)
+  }
 }
 </script>
 

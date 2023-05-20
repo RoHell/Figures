@@ -49,10 +49,7 @@ const style = computed(() => ({
   '--cols': props.cols,
 }))
 
-const handleMouseDown = (index?: number) => {
-  if (!index) {
-    return
-  }
+const handleMouseDown = (index: number) => {
   emit('down', getFieldCoordinates(index))
 }
 
