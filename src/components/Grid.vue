@@ -47,11 +47,13 @@ const style = computed(() => ({
   '--cols': props.cols,
 }))
 
-const handleMouseDown = (index: number) => {
+const handleMouseDown = (index?: number) => {
+  if (!index) { return }
   emit('down', getFieldCoordinates(index))
 }
 
-const handleMouseUp = (index: number) => {
+const handleMouseUp = (index?: number) => {
+  if (!index) { return }
   emit('up', getFieldCoordinates(index))
 }
 </script>
@@ -71,8 +73,8 @@ const handleMouseUp = (index: number) => {
       @click="handleFieldSelect(index)"
       @touchstart="handleMouseDown(index)"
       @touchend="handleMouseUp(index)"
-      @mousedown="handleMouseDown(index)"
-      @mouseup="handleMouseUp(index)"
+      @mousedown="handleMouseDown()"
+      @mouseup="handleMouseUp()"
     />
   </div>
 </template>
