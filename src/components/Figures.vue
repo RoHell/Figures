@@ -12,11 +12,12 @@ const figures: IconEnum[] = [
 
 <template>
   <div class="figures">
-    <Icon :icon="IconEnum.pawn" class="figures__player" />
+    <Icon :icon="IconEnum.pawn" class="figures__player" :data-figure="IconEnum.pawn"/>
     <div class="figures__cpu">
       <Icon
         v-for="figure in figures"
         :icon="figure"
+        :data-figure="figure"
         :class="`figures__${figure}`"
       />
     </div>

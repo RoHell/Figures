@@ -6,7 +6,7 @@ export interface CoordinatesInterface {
 export interface FigureInterface {
   name: string
   coordinates: CoordinatesInterface
-  field: Element
+  field: HTMLElement
   element: Element
 }
 
@@ -22,9 +22,9 @@ export enum IconEnum {
 export enum LevelEnum {
   easy = 1,
   medium,
-  hard,
+  hard = 4,
   extreme = 6,
-  insane = 8,
+  insane = 10,
 }
 
 export interface LevelInterface {
@@ -37,9 +37,4 @@ export enum GridColsEnum {
   four = 4,
   six = 6,
   eight = 8,
-}
-
-export enum MarkEnum {
-  marked = 'marked',
-  hint = 'hint',
 }
