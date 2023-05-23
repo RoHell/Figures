@@ -6,6 +6,7 @@ import {
 
 const INITIAL_GRID_COLS = 4
 const gridCols = ref(INITIAL_GRID_COLS)
+const isEmptyField = ref(false)
 
 export default () => {
   const gridFields = computed((): NodeListOf<HTMLElement> => document.querySelectorAll('.grid__field') || [])
@@ -14,7 +15,9 @@ export default () => {
     gridCols.value = cols
   }
 
-  const isEmptyField = (): boolean => Array.from(gridFields.value).some((field: HTMLElement) => !(field.dataset.figure_field || field.dataset.marked))
+  const verifyEmptyField = () => {
+    isEmptyField.value = Array.from(gridFields.value).some((field: HTMLElement) => !(field.dataset.figure_field || field.dataset.marked))
+  }
   
   const getGridElement = (fieldCoordinates: CoordinatesInterface): HTMLElement => document.querySelector(`[data-x="${fieldCoordinates?.x}"][data-y="${fieldCoordinates?.y}"]`) as HTMLElement
 
@@ -23,6 +26,7 @@ export default () => {
     gridCols,
     gridFields,
     setGrid,
+    verifyEmptyField,
     isEmptyField,
     getGridElement,
   }

@@ -13,14 +13,14 @@ import useMarkedFields from './useMarkedFields'
 
 import { getRandomInt } from '../utils'
 
-const { gridCols, gridFields, isEmptyField, getGridElement } = useGrid()
-const { setFigureMovesCoordinates, isCoordinatesTaken } = useCoordinates()
-const { setMarkedFields, clearMarkedFields } = useMarkedFields()
-
 const INITIAL_FIGURES_COUNT = LevelEnum.easy
 const figuresCount = ref(INITIAL_FIGURES_COUNT)
 
 export default () => {
+  const { gridCols, gridFields, isEmptyField, verifyEmptyField, getGridElement } = useGrid()
+  const { setFigureMovesCoordinates, isCoordinatesTaken } = useCoordinates()
+  const { setMarkedFields, clearMarkedFields } = useMarkedFields()
+  
   const randomFiguresList = ref<FigureInterface[]>([])
   const selectedFigure = ref<FigureInterface>()
   
@@ -66,8 +66,8 @@ export default () => {
       setFigureMovesCoordinates(figure)
     })
     setMarkedFields({ class: false })
-  
-    if (!isEmptyField()) {
+    verifyEmptyField()
+    if (!isEmptyField.value) {
       clearMarkedFields({ content: false })
       clearRandomFiguresList()
       setRandomFiguresList()
