@@ -18,13 +18,12 @@ const { setFigureMovesCoordinates, isCoordinatesTaken } = useCoordinates()
 const { setMarkedFields, clearMarkedFields } = useMarkedFields()
 
 const INITIAL_FIGURES_COUNT = LevelEnum.easy
+const figuresCount = ref(INITIAL_FIGURES_COUNT)
 
 export default () => {
   const randomFiguresList = ref<FigureInterface[]>([])
-  const figuresCount = ref(INITIAL_FIGURES_COUNT)
   const selectedFigure = ref<FigureInterface>()
   
-  const figuresOffset = computed((): number[] => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
   const figuresRange = computed((): number[] => [...Array(figuresCount.value).keys()])
 
   const setRandomFiguresList = () => {
@@ -104,7 +103,6 @@ export default () => {
     randomFiguresList,
     figuresCount,
     selectedFigure,
-    figuresOffset,
     figuresRange,
     setRandomFiguresList,
     clearRandomFiguresList,

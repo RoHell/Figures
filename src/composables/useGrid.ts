@@ -5,10 +5,9 @@ import {
 } from '../types'
 
 const INITIAL_GRID_COLS = 4
+const gridCols = ref(INITIAL_GRID_COLS)
 
 export default () => {
-  const gridCols = ref(INITIAL_GRID_COLS)
-
   const gridFields = computed((): NodeListOf<HTMLElement> => document.querySelectorAll('.grid__field') || [])
  
   const setGrid = (cols: number) => {

@@ -12,10 +12,9 @@ const allFiguresMovesCoordinates = ref<CoordinatesInterface[]>([])
 const playerFieldCoordinates = ref<CoordinatesInterface | null>(null)
 
 export default () => {
-  const { gridCols } = useGrid()
-  
+const { gridCols } = useGrid()
 
-  const figuresOffset = computed((): number[] => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
+  const offset = computed((): number[] => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
 
   const setFigureMovesCoordinates = (figure: FigureInterface) => {
     const { name, coordinates } = figure
@@ -35,7 +34,7 @@ export default () => {
   }
 
   const setBishopMovesCoordinates = ({ x, y }: CoordinatesInterface) => {
-    const movesCoordinates = figuresOffset.value.reduce(
+    const movesCoordinates = offset.value?.reduce(
       (coords: CoordinatesInterface[], offset: number) => {
         coords = [
           ...coords,
@@ -52,7 +51,7 @@ export default () => {
   }
   
   const setRookMovesCoordinates = ({ x, y }: CoordinatesInterface) => {
-    const movesCoordinates = figuresOffset.value.reduce(
+    const movesCoordinates = offset.value?.reduce(
       (coords: CoordinatesInterface[], offset: number) => {
         coords = [
           ...coords,
