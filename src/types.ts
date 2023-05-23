@@ -10,6 +10,13 @@ export interface FigureInterface {
   element: Element
 }
 
+export enum FigureEnum {
+  bishop = 'bishop',
+  rook = 'rook',
+  queen = 'queen',
+  knight = 'knight',
+}
+
 export enum IconEnum {
   bishop = 'bishop',
   rook = 'rook',
@@ -21,7 +28,7 @@ export enum IconEnum {
 
 export enum LevelEnum {
   easy = 1,
-  medium,
+  medium = 2,
   hard = 4,
   extreme = 6,
   insane = 10,
