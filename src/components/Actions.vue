@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LevelEnum, GridColsEnum } from '../types'
+import { LevelEnum, GridSizeEnum } from '../types'
 
 interface Props {
   startDisabled?: boolean
@@ -10,7 +10,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   startDisabled: false,
   activeLevel: LevelEnum.easy,
-  activeGridCols: GridColsEnum.four,
+  activeGridCols: GridSizeEnum.four,
 })
 
 const emit = defineEmits<{
@@ -51,17 +51,17 @@ const levels = [
 const grids = [
   {
     name: 'four',
-    count: GridColsEnum.four,
+    count: GridSizeEnum.four,
     emoji: '&#10125;',
   },
   {
     name: 'six',
-    count: GridColsEnum.six,
+    count: GridSizeEnum.six,
     emoji: '&#10127;',
   },
   {
     name: 'eight',
-    count: GridColsEnum.eight,
+    count: GridSizeEnum.eight,
     emoji: '&#10129;',
   },
 ]

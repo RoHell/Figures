@@ -12,9 +12,9 @@ const allFiguresMovesCoordinates = ref<CoordinatesInterface[]>([])
 const playerFieldCoordinates = ref<CoordinatesInterface | null>(null)
 
 export default () => {
-const { gridCols } = useGrid()
+const { gridSize } = useGrid()
 
-  const offset = computed((): number[] => Array.from({ length: gridCols.value - 1 }, (_, idx) => idx + 1))
+  const offset = computed((): number[] => Array.from({ length: gridSize.value - 1 }, (_, idx) => idx + 1))
 
   const setFigureMovesCoordinates = (figure: FigureInterface) => {
     const { name, coordinates } = figure

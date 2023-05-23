@@ -17,7 +17,7 @@ const INITIAL_FIGURES_COUNT = LevelEnum.easy
 const figuresCount = ref(INITIAL_FIGURES_COUNT)
 
 export default () => {
-  const { gridCols, gridFields, isEmptyField, verifyEmptyField, getGridElement } = useGrid()
+  const { gridSize, gridFields, isEmptyField, verifyEmptyField, getGridElement } = useGrid()
   const { setFigureMovesCoordinates, isCoordinatesTaken } = useCoordinates()
   const { setMarkedFields, clearMarkedFields } = useMarkedFields()
   
@@ -89,8 +89,8 @@ export default () => {
   const getRandomFigureName = (): FigureEnum => Object.values(FigureEnum)[getRandomInt(Object.values(FigureEnum).length)]
   
   const getRandomFigureCoordinates = () => ({
-    x: getRandomInt(gridCols.value),
-    y: getRandomInt(gridCols.value),
+    x: getRandomInt(gridSize.value),
+    y: getRandomInt(gridSize.value),
   })
 
   const getFigureElement = (name: IconEnum | string): HTMLElement => document.querySelector(`[data-figure="${name}"`) as HTMLElement

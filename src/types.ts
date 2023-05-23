@@ -40,7 +40,7 @@ export interface LevelInterface {
   emoji: string,
 }
 
-export enum GridColsEnum {
+export enum GridSizeEnum {
   four = 4,
   six = 6,
   eight = 8,

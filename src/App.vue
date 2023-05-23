@@ -16,8 +16,8 @@ import usePlayer from './composables/usePlayer'
 import useStatus from './composables/useStatus'
 
 const {
-  setGrid,
-  gridCols,
+  setGridSize,
+  gridSize,
 } = useGrid()
 
 const {
@@ -118,7 +118,7 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields({ content:
     <Grid
       @up="handleMouseUp"
       @down="handleMouseDown"
-      :cols="gridCols"
+      :cols="gridSize"
       :disabled="isChecking"
     />
     <div
@@ -144,10 +144,10 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields({ content:
       v-if="!isPlaying"
       @start="handleStart"
       @level="setFiguresCount"
-      @grid="setGrid"
+      @grid="setGridSize"
       :start-disabled="isPlaying"
       :active-level="figuresCount"
-      :active-grid-cols="gridCols"
+      :active-grid-cols="gridSize"
     />
   </main>
 </template>
