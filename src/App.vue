@@ -20,8 +20,9 @@ const allFiguresMovesCoordinates = ref<CoordinatesInterface[]>([])
 const playerField = ref<HTMLElement | null>(null)
 const isPlaying = ref(false)
 const isStopped = ref(false)
+const isChecking = ref(false)
 const gridCols = ref(INITIAL_GRID_COLS)
-const randomFiguresList = ref<FigureInterface[]>()
+const randomFiguresList = ref<FigureInterface[]>([])
 const figuresCount = ref(INITIAL_FIGURES_COUNT)
 const selectedFigure = ref<FigureInterface>()
 
@@ -140,6 +141,7 @@ const isPlayerCatched = (): boolean => {
 const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA.x === elementB.x) && (elementA.y === elementB.y)
 
 const checkGameResult = () => {
+  isChecking.value = true
   setTimeout(async () => {
     if (!playerFieldCoordinates.value || isPlayerCatched()) {
       await handleStop()
@@ -147,6 +149,7 @@ const checkGameResult = () => {
       await clearFields()
       handleStart()
     }
+    isChecking.value = false
   }, 3000)
 }
 
@@ -254,7 +257,6 @@ const clearFiguresFields = () => {
 const clearPlayerField = () => {
   if (playerField.value) {
     playerField.value.innerHTML = ''
-    delete playerField.value.dataset.player
     playerFieldCoordinates.value = null
     playerField.value = null
   }
@@ -278,10 +280,9 @@ const setPlayerField = (fieldCoordinates: CoordinatesInterface) => {
     clearPlayerField()
   }
   playerFieldCoordinates.value = fieldCoordinates
-  playerField.value = getFieldElement(fieldCoordinates) as HTMLElement
-  playerField.value.dataset.player
+  playerField.value = getFieldElement(fieldCoordinates)
   if (playerField.value) {
-    const figure = getFigureElement(PLAYER_FIGURE_NAME)?.outerHTML as string
+    const figure = getFigureElement(PLAYER_FIGURE_NAME)?.outerHTML
     playerField.value.innerHTML = figure
   }
 }
@@ -314,8 +315,16 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields({ content:
     <h1>Avoid Figures</h1>
   </header>
   <main class="avoid-figures">
-    <Grid @up="handleMouseUp" @down="handleMouseDown" :cols="gridCols" />
-    <div v-if="isPlaying" class="avoid-figures__controls">
+    <Grid
+      @up="handleMouseUp"
+      @down="handleMouseDown"
+      :cols="gridCols"
+      :disabled="isChecking"
+    />
+    <div
+      v-if="isPlaying"
+      class="avoid-figures__controls"
+    >
       <button
         type="button"
         class="avoid-figures__stop"
@@ -369,6 +378,9 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields({ content:
   &__check {
     border-radius: 0.25rem;
     border: 2px solid white;
+    &:disabled {
+      border-color: gray;
+    }
   }
 }
 .actions {

@@ -8,17 +8,22 @@ const figures: IconEnum[] = [
   IconEnum.queen,
   IconEnum.knight,
 ]
+
+const playerFigure = IconEnum.pawn
 </script>
 
 <template>
   <div class="figures">
-    <Icon :icon="IconEnum.pawn" class="figures__player" :data-figure="IconEnum.pawn"/>
+    <Icon
+      :icon="playerFigure"
+      color="#00FF00"
+      :data-figure="playerFigure"
+    />
     <div class="figures__cpu">
       <Icon
         v-for="figure in figures"
         :icon="figure"
         :data-figure="figure"
-        :class="`figures__${figure}`"
       />
     </div>
   </div>
@@ -35,10 +40,6 @@ const figures: IconEnum[] = [
   &__cpu {
     display: flex;
     height: 4rem;
-  }
-
-  &__player {
-    color: #00FF00;
   }
 }
 </style>

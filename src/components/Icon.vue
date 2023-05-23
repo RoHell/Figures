@@ -2,11 +2,15 @@
 import { IconEnum } from '../types'
 
 export interface IconProps {
-  icon?: IconEnum
+  icon: IconEnum
+  size?: string
+  color?: string
 }
 
 withDefaults(defineProps<IconProps>(), {
-  icon: IconEnum.knight
+  icon: IconEnum.pawn,
+  size: '100%',
+  color: 'currentColor'
 })
 
 const iconPath = {
@@ -21,14 +25,14 @@ const iconPath = {
 
 <template>
   <svg
-    width="100%"
-    height="100%"
+    :width="size"
+    :height="size"
     viewBox="0 0 100 100"
     version="1.1"
     xml:space="preserve"
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
-    fill="currentColor"
+    :fill="color"
   >
     <path :d="iconPath[icon]" />
   </svg>
