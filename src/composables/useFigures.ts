@@ -65,10 +65,10 @@ export default () => {
       }
       setFigureMovesCoordinates(figure)
     })
-    setMarkedFields({ class: false })
+    setMarkedFields({ addMarkedClass: false })
     verifyEmptyField()
     if (!isEmptyField.value) {
-      clearMarkedFields({ content: false })
+      clearMarkedFields()
       clearRandomFiguresList()
       setRandomFiguresList()
     }

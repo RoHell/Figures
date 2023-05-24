@@ -107,7 +107,7 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
   }
 }
 
-const handleMouseUp = () => selectedFigure.value && clearMarkedFields({ content: false })
+const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
 </script>
 
 <template>

@@ -13,25 +13,20 @@ export default () => {
   
   const markedFields = computed(() => allFiguresMovesCoordinates.value.map((coord: CoordinatesInterface) => getGridElement(coord)).filter(Boolean))
   
-  const setMarkedFields = ({ class: addClass = true }: { class?: boolean } = {}) => {
+  const setMarkedFields = ({ addMarkedClass = true }: { addMarkedClass?: boolean } = {}) => {
     markedFields.value.forEach((field: HTMLElement) => {
       if (field.dataset.figure_field) { return }
       field.dataset.marked = 'true'
-      if (addClass) {
+      if (addMarkedClass) {
         field.classList.add('grid__field--marked')
       }
     })
   }
 
-  const clearMarkedFields = ({ class: removeClasses = true, content: removeContent = true }: { class?: boolean, content?: boolean } = {}) => {
+  const clearMarkedFields = () => {
     markedFields.value.forEach((field: HTMLElement) => {
       delete field.dataset.marked
-      if (removeClasses) {
-        field.classList.remove('grid__field--marked')
-      }
-      if (removeContent) {
-        field.innerHTML = ''
-      }
+      field.classList.remove('grid__field--marked')
     })
     allFiguresMovesCoordinates.value = []
   }

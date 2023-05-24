@@ -69,9 +69,6 @@ const handleMouseUp = () => {
     <div
       v-for="(_, index) in fieldsCount"
       class="grid__field"
-      :class="`grid__field__${getFieldCoordinates(index).x}-${
-        getFieldCoordinates(index).y
-      }`"
       :data-x="getColumnIndex(index)"
       :data-y="getRowIndex(index)"
       data-marked
@@ -102,7 +99,7 @@ const handleMouseUp = () => {
     flex-grow: 0;
     cursor: pointer;
 
-    &--marked:not(.grid__field--figure) {
+    &--marked {
       background-color: red;
       pointer-events: none;
     }
