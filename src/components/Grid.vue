@@ -87,12 +87,13 @@ const handleMouseUp = () => {
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(1rem, 1fr));
   grid-template-rows: repeat(var(--cols), minmax(1rem, 1fr));
+  background-color: dimgray;
 
   &__field {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid gray;
+    border: 1px solid white;
     padding: 0.5rem;
     aspect-ratio: 1;
     flex-grow: 0;
