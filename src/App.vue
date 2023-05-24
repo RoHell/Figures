@@ -112,9 +112,6 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
 </script>
 
 <template>
-  <header>
-    <h1>Avoid Figures</h1>
-  </header>
   <main class="avoid-figures">
     <div class="avoid-figures__main">
       <Grid
@@ -146,7 +143,8 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
   </main>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+
 .avoid-figures {
   display: flex;
   flex-direction: column;
@@ -158,24 +156,12 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
   &__main {
     position: relative;
     aspect-ratio: 1;
-    max-height: 340px;
   }
 
   &__grid {
     position: absolute;
     width: 100%;
     height: 100%;
-  }
-
-  &__menu {
-    position: absolute;
-    z-index: 10;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.6);
   }
 }
 </style>

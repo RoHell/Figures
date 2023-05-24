@@ -24,6 +24,9 @@ export enum IconEnum {
   knight = 'knight',
   pawn = 'pawn',
   king = 'king',
+  more = 'more',
+  close = 'close',
+  settings = 'settings',
 }
 
 export enum LevelEnum {

@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { LevelEnum, GridSizeEnum } from '../types'
+import { computed, ref } from 'vue';
+
+import { LevelEnum, GridSizeEnum, IconEnum } from '../types'
+
+import Icon from '../components/Icon.vue'
 
 interface Props {
   startDisabled?: boolean
@@ -7,7 +11,7 @@ interface Props {
   activeGridCols?: number
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   startDisabled: false,
   activeLevel: LevelEnum.easy,
   activeGridCols: GridSizeEnum.four,
@@ -17,6 +21,8 @@ const emit = defineEmits<{
   (e: 'level', value: LevelEnum): void
   (e: 'grid', value: number): void
 }>()
+
+const isOpen = ref(false)
 
 const levels = [
   {
@@ -63,51 +69,136 @@ const grids = [
     emoji: '&#10129;',
   },
 ]
+
+const menuIcon = computed(() => isOpen.value ? IconEnum.close : IconEnum.more)
+
+const toggleMenu = () => {
+  isOpen.value = !isOpen.value
+}
+
+const selectedLevel = computed(() => levels.find(l => l.hardness === props.activeLevel))
+
+const selectedGrid = computed(() => grids.find(g => g.count === props.activeGridCols))
 </script>
 
 <template>
   <div class="menu">
-    <div class="menu__grids">
-      <button
-        v-for="grid in grids"
-        type="button"
-        :title="grid.name"
-        class="menu__grid"
-        :class="{
-          ' menu__grid--active': activeGridCols === grid.count,
-        }"
-        @click="emit('grid', grid.count)"
-        v-html="grid.emoji"
-      />
+    <div class="menu__header">
+      <span class="menu__header-title">Avoid Figures</span>
+      <button class="menu__header-toggle" @click="toggleMenu">
+        <Icon :icon="menuIcon" size="3.25rem"/>
+      </button>
     </div>
-    <div class="menu__levels">
-      <button
-        v-for="level in levels"
-        type="button"
-        :title="level.name"
-        class="menu__level"
-        :class="{
-          ' menu__level--active': activeLevel === level.hardness,
-        }"
-        @click="emit('level', level.hardness)"
-        v-html="level.emoji"
-      />
+    <div
+      v-if="isOpen"
+      class="menu__opened"
+    >
+      <span>
+        Tu będą ustawienia
+      </span>
+      <Icon :icon="IconEnum.settings" size="5rem"/>
+    </div>
+
+    <div
+      v-else
+      class="menu__closed"
+    >
+      <div class="menu__grids">
+        <span v-text="'GRID: '" />
+        <button
+          v-for="grid in grids"
+          type="button"
+          :title="grid.name"
+          class="menu__grid"
+          :class="{
+            ' menu__grid--active': activeGridCols === grid.count,
+          }"
+          @click="emit('grid', grid.count)"
+          v-html="grid.emoji"
+        />
+      </div>
+      <div class="menu__levels">
+        <span v-text="'LEVEL: '"/>
+        <button
+          v-for="level in levels"
+          type="button"
+          :title="level.name"
+          class="menu__level"
+          :class="{
+            ' menu__level--active': activeLevel === level.hardness,
+          }"
+          @click="emit('level', level.hardness)"
+          v-html="level.emoji"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .menu {
+  position:relative;
+  aspect-ratio: 1;
+  max-height: 340px;
+  height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 2rem;
-  margin: auto;
+  background-color: rgba(dimgray, 0.9);
+
+  &__opened,
+  &__closed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 1rem;
+    margin: auto;
+    width: 100%;
+  }
+
+  &__opened {
+    align-items: center;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    padding: 1rem;
+    border-bottom: 2px solid;
+    background-color: dimgray;
+
+    &-title {
+      font-size: xx-large;
+      flex: 1;
+      font-weight: 500;
+      margin: auto;
+    }
+
+    &-toggle {
+      display: flex;
+      margin-left: auto;
+      background: none;
+      outline: none;
+      border: none;
+      padding: 0;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
 
   &__levels,
   &__grids {
     display: flex;
     gap: 0.25rem;
-    justify-content: space-around;
     align-items: center;
   }
 
@@ -116,7 +207,6 @@ const grids = [
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
     padding: 0.5rem;
     line-height: 0;
     background: none;
@@ -131,11 +221,11 @@ const grids = [
   }
 
   &__grid {
-    font-size: 4rem;
+    font-size: 3rem;
   }
 
   &__level {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   &__start {
