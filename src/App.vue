@@ -6,7 +6,8 @@ import {
 
 import Figures from './components/Figures.vue'
 import Grid from './components/Grid.vue'
-import Actions from './components/Actions.vue'
+import Menu from './components/Menu.vue'
+import Controls from './components/Controls.vue'
 
 import useGrid from './composables/useGrid'
 import useFigures from './composables/useFigures'
@@ -115,46 +116,38 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
     <h1>Avoid Figures</h1>
   </header>
   <main class="avoid-figures">
-    <Grid
-      @up="handleMouseUp"
-      @down="handleMouseDown"
-      :cols="gridSize"
-      :disabled="isChecking"
-    />
-    <div
-      v-if="isPlaying"
-      class="avoid-figures__controls"
-    >
-      <button
-        type="button"
-        class="avoid-figures__stop"
-        @click="handleStop()"
-        v-text="'stop'"
+    <div class="avoid-figures__main">
+      <Grid
+        :cols="gridSize"
+        :disabled="isChecking"
+        class="avoid-figures__grid"
+        @up="handleMouseUp"
+        @down="handleMouseDown"
       />
-      <button
-        type="button"
-        class="avoid-figures__check"
-        :disabled="!playerFieldCoordinates"
-        v-text="'check'"
-        @click="handleCheck()"
+      <Menu
+        v-if="!isPlaying"
+        class="avoid-figures__menu"
+        :start-disabled="isPlaying"
+        :active-level="figuresCount"
+        :active-grid-cols="gridSize"
+        @start="handleStart"
+        @level="setFiguresCount"
+        @grid="setGridSize"
       />
     </div>
-    <Figures />
-    <Actions
-      v-if="!isPlaying"
+
+    <Controls
       @start="handleStart"
-      @level="setFiguresCount"
-      @grid="setGridSize"
-      :start-disabled="isPlaying"
-      :active-level="figuresCount"
-      :active-grid-cols="gridSize"
+      @stop="handleStop"
+      @check="handleCheck"
     />
+
+    <Figures />
   </main>
 </template>
 
 <style scoped lang="scss">
 .avoid-figures {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -162,35 +155,27 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
   margin: 0 auto;
   max-width: 340px;
 
-  &__controls {
-    display: flex;
-    margin: auto;
-    gap: 1rem;
+  &__main {
+    position: relative;
+    aspect-ratio: 1;
+    max-height: 340px;
   }
 
-  &__check,
-  &__stop {
-    text-transform: uppercase;
-    background-color: transparent;
-    font-size: 1.25rem;
-    padding: 1rem;
+  &__grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
   }
-  &__check {
-    border-radius: 0.25rem;
-    border: 2px solid white;
-    &:disabled {
-      border-color: gray;
-    }
+
+  &__menu {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.6);
   }
-}
-.actions {
-  position: absolute;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.6);
 }
 </style>

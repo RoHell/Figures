@@ -1,9 +1,10 @@
 import { ref } from "vue"
 
+const isPlaying = ref(false)
+const isStopped = ref(false)
+const isChecking = ref(false)
+
 export default () => {
-  const isPlaying = ref(false)
-  const isStopped = ref(false)
-  const isChecking = ref(false)
 
   return {
     isPlaying,

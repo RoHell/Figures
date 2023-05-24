@@ -87,7 +87,6 @@ const handleMouseUp = () => {
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(1rem, 1fr));
   grid-template-rows: repeat(var(--cols), minmax(1rem, 1fr));
-  border: 1px solid gray;
 
   &__field {
     display: flex;

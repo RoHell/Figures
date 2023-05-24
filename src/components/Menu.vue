@@ -14,8 +14,6 @@ withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  (e: 'start'): void
-  (e: 'stop'): void
   (e: 'level', value: LevelEnum): void
   (e: 'grid', value: number): void
 }>()
@@ -68,46 +66,38 @@ const grids = [
 </script>
 
 <template>
-  <div class="actions">
-    <div class="actions__grids">
+  <div class="menu">
+    <div class="menu__grids">
       <button
         v-for="grid in grids"
         type="button"
         :title="grid.name"
-        class="actions__grid"
+        class="menu__grid"
         :class="{
-          ' actions__grid--active': activeGridCols === grid.count,
+          ' menu__grid--active': activeGridCols === grid.count,
         }"
         @click="emit('grid', grid.count)"
         v-html="grid.emoji"
       />
     </div>
-    <div class="actions__levels">
+    <div class="menu__levels">
       <button
         v-for="level in levels"
         type="button"
         :title="level.name"
-        class="actions__level"
+        class="menu__level"
         :class="{
-          ' actions__level--active': activeLevel === level.hardness,
+          ' menu__level--active': activeLevel === level.hardness,
         }"
         @click="emit('level', level.hardness)"
         v-html="level.emoji"
       />
     </div>
-
-    <button
-      type="button"
-      class="actions__start"
-      :disabled="startDisabled"
-      @click="emit('start')"
-      v-text="'start'"
-    />
   </div>
 </template>
 
 <style lang="scss" scoped>
-.actions {
+.menu {
   display: flex;
   flex-direction: column;
   gap: 2rem;
