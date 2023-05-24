@@ -71,6 +71,8 @@ const handleMouseUp = () => {
       class="grid__field"
       :data-x="getColumnIndex(index)"
       :data-y="getRowIndex(index)"
+      data-marked
+      data-figure_field
       @click="handleFieldSelect(index)"
       @mousedown="handleMouseDown(index)"
       @mouseup="handleMouseUp()"
