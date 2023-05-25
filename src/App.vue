@@ -18,9 +18,7 @@ import {
   useStatus,
 } from './composables'
 
-const {
-  gridSize,
-} = useGrid()
+const { gridSize } = useGrid()
 
 const {
   setRandomFiguresList,
