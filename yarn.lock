@@ -419,7 +419,7 @@ rollup@^3.21.0:
   optionalDependencies:
     fsevents "~2.3.2"
 
-sass-loader@^13.2.2:
+sass-loader@^13.3.0:
   version "13.3.0"
   resolved "https://registry.yarnpkg.com/sass-loader/-/sass-loader-13.3.0.tgz#ed4a2d555aa10fc99f4daaab425d8d451336bb65"
   integrity sha512-LeWNswSEujsZnwdn9AuA+Q5wZEAFlU+eORQsDKp35OtGAfFxYxpfk/Ylon+TGGkazSqxi2EHDTqdr3di8r7nCg==
