@@ -143,12 +143,14 @@ const toggleMenu = () => {
 header {
   position: fixed;
   top: 0;
+  left: 0;
   z-index: 10;
 }
 
 footer {
   position: fixed;
   bottom: 0;
+  left: 0;
   z-index: 10;
 }
 
