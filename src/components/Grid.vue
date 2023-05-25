@@ -5,10 +5,7 @@ import { type CoordinatesInterface } from '../types'
 
 import { useStatus, useGrid } from '../composables'
 
-const {
-  isPlaying,
-  isChecking,
-} = useStatus()
+const { isPlaying, isChecking } = useStatus()
 
 const { gridSize } = useGrid()
 
