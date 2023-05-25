@@ -6,6 +6,20 @@ import {
 } from '../types'
 
 const INITIAL_GRID_SIZE = 4
+const GRIDS = [
+  {
+    name: '4 x 4',
+    count: GridSizeEnum.four,
+  },
+  {
+    name: '6 x 6',
+    count: GridSizeEnum.six,
+  },
+  {
+    name: '8 x 8',
+    count: GridSizeEnum.eight,
+  },
+]
 const gridSize = ref<GridSizeEnum>(INITIAL_GRID_SIZE)
 const isEmptyField = ref(false)
 
@@ -24,6 +38,7 @@ export default () => {
 
   return {
     INITIAL_GRID_SIZE,
+    GRIDS,
     gridSize,
     gridFields,
     setGridSize,

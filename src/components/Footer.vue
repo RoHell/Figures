@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { IconEnum, LevelEnum, GridSizeEnum } from '../types'
+import { IconEnum } from '../types'
 
 import {
   useStatus,
@@ -11,64 +11,16 @@ import {
 import Icon from '../components/Icon.vue'
 
 const emit = defineEmits<{
-  (e: 'start'): void
-  (e: 'check'): void
+  (e: 'start'): void,
+  (e: 'check'): void,
+  (e: 'grid'): void,
+  (e: 'pieces'): void,
 }>()
 
 const { isPlaying } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
-const { gridSize, setGridSize } = useGrid()
-const { figuresCount, setFiguresCount } = useFigures()
-
-const pieces = [
-  {
-    name: 'easy',
-    count: LevelEnum.easy,
-  },
-  {
-    name: 'medium',
-    count: LevelEnum.medium,
-  },
-  {
-    name: 'hard',
-    count: LevelEnum.hard,
-  },
-  {
-    name: 'extreme',
-    count: LevelEnum.extreme,
-  },
-  {
-    name: 'insane',
-    count: LevelEnum.insane,
-  },
-]
-
-const grids = [
-  {
-    name: '4 x 4',
-    count: GridSizeEnum.four,
-  },
-  {
-    name: '6 x 6',
-    count: GridSizeEnum.six,
-  },
-  {
-    name: '8 x 8',
-    count: GridSizeEnum.eight,
-  },
-]
-
-const setGrid = () => {
-  const currentGridIndex = grids.findIndex(grid => grid.count === gridSize.value)
-  const gridCount = gridSize.value < grids[grids.length - 1].count ? grids[currentGridIndex + 1]?.count : grids[0].count
-  setGridSize(gridCount)
-}
-
-const setPieces = () => {
-  const currentPieceIndex = pieces.findIndex(piece => piece.count === figuresCount.value)
-  const piecesCount = figuresCount.value < pieces[pieces.length - 1].count ? pieces[currentPieceIndex + 1]?.count : pieces[0].count
-  setFiguresCount(piecesCount)
-}
+const { gridSize } = useGrid()
+const { figuresCount } = useFigures()
 
 </script>
 
@@ -79,7 +31,7 @@ const setPieces = () => {
         v-if="!isPlaying"
         type="button"
         class="footer__grid"
-        @click="setGrid"
+        @click="emit('grid')"
       >
         <Icon :icon="IconEnum.grid" size="2.5rem"/>
         <span v-text="`${gridSize} x ${gridSize}`" />
@@ -107,7 +59,7 @@ const setPieces = () => {
         v-if="!isPlaying"
         type="button"
         class="footer__pieces"
-        @click="setPieces"
+        @click="emit('pieces')"
       >
         <div class="footer__pieces-icon">
           <span v-text="`${figuresCount} x `" />

@@ -18,13 +18,20 @@ import {
   useStatus,
 } from './composables'
 
-const { gridSize } = useGrid()
+const {
+  gridSize,
+  setGridSize,
+  GRIDS,
+} = useGrid()
 
 const {
   setRandomFiguresList,
   clearRandomFiguresList,
   randomFiguresList,
   selectedFigure,
+  figuresCount,
+  setFiguresCount,
+  PIECES,
 } = useFigures()
 
 const {
@@ -47,21 +54,18 @@ const {
 
 const {
   isPlaying,
-  isStopped,
   isChecking,
   isMenuOpen,
 } = useStatus()
 
 const handleStart = () => {
   clearFields()
-  isStopped.value = false
   isPlaying.value = true
   setRandomFiguresList()
 }
 
 const handleStop = () => {
   clearFields()
-  isStopped.value = true
   isPlaying.value = false
 }
 
@@ -111,6 +115,18 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
+
+const setGrid = () => {
+  const currentGridIndex = GRIDS.findIndex(grid => grid.count === gridSize.value)
+  const gridCount = gridSize.value < GRIDS[GRIDS.length - 1].count ? GRIDS[currentGridIndex + 1]?.count : GRIDS[0].count
+  setGridSize(gridCount)
+}
+
+const setPieces = () => {
+  const currentPieceIndex = PIECES.findIndex(piece => piece.count === figuresCount.value)
+  const piecesCount = figuresCount.value < PIECES[PIECES.length - 1].count ? PIECES[currentPieceIndex + 1]?.count : PIECES[0].count
+  setFiguresCount(piecesCount)
+}
 </script>
 
 <template>
@@ -119,21 +135,20 @@ const toggleMenu = () => {
     @menu="toggleMenu"
   />
 
-  <main class="app">
-    <div class="app__main">
-      <Grid
-        :cols="gridSize"
-        class="app__grid"
-        @up="handleMouseUp"
-        @down="handleMouseDown"
-      />
-    </div>
+  <main>
+    <Grid
+      :cols="gridSize"
+      @up="handleMouseUp"
+      @down="handleMouseDown"
+    />
     <Figures />
   </main>
 
   <Footer
     @start="handleStart"
     @check="handleCheck"
+    @grid="setGrid"
+    @pieces="setPieces"
   />
 </template>
 
@@ -152,33 +167,20 @@ footer {
   z-index: 10;
 }
 
-.app {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  width: 100%;
+main {
   margin: var(--header-height) auto var(--footer-height);
-
-  &__main {
-    position: relative;
-    aspect-ratio: 1;
-  }
-
-  &__grid {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-  }
+  width: 100%;
+  height: 100%;
 }
 
 @media screen and (orientation: portrait) {
-  .app {
+  main {
     max-width: var(--app-max-width);
   }
 }
 
 @media screen and (orientation: landscape) {
-  .app {
+  main {
     width: calc(100vh - var(--header-height) - var(--footer-height))
   }
 }

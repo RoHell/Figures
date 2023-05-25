@@ -13,6 +13,29 @@ import useMarkedFields from './useMarkedFields'
 
 import { getRandomInt } from '../utils'
 
+const PIECES = [
+  {
+    name: 'easy',
+    count: LevelEnum.easy,
+  },
+  {
+    name: 'medium',
+    count: LevelEnum.medium,
+  },
+  {
+    name: 'hard',
+    count: LevelEnum.hard,
+  },
+  {
+    name: 'extreme',
+    count: LevelEnum.extreme,
+  },
+  {
+    name: 'insane',
+    count: LevelEnum.insane,
+  },
+]
+
 const INITIAL_FIGURES_COUNT = LevelEnum.easy
 const figuresCount = ref(INITIAL_FIGURES_COUNT)
 
@@ -104,6 +127,7 @@ export default () => {
     figuresCount,
     selectedFigure,
     figuresRange,
+    PIECES,
     setRandomFiguresList,
     clearRandomFiguresList,
     getFigureElement,
