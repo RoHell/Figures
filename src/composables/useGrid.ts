@@ -1,17 +1,18 @@
 import { ref, computed } from 'vue'
 
 import {
+  GridSizeEnum,
   type CoordinatesInterface,
 } from '../types'
 
 const INITIAL_GRID_SIZE = 4
-const gridSize = ref(INITIAL_GRID_SIZE)
+const gridSize = ref<GridSizeEnum>(INITIAL_GRID_SIZE)
 const isEmptyField = ref(false)
 
 export default () => {
   const gridFields = computed((): NodeListOf<HTMLElement> => document.querySelectorAll('.grid__field') || [])
  
-  const setGridSize = (cols: number) => {
+  const setGridSize = (cols: GridSizeEnum) => {
     gridSize.value = cols
   }
 

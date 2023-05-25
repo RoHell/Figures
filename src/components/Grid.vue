@@ -3,13 +3,20 @@ import { computed } from 'vue'
 
 import { type CoordinatesInterface } from '../types'
 
+import { useStatus, useGrid } from '../composables'
+
+const {
+  isPlaying,
+  isChecking,
+} = useStatus()
+
+const { gridSize } = useGrid()
+
 interface Props {
-  disabled: boolean
   cols?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
   cols: 4,
 })
 
@@ -19,22 +26,22 @@ const emit = defineEmits<{
   (e: 'up'): void
 }>()
 
-const fieldsCount = computed(() => props.cols * props.cols)
+const fieldsCount = computed(() => gridSize.value * gridSize.value)
 
 const colsRangeArray = computed((): number[] =>
-  Array.from({ length: props.cols }, (_, idx) => idx + 1)
+  Array.from({ length: gridSize.value }, (_, idx) => idx + 1)
 )
 
 const getRowIndex = (index: number) => {
   return colsRangeArray.value.reduce((acc: number, r: number) => {
-    if (index + 1 > r * props.cols) {
+    if (index + 1 > r * gridSize.value) {
       acc = r
     }
     return acc
   }, 0)
 }
 
-const getColumnIndex = (index: number) => index % props.cols
+const getColumnIndex = (index: number) => index % gridSize.value
 
 const handleFieldSelect = (index: number) => {
   emit('field', getFieldCoordinates(index))
@@ -46,7 +53,7 @@ const getFieldCoordinates = (index: number) => ({
 })
 
 const style = computed(() => ({
-  '--cols': props.cols,
+  '--cols': gridSize.value,
 }))
 
 const handleMouseDown = (index: number) => {
@@ -62,7 +69,8 @@ const handleMouseUp = () => {
   <div
     class="grid"
     :class="{
-      'grid--disabled': disabled,
+      'grid--is-checking': isChecking,
+      'grid--is-not-playing': !isPlaying,
     }"
     :style="style"
   >
@@ -105,8 +113,13 @@ const handleMouseUp = () => {
     }
   }
 
-  &--disabled {
+  &--is-checking,
+  &--is-not-playing {
     pointer-events: none;
+  }
+
+  &--is-not-playing {
+    opacity: 0.2;
   }
 }
 </style>

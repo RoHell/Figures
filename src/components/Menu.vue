@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { reactive, ref } from 'vue';
 
-import { LevelEnum, GridSizeEnum, IconEnum } from '../types'
+import {
+  LevelEnum,
+  GridSizeEnum,
+  ConfigNameEnum,
+  type ConfigInterface,
+} from '../types'
 
 import Icon from '../components/Icon.vue'
 
@@ -23,6 +28,13 @@ const emit = defineEmits<{
 }>()
 
 const isOpen = ref(false)
+
+const configModel = reactive<Record<ConfigNameEnum, boolean>>({
+  pieces: false,
+  vibrations: false,
+  sounds: false,
+  tips: true
+})
 
 const levels = [
   {
@@ -54,81 +66,66 @@ const levels = [
 
 const grids = [
   {
-    name: 'four',
+    name: '4 x 4',
     count: GridSizeEnum.four,
     emoji: '&#10125;',
   },
   {
-    name: 'six',
+    name: '6 x 6',
     count: GridSizeEnum.six,
     emoji: '&#10127;',
   },
   {
-    name: 'eight',
+    name: '8 x 8',
     count: GridSizeEnum.eight,
     emoji: '&#10129;',
   },
 ]
 
-const menuIcon = computed(() => isOpen.value ? IconEnum.close : IconEnum.more)
-
-const toggleMenu = () => {
-  isOpen.value = !isOpen.value
-}
-
-const selectedLevel = computed(() => levels.find(l => l.hardness === props.activeLevel))
-
-const selectedGrid = computed(() => grids.find(g => g.count === props.activeGridCols))
+const configs: ConfigInterface[] = [
+  {
+    id: '1',
+    name: ConfigNameEnum.pieces,
+    label: 'peces blocks each other',
+  },
+  {
+    id: '2',
+    name: ConfigNameEnum.vibrations,
+    label: 'vibrations',
+  },
+  {
+    id: '3',
+    name: ConfigNameEnum.sounds,
+    label: 'sounds',
+  },
+  {
+    id: '4',
+    name: ConfigNameEnum.sounds,
+    label: 'tips',
+  }
+]
 </script>
 
 <template>
   <div class="menu">
-    <div class="menu__header">
-      <span class="menu__header-title">Avoid Figures</span>
-      <button class="menu__header-toggle" @click="toggleMenu">
-        <Icon :icon="menuIcon" size="3.25rem"/>
-      </button>
-    </div>
     <div
       v-if="isOpen"
       class="menu__opened"
     >
-      <span>
-        Tu będą ustawienia
-      </span>
-      <Icon :icon="IconEnum.settings" size="5rem"/>
-    </div>
-
-    <div
-      v-else
-      class="menu__closed"
-    >
-      <div class="menu__grids">
-        <span v-text="'GRID: '" />
-        <button
-          v-for="grid in grids"
-          type="button"
-          :title="grid.name"
-          class="menu__grid"
-          :class="{
-            ' menu__grid--active': activeGridCols === grid.count,
-          }"
-          @click="emit('grid', grid.count)"
-          v-html="grid.emoji"
+      <div
+        v-for="{ id, name, label } in configs"
+        class="menu__config"
+      >
+        <input
+          :id="id"
+          v-model="configModel[name]"
+          type="checkbox"
+          :checked="configModel[name]"
+          :name="name"
         />
-      </div>
-      <div class="menu__levels">
-        <span v-text="'LEVEL: '"/>
-        <button
-          v-for="level in levels"
-          type="button"
-          :title="level.name"
-          class="menu__level"
-          :class="{
-            ' menu__level--active': activeLevel === level.hardness,
-          }"
-          @click="emit('level', level.hardness)"
-          v-html="level.emoji"
+        <label
+          :for="id"
+          v-text="label"
         />
       </div>
     </div>
@@ -139,14 +136,12 @@ const selectedGrid = computed(() => grids.find(g => g.count === props.activeGrid
 .menu {
   position:relative;
   aspect-ratio: 1;
-  max-height: 340px;
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
   background-color: rgba(dimgray, 0.9);
 
   &__opened,
@@ -160,40 +155,42 @@ const selectedGrid = computed(() => grids.find(g => g.count === props.activeGrid
   }
 
   &__opened {
-    align-items: center;
+    text-align: start;
   }
 
-  &__header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 100%;
-    padding: 1rem;
-    border-bottom: 2px solid;
-    background-color: dimgray;
+  // &__header {
+  //   display: flex;
+  //   align-items: center;
+  //   gap: 1rem;
+  //   width: 100%;
+  //   padding: 1rem;
+  //   border-bottom: 2px solid;
+  //   background-color: dimgray;
 
-    &-title {
-      font-size: xx-large;
-      flex: 1;
-      font-weight: 500;
-      margin: auto;
-    }
+  //   &-title {
+  //     font-size: xx-large;
+  //     text-transform: uppercase;
+  //     flex: 1;
+  //     font-weight: 500;
+  //     margin: auto;
+  //     text-align: center;
+  //   }
 
-    &-toggle {
-      display: flex;
-      margin-left: auto;
-      background: none;
-      outline: none;
-      border: none;
-      padding: 0;
-      opacity: 0.8;
-      transition: opacity 0.2s;
+  //   &-toggle {
+  //     display: flex;
+  //     margin-left: auto;
+  //     background: none;
+  //     outline: none;
+  //     border: none;
+  //     padding: 0;
+  //     opacity: 0.8;
+  //     transition: opacity 0.2s;
 
-      &:hover {
-        opacity: 1;
-      }
-    }
-  }
+  //     &:hover {
+  //       opacity: 1;
+  //     }
+  //   }
+  // }
 
   &__levels,
   &__grids {

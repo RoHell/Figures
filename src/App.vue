@@ -6,27 +6,26 @@ import {
 
 import Figures from './components/Figures.vue'
 import Grid from './components/Grid.vue'
-import Menu from './components/Menu.vue'
-import Controls from './components/Controls.vue'
+import Header from './components/Header.vue'
+import Footer from './components/Footer.vue'
 
-import useGrid from './composables/useGrid'
-import useFigures from './composables/useFigures'
-import useCoordinates from './composables/useCoordinates'
-import useMarkedFields from './composables/useMarkedFields'
-import usePlayer from './composables/usePlayer'
-import useStatus from './composables/useStatus'
+import {
+  useGrid,
+  useFigures,
+  useCoordinates,
+  useMarkedFields,
+  usePlayer,
+  useStatus,
+} from './composables'
 
 const {
-  setGridSize,
   gridSize,
 } = useGrid()
 
 const {
   setRandomFiguresList,
   clearRandomFiguresList,
-  setFiguresCount,
   randomFiguresList,
-  figuresCount,
   selectedFigure,
 } = useFigures()
 
@@ -52,6 +51,7 @@ const {
   isPlaying,
   isStopped,
   isChecking,
+  isMenuOpen,
 } = useStatus()
 
 const handleStart = () => {
@@ -109,49 +109,55 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
 }
 
 const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
 </script>
 
 <template>
-  <main class="avoid-figures">
-    <div class="avoid-figures__main">
+  <Header
+    @back="handleStop"
+    @menu="toggleMenu"
+  />
+
+  <main class="app">
+    <div class="app__main">
       <Grid
         :cols="gridSize"
-        :disabled="isChecking"
-        class="avoid-figures__grid"
+        class="app__grid"
         @up="handleMouseUp"
         @down="handleMouseDown"
       />
-      <Menu
-        v-if="!isPlaying"
-        class="avoid-figures__menu"
-        :start-disabled="isPlaying"
-        :active-level="figuresCount"
-        :active-grid-cols="gridSize"
-        @start="handleStart"
-        @level="setFiguresCount"
-        @grid="setGridSize"
-      />
     </div>
-
-    <Controls
-      @start="handleStart"
-      @stop="handleStop"
-      @check="handleCheck"
-    />
-
     <Figures />
   </main>
+
+  <Footer
+    @start="handleStart"
+    @check="handleCheck"
+  />
 </template>
 
 <style lang="scss" scoped>
+header {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+}
 
-.avoid-figures {
+footer {
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+}
+
+.app {
   display: flex;
   flex-direction: column;
   gap: 2rem;
   width: 100%;
-  margin: 0 auto;
-  max-width: 340px;
+  margin: var(--header-height) auto var(--footer-height);
 
   &__main {
     position: relative;
@@ -162,6 +168,18 @@ const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
     position: absolute;
     width: 100%;
     height: 100%;
+  }
+}
+
+@media screen and (orientation: portrait) {
+  .app {
+    max-width: var(--app-max-width);
+  }
+}
+
+@media screen and (orientation: landscape) {
+  .app {
+    width: calc(100vh - var(--header-height) - var(--footer-height))
   }
 }
 </style>

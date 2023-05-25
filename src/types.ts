@@ -27,6 +27,8 @@ export enum IconEnum {
   more = 'more',
   close = 'close',
   settings = 'settings',
+  back = 'back',
+  grid = 'grid',
 }
 
 export enum LevelEnum {
@@ -47,4 +49,17 @@ export enum GridSizeEnum {
   four = 4,
   six = 6,
   eight = 8,
+}
+
+export enum ConfigNameEnum {
+  pieces = 'pieces',
+  vibrations = 'vibrations',
+  sounds = 'sounds',
+  tips = 'tips',
+}
+
+export interface ConfigInterface {
+  id: string,
+  name: ConfigNameEnum,
+  label: ConfigNameEnum | string,
 }
