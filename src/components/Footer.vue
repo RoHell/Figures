@@ -76,6 +76,7 @@ const setPieces = () => {
   <footer class="footer">
     <div class="footer__left">
       <button
+        v-if="!isPlaying"
         type="button"
         class="footer__grid"
         @click="setGrid"
@@ -103,6 +104,7 @@ const setPieces = () => {
     </div>
     <div class="footer__right">
       <button
+        v-if="!isPlaying"
         type="button"
         class="footer__pieces"
         @click="setPieces"
