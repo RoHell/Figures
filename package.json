@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "dist": "^0.1.2",
     "typescript": "^5.0.4",
     "vue": "^3.2.47"
   },
