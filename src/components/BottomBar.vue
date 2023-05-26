@@ -95,8 +95,6 @@ const { figuresCount } = useFigures()
 
     &__center {
       margin: auto;
-      height: 100%;
-      flex: 1;
     }
 
     &__start,
@@ -104,7 +102,7 @@ const { figuresCount } = useFigures()
       text-transform: uppercase;
       background-color: transparent;
       font-size: 1rem;
-      padding: 0.5rem;
+      padding: 1rem;
       height: 100%;
       width: 100%;
       border-radius: 0.25rem;

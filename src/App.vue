@@ -139,12 +139,14 @@ const setPieces = () => {
     </header>
 
     <main>
-      <Grid
-        :cols="gridSize"
-        @up="handleMouseUp"
-        @down="handleMouseDown"
-      />
-      <Figures />
+      <div class="app__grid">
+        <Grid
+          :cols="gridSize"
+          @up="handleMouseUp"
+          @down="handleMouseDown"
+        />
+        <Figures />
+      </div>
     </main>
 
     <footer>
@@ -164,6 +166,12 @@ const setPieces = () => {
 .app {
   display: flex;
   width: 100%;
+  min-height: 100vh;
+  align-items: center;
+
+  &__grid {
+    margin-left: auto;
+  }
 }
 header {
   position: fixed;
@@ -194,14 +202,9 @@ main {
 
 @media screen and (orientation: landscape) {
   main {
-    display: flex;
-    margin: 0 0 0 auto;
-    padding-left: var(--bottom-bar-height);
-  }
-  
-  .grid {
-    width: 100vh;
-    margin-left: auto;
+    display: block;
+    flex: 1;
+    margin: 0 0 0 var(--bottom-bar-height);
   }
 
   header {
@@ -211,6 +214,13 @@ main {
   footer {
     top: 0;
     right: unset;
+  }
+}
+
+@media screen and (max-width: 60rem) and (orientation: landscape) {
+  .app__grid {
+    width: 100vh;
+    height: 100vh;
   }
 }
 </style>
