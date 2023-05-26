@@ -171,6 +171,7 @@ const setPieces = () => {
     height: 100%;
     max-height: 100vh;
     aspect-ratio: 1;
+    padding: 1rem;
   }
 }
 header {
