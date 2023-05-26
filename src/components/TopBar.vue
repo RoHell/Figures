@@ -12,37 +12,50 @@ const emit = defineEmits<{
   (e: 'menu'): void,
 }>()
 
-const { isMenuOpen, isPlaying } = useStatus()
+const { isMenuOpen } = useStatus()
 
 const menuIcon = computed(() => isMenuOpen.value ? IconEnum.close : IconEnum.more)
 
 </script>
 
 <template>
-  <header class="header">
+  <div class="top-bar">
     <button
-      class="header__back"
+      class="top-bar__back"
       :class="{
-        'header__back--hidden': !isPlaying
+        'top-bar__back--hidden': true
       }"
       @click="emit('back')"
     >
       <Icon :icon="IconEnum.back" size="3rem"/>
     </button>
-    <p class="header__title">Game<em><b>bit</b></em></p>
-    <button class="header__menu" @click="emit('menu')">
+
+    <p
+      class="top-bar__title"
+      @click="emit('back')"
+    >
+      Game<em><b>bit</b></em>
+    </p>
+
+    <button
+      class="top-bar__menu"
+      :class="{
+        'top-bar__menu--hidden': true
+      }"
+      @click="emit('menu')"
+    >
       <Icon :icon="menuIcon" size="3rem"/>
     </button>
-  </header>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-  .header {
+  .top-bar {
     display: flex;
     align-items: center;
     gap: 1rem;
     width: 100%;
-    height: var(--header-height);
+    height: var(--top-bar-height);
     padding: 1rem;
     border-bottom: 1px solid;
     background-color: dimgray;
@@ -67,7 +80,7 @@ const menuIcon = computed(() => isMenuOpen.value ? IconEnum.close : IconEnum.mor
       opacity: 0.8;
       transition: opacity 0.2s;
 
-      &:hover:not(.header__back--hidden) {
+      &:hover:not(.top-bar__back--hidden) {
         opacity: 1;
       }
 

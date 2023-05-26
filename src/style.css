@@ -13,8 +13,8 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --header-height: 5rem;
-  --footer-height: 5rem;
+  --top-bar-height: 5rem;
+  --bottom-bar-height: 5rem;
   --app-max-width: 50rem;
 }
 

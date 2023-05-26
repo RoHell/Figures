@@ -6,8 +6,8 @@ import {
 
 import Figures from './components/Figures.vue'
 import Grid from './components/Grid.vue'
-import Header from './components/Header.vue'
-import Footer from './components/Footer.vue'
+import TopBar from './components/TopBar.vue'
+import BottomBar from './components/BottomBar.vue'
 
 import {
   useGrid,
@@ -130,10 +130,12 @@ const setPieces = () => {
 </script>
 
 <template>
-  <Header
-    @back="handleStop"
-    @menu="toggleMenu"
-  />
+  <header>
+    <TopBar
+      @back="handleStop"
+      @menu="toggleMenu"
+    />
+  </header>
 
   <main>
     <Grid
@@ -144,12 +146,15 @@ const setPieces = () => {
     <Figures />
   </main>
 
-  <Footer
-    @start="handleStart"
-    @check="handleCheck"
-    @grid="setGrid"
-    @pieces="setPieces"
-  />
+  <footer>
+    <BottomBar
+      @start="handleStart"
+      @check="handleCheck"
+      @grid="setGrid"
+      @pieces="setPieces"
+      @back="handleStop"
+    />
+  </footer>
 </template>
 
 <style lang="scss" scoped>
@@ -157,6 +162,7 @@ header {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
   z-index: 10;
 }
 
@@ -164,11 +170,12 @@ footer {
   position: fixed;
   bottom: 0;
   left: 0;
+  right: 0;
   z-index: 10;
 }
 
 main {
-  margin: var(--header-height) auto var(--footer-height);
+  margin: var(--top-bar-height) auto var(--bottom-bar-height);
   width: 100%;
   height: 100%;
 }
@@ -181,7 +188,22 @@ main {
 
 @media screen and (orientation: landscape) {
   main {
-    width: calc(100vh - var(--header-height) - var(--footer-height))
+    display: flex;
+    margin: 0 auto;
+  }
+  
+  .grid {
+    width: 100vh;
+    margin-left: auto;
+  }
+
+  header {
+    display: none;
+  }
+
+  footer {
+    top: 0;
+    right: unset;
   }
 }
 </style>

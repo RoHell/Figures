@@ -15,6 +15,7 @@ const emit = defineEmits<{
   (e: 'check'): void,
   (e: 'grid'): void,
   (e: 'pieces'): void,
+  (e: 'back'): void,
 }>()
 
 const { isPlaying } = useStatus()
@@ -25,23 +26,30 @@ const { figuresCount } = useFigures()
 </script>
 
 <template>
-  <footer class="footer">
-    <div class="footer__left">
+  <nav class="bottom-bar">
+    <div class="bottom-bar__left">
       <button
-        v-if="!isPlaying"
+        v-if="isPlaying"
+        class="bottom-bar__back"
+        @click="emit('back')"
+      >
+        <Icon :icon="IconEnum.back" size="3rem"/>
+      </button>
+      <button
+        v-else
         type="button"
-        class="footer__grid"
+        class="bottom-bar__grid"
         @click="emit('grid')"
       >
         <Icon :icon="IconEnum.grid" size="2.5rem"/>
         <span v-text="`${gridSize} x ${gridSize}`" />
       </button>
     </div>
-    <div class="footer__center">
+    <div class="bottom-bar__center">
       <button
         v-if="isPlaying"
         type="button"
-        class="footer__check"
+        class="bottom-bar__check"
         :disabled="!playerFieldCoordinates"
         v-text="'check'"
         @click="emit('check')"
@@ -50,36 +58,37 @@ const { figuresCount } = useFigures()
         v-else
         type="button"
         @click="emit('start')"
-        class="footer__start"
+        class="bottom-bar__start"
         v-text="'start'"
       />
     </div>
-    <div class="footer__right">
+    <div class="bottom-bar__right">
       <button
         v-if="!isPlaying"
         type="button"
-        class="footer__pieces"
+        class="bottom-bar__pieces"
         @click="emit('pieces')"
       >
-        <div class="footer__pieces-icon">
+        <div class="bottom-bar__pieces-icon">
           <span v-text="`${figuresCount} x `" />
           <Icon :icon="IconEnum.pawn" size="2rem"/>
         </div>
         <span v-text="'random'" />
       </button>
     </div>
-  </footer>
+  </nav>
 </template>
 
 <style lang="scss" scoped>
-  .footer {
+
+  
+  .bottom-bar {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 1rem;
     width: 100%;
-    height: 100%;
-    height: var(--footer-height);
+    height: var(--bottom-bar-height);
     padding: 0.5rem 1rem;
     border-top: 1px solid;
     background-color: dimgray;
@@ -115,11 +124,12 @@ const { figuresCount } = useFigures()
     }
 
     &__grid,
-    &__pieces {
+    &__pieces,
+    &__back {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       gap: 0.25rem;
       font-size: smaller;
       padding: 0.25rem;
@@ -133,6 +143,14 @@ const { figuresCount } = useFigures()
       display: flex;
       align-items: center;
       font-size: 1rem;
+    }
+  }
+  @media screen and (orientation: landscape) {
+    .bottom-bar {
+      --bottom-bar-height: 100%;
+      
+      flex-direction: column;
+      width: auto;
     }
   }
 </style>
