@@ -130,34 +130,41 @@ const setPieces = () => {
 </script>
 
 <template>
-  <header>
-    <TopBar
-      @back="handleStop"
-      @menu="toggleMenu"
-    />
-  </header>
+  <div class="app">
+    <header>
+      <TopBar
+        @back="handleStop"
+        @menu="toggleMenu"
+      />
+    </header>
 
-  <main>
-    <Grid
-      :cols="gridSize"
-      @up="handleMouseUp"
-      @down="handleMouseDown"
-    />
-    <Figures />
-  </main>
+    <main>
+      <Grid
+        :cols="gridSize"
+        @up="handleMouseUp"
+        @down="handleMouseDown"
+      />
+      <Figures />
+    </main>
 
-  <footer>
-    <BottomBar
-      @start="handleStart"
-      @check="handleCheck"
-      @grid="setGrid"
-      @pieces="setPieces"
-      @back="handleStop"
-    />
-  </footer>
+    <footer>
+      <BottomBar
+        @start="handleStart"
+        @check="handleCheck"
+        @grid="setGrid"
+        @pieces="setPieces"
+        @back="handleStop"
+      />
+    </footer>
+
+  </div>
 </template>
 
 <style lang="scss" scoped>
+.app {
+  display: flex;
+  width: 100%;
+}
 header {
   position: fixed;
   top: 0;
@@ -177,7 +184,6 @@ footer {
 main {
   margin: var(--top-bar-height) auto var(--bottom-bar-height);
   width: 100%;
-  height: 100%;
 }
 
 @media screen and (orientation: portrait) {
@@ -189,7 +195,8 @@ main {
 @media screen and (orientation: landscape) {
   main {
     display: flex;
-    margin: 0 auto;
+    margin: 0 0 0 auto;
+    padding-left: var(--bottom-bar-height);
   }
   
   .grid {

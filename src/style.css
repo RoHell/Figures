@@ -15,7 +15,7 @@
 
   --top-bar-height: 5rem;
   --bottom-bar-height: 5rem;
-  --app-max-width: 50rem;
+  --app-max-width: 60rem;
 }
 
 * {
@@ -96,5 +96,11 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media screen and (orientation: landscape) {
+  :root {
+    --bottom-bar-height: 10rem;
   }
 }

@@ -147,10 +147,9 @@ const { figuresCount } = useFigures()
   }
   @media screen and (orientation: landscape) {
     .bottom-bar {
-      --bottom-bar-height: 100%;
-      
       flex-direction: column;
-      width: auto;
+      width: var(--bottom-bar-height);
+      height: 100%;
     }
   }
 </style>
