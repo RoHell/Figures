@@ -165,12 +165,12 @@ const setPieces = () => {
 <style lang="scss" scoped>
 .app {
   display: flex;
-  width: 100%;
-  min-height: 100vh;
-  align-items: center;
 
   &__grid {
     margin-left: auto;
+    height: 100%;
+    max-height: 100vh;
+    aspect-ratio: 1;
   }
 }
 header {
@@ -190,21 +190,20 @@ footer {
 }
 
 main {
-  margin: var(--top-bar-height) auto var(--bottom-bar-height);
+  margin: auto;
   width: 100%;
 }
 
 @media screen and (orientation: portrait) {
   main {
     max-width: var(--app-max-width);
+    max-height: calc(100vh - var(--top-bar-height) - var(--bottom-bar-height));
   }
 }
 
 @media screen and (orientation: landscape) {
   main {
-    display: block;
-    flex: 1;
-    margin: 0 0 0 var(--bottom-bar-height);
+    margin: 0 auto 0 var(--bottom-bar-height);
   }
 
   header {
@@ -214,13 +213,6 @@ main {
   footer {
     top: 0;
     right: unset;
-  }
-}
-
-@media screen and (max-width: 60rem) and (orientation: landscape) {
-  .app__grid {
-    width: 100vh;
-    height: 100vh;
   }
 }
 </style>
