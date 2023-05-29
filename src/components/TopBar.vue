@@ -57,8 +57,6 @@ const menuIcon = computed(() => isMenuOpen.value ? IconEnum.close : IconEnum.mor
     width: 100%;
     height: var(--top-bar-height);
     padding: 1rem;
-    border-bottom: 1px solid;
-    background-color: dimgray;
 
     &__title {
       font-size: xx-large;

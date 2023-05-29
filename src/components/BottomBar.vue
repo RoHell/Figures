@@ -90,8 +90,6 @@ const { figuresCount } = useFigures()
     width: 100%;
     height: var(--bottom-bar-height);
     padding: 0.5rem 1rem;
-    border-top: 1px solid;
-    background-color: dimgray;
 
     &__center {
       margin: auto;
