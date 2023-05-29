@@ -165,59 +165,55 @@ const setPieces = () => {
 <style lang="scss" scoped>
 .app {
   display: flex;
-  height: 100vh;
 
   &__grid {
+    margin-left: auto;
+    height: 100%;
+    max-height: 100vh;
+    aspect-ratio: 1;
     padding: 1rem;
   }
 }
 header {
-  display: flex;
-  align-items: flex-start;
-  background-color: dimgray;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
 }
 
 footer {
-  display: flex;
-  align-items: flex-end;
-  background-color: dimgray;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
 }
 
 main {
-  display: flex;
+  margin: auto;
   width: 100%;
-  background-color: dimgray;
 }
 
 @media screen and (orientation: portrait) {
-  .app {
-    display: flex;
-    flex-direction: column;
-
-    &__grid {
-      max-height: 100%;
-      padding: 1rem;
-      aspect-ratio: 1;
-      margin: 0 auto;
-    }
-  }
   main {
-    aspect-ratio: 1;
-  }
-
-  header,
-  footer {
-    flex: 1;
+    max-width: var(--app-max-width);
+    max-height: calc(100vh - var(--top-bar-height) - var(--bottom-bar-height));
   }
 }
 
 @media screen and (orientation: landscape) {
-  .app {
-    flex-direction: row;
-    &__grid {
-      width: 100%;
-      margin: auto;
-    }
+  main {
+    margin: 0 auto 0 var(--bottom-bar-height);
+  }
+
+  header {
+    display: none;
+  }
+
+  footer {
+    top: 0;
+    right: unset;
   }
 }
 </style>

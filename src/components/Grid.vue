@@ -116,7 +116,7 @@ const handleMouseUp = () => {
   }
 
   &--is-not-playing {
-    // opacity: 0.2;
+    opacity: 0.2;
   }
 }
 </style>
