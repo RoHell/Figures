@@ -85,17 +85,11 @@ const { figuresCount } = useFigures()
   .bottom-bar {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     gap: 1rem;
     width: 100%;
-    height: var(--bottom-bar-height);
     padding: 0.5rem 1rem;
     border-top: 1px solid;
-    background-color: dimgray;
-
-    &__center {
-      margin: auto;
-    }
 
     &__start,
     &__check {
@@ -114,11 +108,10 @@ const { figuresCount } = useFigures()
     }
 
     &__left,
-    &__right {
-      display: flex;
+    &__right,
+    &__center {
       margin: auto;
-      height: 100%;
-      flex: 1;
+      width: 100%
     }
 
     &__grid,
@@ -148,6 +141,7 @@ const { figuresCount } = useFigures()
       flex-direction: column;
       width: var(--bottom-bar-height);
       height: 100%;
+      border-top: none;
     }
   }
 </style>
