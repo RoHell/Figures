@@ -5,7 +5,7 @@ import {
   useStatus,
   useCoordinates,
   useGrid,
-  useFigures,
+  usePieces,
 } from '../composables'
 
 import Icon from '../components/Icon.vue'
@@ -21,7 +21,7 @@ const emit = defineEmits<{
 const { isPlaying } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
 const { gridSize } = useGrid()
-const { figuresCount } = useFigures()
+const { piecesCount } = usePieces()
 
 </script>
 
@@ -70,7 +70,7 @@ const { figuresCount } = useFigures()
         @click="emit('pieces')"
       >
         <div class="bottom-bar__pieces-icon">
-          <span v-text="`${figuresCount} x `" />
+          <span v-text="`${piecesCount} x `" />
           <Icon :icon="IconEnum.pawn" size="2rem"/>
         </div>
         <span v-text="'random'" />
@@ -88,6 +88,7 @@ const { figuresCount } = useFigures()
     justify-content: space-around;
     gap: 1rem;
     width: 100%;
+    height: var(--bottom-bar-height);
     padding: 0.5rem 1rem;
 
     &__start,

@@ -7,20 +7,20 @@ import {
 
 import useCoordinates from './useCoordinates'
 import useGrid from './useGrid'
-import useFigures from './useFigures'
+import usePieces from './usePieces'
 
 const PLAYER_FIGURE_NAME = IconEnum.pawn
 
 export default () => {
   const {
     playerFieldCoordinates,
-    allFiguresMovesCoordinates,
+    allPiecesMovesCoordinates,
     isSameCoordinates,
   } = useCoordinates()
 
   const { getGridElement } = useGrid()
 
-  const { getFigureElement } = useFigures()
+  const { getPieceElement } = usePieces()
 
   const playerField = ref<HTMLElement | null>(null)
 
@@ -28,8 +28,8 @@ export default () => {
     if (!playerFieldCoordinates.value) { return false }
   
     return (
-      [...allFiguresMovesCoordinates.value].some((figureMovesCoordinates: CoordinatesInterface): boolean => {
-        return isSameCoordinates(figureMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
+      [...allPiecesMovesCoordinates.value].some((pieceMovesCoordinates: CoordinatesInterface): boolean => {
+        return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
       }) || false
     )
   }
@@ -49,8 +49,8 @@ export default () => {
     playerFieldCoordinates.value = fieldCoordinates
     playerField.value = getGridElement(fieldCoordinates)
     if (playerField.value) {
-      const figure = getFigureElement(PLAYER_FIGURE_NAME)?.outerHTML
-      playerField.value.innerHTML = figure
+      const piece = getPieceElement(PLAYER_FIGURE_NAME)?.outerHTML
+      playerField.value.innerHTML = piece
     }
   }
 

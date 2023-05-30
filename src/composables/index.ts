@@ -1,5 +1,5 @@
 import useCoordinates from './useCoordinates'
-import useFigures from './useFigures'
+import usePieces from './usePieces'
 import useGrid from './useGrid'
 import useMarkedFields from './useMarkedFields'
 import usePlayer from './usePlayer'
@@ -7,7 +7,7 @@ import useStatus from './useStatus'
 
 export {
   useCoordinates,
-  useFigures,
+  usePieces,
   useGrid,
   useMarkedFields,
   usePlayer,

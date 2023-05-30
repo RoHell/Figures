@@ -76,8 +76,6 @@ const handleMouseUp = () => {
       class="grid__field"
       :data-x="getColumnIndex(index)"
       :data-y="getRowIndex(index)"
-      data-marked
-      data-figure_field
       @click="handleFieldSelect(index)"
       @mousedown="handleMouseDown(index)"
       @mouseup="handleMouseUp()"
@@ -100,7 +98,6 @@ const handleMouseUp = () => {
     border: 1px solid white;
     padding: 0.5rem;
     aspect-ratio: 1;
-    flex-grow: 0;
     cursor: pointer;
 
     &--marked {

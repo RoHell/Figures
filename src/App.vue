@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import {
   type CoordinatesInterface,
-  type FigureInterface,
+  type PieceInterface,
 } from './types'
 
-import Figures from './components/Figures.vue'
+import Pieces from './components/Pieces.vue'
 import Grid from './components/Grid.vue'
 import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
 
 import {
   useGrid,
-  useFigures,
+  usePieces,
   useCoordinates,
   useMarkedFields,
   usePlayer,
@@ -21,22 +21,22 @@ import {
 const {
   gridSize,
   setGridSize,
-  GRIDS,
+  currentGridCount,
 } = useGrid()
 
 const {
-  setRandomFiguresList,
-  clearRandomFiguresList,
-  randomFiguresList,
-  selectedFigure,
-  figuresCount,
-  setFiguresCount,
-  PIECES,
-} = useFigures()
+  setRandomPiecesList,
+  clearRandomPiecesList,
+  randomPiecesList,
+  selectedPiece,
+  piecesCount,
+  setPiecesCount,
+  piecesRange,
+} = usePieces()
 
 const {
-  setFigureMovesCoordinates,
-  allFiguresMovesCoordinates,
+  setPieceMovesCoordinates,
+  allPiecesMovesCoordinates,
   playerFieldCoordinates,
   isSameCoordinates,
 } = useCoordinates()
@@ -61,7 +61,7 @@ const {
 const handleStart = () => {
   clearFields()
   isPlaying.value = true
-  setRandomFiguresList()
+  setRandomPiecesList()
 }
 
 const handleStop = () => {
@@ -71,8 +71,8 @@ const handleStop = () => {
 
 const handleCheck = (timeout: number = 0) => {
   setTimeout(() => {
-    randomFiguresList.value?.forEach((figure) => {
-      setFigureMovesCoordinates(figure)
+    randomPiecesList.value?.forEach((piece) => {
+      setPieceMovesCoordinates(piece)
       setMarkedFields()
     })
     checkGameResult()
@@ -94,38 +94,36 @@ const checkGameResult = () => {
 
 const clearFields = () => {
   clearMarkedFields()
-  clearRandomFiguresList()
+  clearRandomPiecesList()
   clearPlayerField()
 }
 
 const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
-  selectedFigure.value = randomFiguresList.value?.find((figure: FigureInterface) => isSameCoordinates(fieldCoordinates, figure.coordinates))
+  selectedPiece.value = randomPiecesList.value?.find((piece: PieceInterface) => isSameCoordinates(fieldCoordinates, piece.coordinates))
 
-  if (selectedFigure.value) {
-    allFiguresMovesCoordinates.value = []
-    setFigureMovesCoordinates(selectedFigure.value)
+  if (selectedPiece.value) {
+    allPiecesMovesCoordinates.value = []
+    setPieceMovesCoordinates(selectedPiece.value)
     setMarkedFields()
   } else {
     setPlayerField(fieldCoordinates)
   }
 }
 
-const handleMouseUp = () => selectedFigure.value && clearMarkedFields()
+const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
 }
 
-const setGrid = () => {
-  const currentGridIndex = GRIDS.findIndex(grid => grid.count === gridSize.value)
-  const gridCount = gridSize.value < GRIDS[GRIDS.length - 1].count ? GRIDS[currentGridIndex + 1]?.count : GRIDS[0].count
-  setGridSize(gridCount)
+const toggleGrid = () => {
+  setGridSize(currentGridCount.value)
 }
 
 const setPieces = () => {
-  const currentPieceIndex = PIECES.findIndex(piece => piece.count === figuresCount.value)
-  const piecesCount = figuresCount.value < PIECES[PIECES.length - 1].count ? PIECES[currentPieceIndex + 1]?.count : PIECES[0].count
-  setFiguresCount(piecesCount)
+  const pcs = piecesRange.value
+  const currentPieceCount = piecesCount.value < pcs.length ? piecesCount.value + 1 : pcs[0]
+  setPiecesCount(currentPieceCount)
 }
 </script>
 
@@ -145,7 +143,7 @@ const setPieces = () => {
           @up="handleMouseUp"
           @down="handleMouseDown"
         />
-        <Figures />
+        <Pieces />
       </div>
     </main>
 
@@ -153,7 +151,7 @@ const setPieces = () => {
       <BottomBar
         @start="handleStart"
         @check="handleCheck"
-        @grid="setGrid"
+        @grid="toggleGrid"
         @pieces="setPieces"
         @back="handleStop"
       />
@@ -174,6 +172,7 @@ const setPieces = () => {
     margin: auto;
   }
 }
+
 header {
   display: flex;
   align-items: flex-start;

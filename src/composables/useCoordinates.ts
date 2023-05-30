@@ -3,21 +3,23 @@ import { computed, ref } from 'vue'
 import {
   IconEnum,
   type CoordinatesInterface,
-  type FigureInterface,
+  type PieceInterface,
 } from '../types'
+
+import { arrayFromLength } from '../utils'
 
 import useGrid from './useGrid'
 
-const allFiguresMovesCoordinates = ref<CoordinatesInterface[]>([])
+const allPiecesMovesCoordinates = ref<CoordinatesInterface[]>([])
 const playerFieldCoordinates = ref<CoordinatesInterface | null>(null)
 
 export default () => {
 const { gridSize } = useGrid()
 
-  const offset = computed((): number[] => Array.from({ length: gridSize.value - 1 }, (_, idx) => idx + 1))
+  const offset = computed((): number[] => arrayFromLength(gridSize.value - 1))
 
-  const setFigureMovesCoordinates = (figure: FigureInterface) => {
-    const { name, coordinates } = figure
+  const setPieceMovesCoordinates = (piece: PieceInterface) => {
+    const { name, coordinates } = piece
     switch (name) {
       case IconEnum.bishop:
         setBishopMovesCoordinates(coordinates)
@@ -47,7 +49,7 @@ const { gridSize } = useGrid()
       },
       []
     )
-    setAllFigureMovesCoordinates(movesCoordinates)
+    setAllPieceMovesCoordinates(movesCoordinates)
   }
   
   const setRookMovesCoordinates = ({ x, y }: CoordinatesInterface) => {
@@ -64,7 +66,7 @@ const { gridSize } = useGrid()
       },
       []
     )
-    setAllFigureMovesCoordinates(movesCoordinates)
+    setAllPieceMovesCoordinates(movesCoordinates)
   }
   
   const setQueenMovesCoordinates = (coordinates: CoordinatesInterface) => {
@@ -83,18 +85,18 @@ const { gridSize } = useGrid()
       { x: x - 1, y: y - 2 },
       { x: x - 1, y: y + 2 },
     ]
-    setAllFigureMovesCoordinates(movesCoordinates)
+    setAllPieceMovesCoordinates(movesCoordinates)
   }
   
-  const setAllFigureMovesCoordinates = (movesCoordinates: CoordinatesInterface[]) => {
-    allFiguresMovesCoordinates.value = [
-      ...allFiguresMovesCoordinates.value,
+  const setAllPieceMovesCoordinates = (movesCoordinates: CoordinatesInterface[]) => {
+    allPiecesMovesCoordinates.value = [
+      ...allPiecesMovesCoordinates.value,
       ...movesCoordinates,
     ]
   }
 
-  const isCoordinatesTaken = (figuresToCheck: FigureInterface[] = [], coord: CoordinatesInterface) => {
-    return figuresToCheck
+  const isCoordinatesTaken = (piecesToCheck: PieceInterface[] = [], coord: CoordinatesInterface) => {
+    return piecesToCheck
       .filter(Boolean)
       .some(({ coordinates: { x, y } }) => x === coord?.x && y === coord?.y)
   }
@@ -102,8 +104,8 @@ const { gridSize } = useGrid()
   const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA.x === elementB.x) && (elementA.y === elementB.y)
 
   return {
-    setFigureMovesCoordinates,
-    allFiguresMovesCoordinates,
+    setPieceMovesCoordinates,
+    allPiecesMovesCoordinates,
     playerFieldCoordinates,
     isCoordinatesTaken,
     isSameCoordinates,

@@ -2,35 +2,35 @@
 import Icon from '../components/Icon.vue'
 import { IconEnum } from '../types'
 
-const figures: IconEnum[] = [
+const pieces: IconEnum[] = [
   IconEnum.bishop,
   IconEnum.rook,
   IconEnum.queen,
   IconEnum.knight,
 ]
 
-const playerFigure = IconEnum.pawn
+const playerPiece = IconEnum.pawn
 </script>
 
 <template>
-  <div class="figures">
+  <div class="pieces">
     <Icon
-      :icon="playerFigure"
+      :icon="playerPiece"
       color="#00FF00"
-      :data-figure="playerFigure"
+      :data-piece="playerPiece"
     />
-    <div class="figures__cpu">
+    <div class="pieces__cpu">
       <Icon
-        v-for="figure in figures"
-        :icon="figure"
-        :data-figure="figure"
+        v-for="piece in pieces"
+        :icon="piece"
+        :data-piece="piece"
       />
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-.figures {
+.pieces {
   display: flex;
   flex-direction: column;
   gap: 1rem;

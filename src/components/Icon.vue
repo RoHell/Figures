@@ -3,7 +3,7 @@ import { IconEnum } from '../types'
 
 export interface IconProps {
   icon: IconEnum
-  size?: string
+  size?: string | number
   color?: string
 }
 
@@ -42,3 +42,9 @@ const iconPath = {
     <path :d="iconPath[icon]" />
   </svg>
 </template>
+
+<style lang="scss" scoped>
+  svg {
+    width: fit-content;
+  }
+</style>
