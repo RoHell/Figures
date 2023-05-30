@@ -32,6 +32,7 @@ const {
   piecesCount,
   setPiecesCount,
   piecesRange,
+  maxPiecesCount,
 } = usePieces()
 
 const {
@@ -118,11 +119,14 @@ const toggleMenu = () => {
 
 const toggleGrid = () => {
   setGridSize(currentGridCount.value)
+
+  if (piecesCount.value > maxPiecesCount.value) {
+    setPiecesCount(piecesRange.value[0])
+  }
 }
 
 const setPieces = () => {
-  const pcs = piecesRange.value
-  const currentPieceCount = piecesCount.value < pcs.length ? piecesCount.value + 1 : pcs[0]
+  const currentPieceCount = piecesCount.value < piecesRange.value.length ? piecesCount.value + 1 : piecesRange.value[0]
   setPiecesCount(currentPieceCount)
 }
 </script>
