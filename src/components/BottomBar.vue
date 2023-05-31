@@ -4,8 +4,6 @@ import { IconEnum } from '../types'
 import {
   useStatus,
   useCoordinates,
-  useGrid,
-  usePieces,
 } from '../composables'
 
 import Icon from '../components/Icon.vue'
@@ -13,15 +11,11 @@ import Icon from '../components/Icon.vue'
 const emit = defineEmits<{
   (e: 'start'): void,
   (e: 'check'): void,
-  (e: 'grid'): void,
-  (e: 'pieces'): void,
   (e: 'back'): void,
 }>()
 
 const { isPlaying } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
-const { gridSize } = useGrid()
-const { piecesCount } = usePieces()
 
 </script>
 
@@ -34,15 +28,6 @@ const { piecesCount } = usePieces()
         @click="emit('back')"
       >
         <Icon :icon="IconEnum.back" size="3rem"/>
-      </button>
-      <button
-        v-else
-        type="button"
-        class="bottom-bar__grid"
-        @click="emit('grid')"
-      >
-        <Icon :icon="IconEnum.grid" size="2.5rem"/>
-        <span v-text="`${gridSize} x ${gridSize}`" />
       </button>
     </div>
     <div class="bottom-bar__center">
@@ -63,18 +48,6 @@ const { piecesCount } = usePieces()
       />
     </div>
     <div class="bottom-bar__right">
-      <button
-        v-if="!isPlaying"
-        type="button"
-        class="bottom-bar__pieces"
-        @click="emit('pieces')"
-      >
-        <div class="bottom-bar__pieces-icon">
-          <span v-text="`${piecesCount} x `" />
-          <Icon :icon="IconEnum.pawn" size="2rem"/>
-        </div>
-        <span v-text="'random'" />
-      </button>
     </div>
   </nav>
 </template>
@@ -89,14 +62,13 @@ const { piecesCount } = usePieces()
     gap: 1rem;
     width: 100%;
     height: var(--bottom-bar-height);
-    padding: 0.5rem 1rem;
 
     &__start,
     &__check {
       text-transform: uppercase;
       background-color: transparent;
       font-size: 1rem;
-      padding: 1rem;
+      padding: 0.75rem;
       height: 100%;
       width: 100%;
       border-radius: 0.25rem;
@@ -111,7 +83,12 @@ const { piecesCount } = usePieces()
     &__right,
     &__center {
       margin: auto;
-      width: 100%
+      width: 100%;
+    }
+    
+    &__left,
+    &__right {
+      flex: 1;
     }
 
     &__grid,
@@ -128,12 +105,6 @@ const { piecesCount } = usePieces()
       width: 100%;
       background-color: transparent;
       outline: none;
-    }
-
-    &__pieces-icon {
-      display: flex;
-      align-items: center;
-      font-size: 1rem;
     }
   }
   @media screen and (orientation: landscape) {

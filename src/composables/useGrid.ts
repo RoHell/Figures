@@ -56,6 +56,7 @@ export default () => {
     hasMarkedField,
     getGridElement,
     currentGridCount,
+    currentGridIndex,
     verifyEmptyField,
   }
 }

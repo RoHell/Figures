@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import {
+  GridSizeEnum,
   type CoordinatesInterface,
   type PieceInterface,
 } from './types'
 
 import Pieces from './components/Pieces.vue'
 import Grid from './components/Grid.vue'
+import Dashboard from './components/Dashboard.vue'
 import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
 
@@ -21,7 +23,6 @@ import {
 const {
   gridSize,
   setGridSize,
-  currentGridCount,
 } = useGrid()
 
 const {
@@ -113,34 +114,27 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
 
 const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
-
-const toggleGrid = () => {
-  setGridSize(currentGridCount.value)
+const setGrid = (count: GridSizeEnum) => {
+  setGridSize(count)
 
   if (piecesCount.value > maxPiecesCount.value) {
     setPiecesCount(piecesRange.value[0])
   }
 }
-
-const setPieces = () => {
-  const currentPieceCount = piecesCount.value < piecesRange.value.length ? piecesCount.value + 1 : piecesRange.value[0]
-  setPiecesCount(currentPieceCount)
-}
 </script>
 
 <template>
   <div class="app">
-    <header>
-      <TopBar
-        @back="handleStop"
-        @menu="toggleMenu"
-      />
-    </header>
-
     <main>
+      <div class="app__dashboard">
+        <TopBar
+          @back="handleStop"
+        />
+        <Dashboard
+          @grid="setGrid"
+          @pieces="setPiecesCount"
+        />
+      </div>
       <div class="app__grid">
         <Grid
           :cols="gridSize"
@@ -155,8 +149,6 @@ const setPieces = () => {
       <BottomBar
         @start="handleStart"
         @check="handleCheck"
-        @grid="toggleGrid"
-        @pieces="setPieces"
         @back="handleStop"
       />
     </footer>
@@ -170,16 +162,23 @@ const setPieces = () => {
   height: 100%;
   max-height: 100vh;
 
-  &__grid {
+  &__grid,
+  &__dashboard,
+  footer {
     padding: 1rem;
+  }
+
+  &__grid {
     aspect-ratio: 1;
     margin: auto;
   }
-}
 
-header {
-  display: flex;
-  align-items: flex-start;
+  &__dashboard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1rem;
+  }
 }
 
 footer {
@@ -199,6 +198,10 @@ main {
     &__grid {
       height: 100%;
       max-height: 100vw;
+    }
+
+    main {
+      flex-direction: column;
     }
   }
 }
