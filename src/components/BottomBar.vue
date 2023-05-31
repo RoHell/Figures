@@ -14,7 +14,7 @@ const emit = defineEmits<{
   (e: 'back'): void,
 }>()
 
-const { isPlaying } = useStatus()
+const { isPlaying, isSelectingPieces } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
 
 </script>
@@ -42,6 +42,7 @@ const { playerFieldCoordinates } = useCoordinates()
       <button
         v-else
         type="button"
+        :disabled="isSelectingPieces"
         @click="emit('start')"
         class="bottom-bar__start"
         v-text="'start'"
@@ -70,7 +71,7 @@ const { playerFieldCoordinates } = useCoordinates()
       font-size: 1rem;
       padding: 0.75rem;
       height: 100%;
-      width: 100%;
+      width: 5.25rem;
       border-radius: 0.25rem;
       border: 2px solid white;
       outline: none;
@@ -83,7 +84,6 @@ const { playerFieldCoordinates } = useCoordinates()
     &__right,
     &__center {
       margin: auto;
-      width: 100%;
     }
     
     &__left,

@@ -57,7 +57,6 @@ const {
 const {
   isPlaying,
   isChecking,
-  isMenuOpen,
 } = useStatus()
 
 const handleStart = () => {

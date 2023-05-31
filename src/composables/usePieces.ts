@@ -9,6 +9,7 @@ import {
 import useGrid from './useGrid'
 import useCoordinates from './useCoordinates'
 import useMarkedFields from './useMarkedFields'
+import { useStatus } from '../composables'
 
 import { getRandomInt, arrayFromLength } from '../utils'
 
@@ -33,17 +34,21 @@ export default () => {
     setMarkedFields,
     clearMarkedFields,
   } = useMarkedFields()
+
+  const { isSelectingPieces } = useStatus()
   
   const randomPiecesList = ref<PieceInterface[]>([])
   const selectedPiece = ref<PieceInterface>()
 
   const setRandomPiecesList = () => {
+    isSelectingPieces.value = true
     randomPiecesList.value = [...Array(piecesCount.value).keys()]
       .reduce((pieces: PieceInterface[], _) => [...pieces, getRandomPiece(pieces)] as PieceInterface[], [])
       .filter(Boolean)
 
     if (randomPiecesList.value.length === piecesCount.value) {
       positionPieces()
+      isSelectingPieces.value = false
     } else {
       setRandomPiecesList()
     }
