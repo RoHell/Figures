@@ -32,7 +32,6 @@ const {
   selectedPiece,
   piecesCount,
   setPiecesCount,
-  piecesRange,
   maxPiecesCount,
 } = usePieces()
 
@@ -117,90 +116,85 @@ const setGrid = (count: GridSizeEnum) => {
   setGridSize(count)
 
   if (piecesCount.value > maxPiecesCount.value) {
-    setPiecesCount(piecesRange.value[0])
+    setPiecesCount(maxPiecesCount.value)
   }
 }
 </script>
 
 <template>
   <div class="app">
-    <main>
-      <div class="app__dashboard">
-        <TopBar
-          @back="handleStop"
-        />
-        <Dashboard
-          @grid="setGrid"
-          @pieces="setPiecesCount"
-        />
-      </div>
-      <div class="app__grid">
-        <Grid
-          :cols="gridSize"
-          @up="handleMouseUp"
-          @down="handleMouseDown"
-        />
-        <Pieces />
-      </div>
-    </main>
-
-    <footer>
+    <div class="app__panel">
+      <TopBar
+        @back="handleStop"
+      />
+      <Dashboard
+        @grid="setGrid"
+        @pieces="setPiecesCount"
+      />
       <BottomBar
+        class="bottom-bar--landscape"
         @start="handleStart"
         @check="handleCheck"
         @back="handleStop"
       />
-    </footer>
-
+    </div>
+    <div class="app__grid">
+      <Grid
+        :cols="gridSize"
+        @up="handleMouseUp"
+        @down="handleMouseDown"
+      />
+      <Pieces />
+    </div>
+    <BottomBar
+      class="bottom-bar--portrait"
+      @start="handleStart"
+      @check="handleCheck"
+      @back="handleStop"
+    />
   </div>
 </template>
 
 <style lang="scss" scoped>
 .app {
   display: flex;
+  justify-content: space-between;
   height: 100%;
   max-height: 100vh;
 
-  &__grid,
-  &__dashboard,
-  footer {
-    padding: 1rem;
+  &__panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 1rem;
+    min-width: 16rem;
   }
 
   &__grid {
     aspect-ratio: 1;
     margin: auto;
+    padding: 0.5rem;
   }
-
-  &__dashboard {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: 1rem;
-  }
-}
-
-footer {
-  display: flex;
-  align-items: flex-end;
-}
-
-main {
-  display: flex;
-  flex: 1;
 }
 
 @media screen and (orientation: portrait) {
   .app {
     flex-direction: column;
 
+    &__panel {
+      padding: 0.5rem 0.5rem 0;
+    }
+
     &__grid {
       height: 100%;
       max-height: 100vw;
     }
 
-    main {
-      flex-direction: column;
+    .bottom-bar {
+      padding: 0.5rem;
+      &--landscape {
+        display: none;
+      }
     }
   }
 }
@@ -209,9 +203,21 @@ main {
   .app {
     flex-direction: row;
 
+    &__panel {
+      padding: 0.5rem 0 0.5rem 0.5rem;
+    }
+
     &__grid {
       width: 100%;
       max-width: 100vh;
+    }
+
+    .bottom-bar {
+      margin-top: auto;
+
+      &--portrait {
+        display: none;
+      }
     }
   }
 }

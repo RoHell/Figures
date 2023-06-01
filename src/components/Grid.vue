@@ -5,7 +5,7 @@ import { type CoordinatesInterface } from '../types'
 
 import { useStatus, useGrid } from '../composables'
 
-const { isPlaying, isChecking } = useStatus()
+const { isPlaying, isChecking, isSelectingPieces } = useStatus()
 
 const { gridSize } = useGrid()
 
@@ -67,6 +67,7 @@ const handleMouseUp = () => {
     class="grid"
     :class="{
       'grid--is-checking': isChecking,
+      'grid--is-selecting-pieces': isSelectingPieces,
       'grid--is-not-playing': !isPlaying,
     }"
     :style="style"
@@ -104,15 +105,21 @@ const handleMouseUp = () => {
       background-color: red;
       pointer-events: none;
     }
+
+    &--player {
+      background-color: lightslategray;
+      pointer-events: none;
+    }
   }
 
   &--is-checking,
-  &--is-not-playing {
+  &--is-not-playing,
+  &--is-selecting-pieces {
     pointer-events: none;
   }
 
   &--is-not-playing {
-    // opacity: 0.2;
+    opacity: 0.5;
   }
 }
 </style>

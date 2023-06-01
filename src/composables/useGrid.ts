@@ -6,7 +6,7 @@ import {
   type GridInterface,
 } from '../types'
 
-const INITIAL_GRID_SIZE = GridSizeEnum.four
+const INITIAL_GRID_SIZE = GridSizeEnum.two
 
 const gridSize = ref<GridSizeEnum>(INITIAL_GRID_SIZE)
 

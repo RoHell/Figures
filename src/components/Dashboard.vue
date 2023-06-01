@@ -30,9 +30,9 @@ const { isPlaying } = useStatus()
       <div class="dashboard__section-content dashboard__section-content--grids">
         <button
           v-for="grid in grids"
-          class="dashboard__grid dashboard__grid--grid"
+          class="dashboard__grid dashboard__matrix"
           :class="{
-            'dashboard__grid--active': gridSize === grid.count
+            'dashboard__matrix--active': gridSize === grid.count
           }"
           :disabled="isPlaying"
           @click="emit('grid', grid.count)"
@@ -50,9 +50,9 @@ const { isPlaying } = useStatus()
       <div class="dashboard__section-content dashboard__section-content--pieces">
         <button
           v-for="count in piecesRange"
-          class="dashboard__grid dashboard__grid--piece"
+          class="dashboard__grid dashboard__pieces"
           :class="{
-            'dashboard__grid--active': count <= piecesCount
+            'dashboard__pieces--active': count <= piecesCount
           }"
           :disabled="isPlaying"
           @click="emit('pieces', count)"
@@ -91,10 +91,11 @@ const { isPlaying } = useStatus()
 
     &--grids {
       gap: 0.2rem;
-      grid-template-columns: repeat(auto-fill, minmax(2.6rem, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(2.8rem, 1fr));
     }
 
     &--pieces {
+      gap: 1px;
       grid-template-columns: repeat(auto-fill, minmax(1.9rem, 1fr));
     }
   }
@@ -111,28 +112,37 @@ const { isPlaying } = useStatus()
   background-color: transparent;
   border: 1px solid;
 
-  &:hover:not(.dashboard__grid--active) {
-    border-color: white;
-    background-color: rgba(dimgray, 0.7);
-  }
-
   &:disabled {
     pointer-events: none;
   }
+}
 
-  &--grid {
-    border-color: white;
-    padding: 0.2rem;
-  }
-
-  &--piece {
-    border-color: transparent;
-    padding: 0.1rem 0;
+.dashboard__matrix {
+  border-color: white;
+  padding: 0.2rem;
+    
+  &:disabled {
+    border-color: rgba(white, 0.5);
   }
 
   &--active {
-    background-color: dimgray;
-    border-color: white;
+    background-color: slategray;
+  }
+}
+
+.dashboard__pieces {
+  border: none;
+  padding: 0.25rem 0;
+  color: lightgray;
+  border-radius: 0.25rem;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &--active {
+    color: white;
+    background-color: slategray;
   }
 }
 

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const emit = defineEmits<{
   (e: 'back'): void,
-  (e: 'menu'): void,
 }>()
 
 </script>

@@ -20,14 +20,14 @@ const { playerFieldCoordinates } = useCoordinates()
 </script>
 
 <template>
-  <nav class="bottom-bar">
+  <div class="bottom-bar">
     <div class="bottom-bar__left">
       <button
         v-if="isPlaying"
         class="bottom-bar__back"
         @click="emit('back')"
       >
-        <Icon :icon="IconEnum.back" size="3rem"/>
+        <Icon :icon="IconEnum.back" size="2.75rem"/>
       </button>
     </div>
     <div class="bottom-bar__center">
@@ -50,7 +50,7 @@ const { playerFieldCoordinates } = useCoordinates()
     </div>
     <div class="bottom-bar__right">
     </div>
-  </nav>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -62,7 +62,7 @@ const { playerFieldCoordinates } = useCoordinates()
     justify-content: space-around;
     gap: 1rem;
     width: 100%;
-    height: var(--bottom-bar-height);
+    // height: var(--bottom-bar-height);
 
     &__start,
     &__check {
@@ -77,6 +77,7 @@ const { playerFieldCoordinates } = useCoordinates()
       outline: none;
       &:disabled {
         border-color: gray;
+        pointer-events: none;
       }
     }
 
@@ -95,22 +96,13 @@ const { playerFieldCoordinates } = useCoordinates()
     &__pieces,
     &__back {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.25rem;
-      font-size: smaller;
-      padding: 0.25rem;
+      padding: 0;
       height: 100%;
       width: 100%;
       background-color: transparent;
       outline: none;
-    }
-  }
-  @media screen and (orientation: landscape) {
-    .bottom-bar {
-      flex-direction: column;
-      height: 100%;
     }
   }
 </style>
