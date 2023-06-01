@@ -57,11 +57,12 @@ h1 {
 button {
   /* border-radius: 8px; */
   /* border: 1px solid transparent; */
-  padding: 0.6em 1.2em;
+  /* padding: 0.6em 1.2em; */
+  padding: 0;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  /* background-color: #1a1a1a; */
+  background-color: transparent;
   cursor: pointer;
   transition: border-color 0.25s;
   outline: none;
@@ -99,4 +100,32 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* 
+TRANSITIONS
+*/
+
+/* Fade transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Slide down transition */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.2s ease-in-out;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  transform: translateX(-100%);
+  overflow: hidden;
+  opacity: 0;
 }

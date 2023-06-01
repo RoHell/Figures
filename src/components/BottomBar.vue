@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { IconEnum } from '../types'
-
 import {
   useStatus,
   useCoordinates,
 } from '../composables'
-
-import Icon from '../components/Icon.vue'
 
 const emit = defineEmits<{
   (e: 'start'): void,
@@ -22,13 +18,7 @@ const { playerFieldCoordinates } = useCoordinates()
 <template>
   <div class="bottom-bar">
     <div class="bottom-bar__left">
-      <button
-        v-if="isPlaying"
-        class="bottom-bar__back"
-        @click="emit('back')"
-      >
-        <Icon :icon="IconEnum.back" size="2.75rem"/>
-      </button>
+      <slot name="left" />
     </div>
     <div class="bottom-bar__center">
       <button
@@ -49,6 +39,7 @@ const { playerFieldCoordinates } = useCoordinates()
       />
     </div>
     <div class="bottom-bar__right">
+      <slot name="right" />
     </div>
   </div>
 </template>
@@ -62,7 +53,6 @@ const { playerFieldCoordinates } = useCoordinates()
     justify-content: space-around;
     gap: 1rem;
     width: 100%;
-    // height: var(--bottom-bar-height);
 
     &__start,
     &__check {

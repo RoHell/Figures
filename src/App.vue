@@ -5,11 +5,15 @@ import {
   type PieceInterface,
 } from './types'
 
+import { IconEnum } from './types'
+
 import Pieces from './components/Pieces.vue'
 import Grid from './components/Grid.vue'
 import Dashboard from './components/Dashboard.vue'
 import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
+import Menu from './components/Menu.vue'
+import Icon from './components/Icon.vue'
 
 import {
   useGrid,
@@ -56,6 +60,7 @@ const {
 const {
   isPlaying,
   isChecking,
+  isMenuOpen,
 } = useStatus()
 
 const handleStart = () => {
@@ -124,19 +129,44 @@ const setGrid = (count: GridSizeEnum) => {
 <template>
   <div class="app">
     <div class="app__panel">
-      <TopBar
-        @back="handleStop"
-      />
+      <TopBar>
+        <template #left>
+          <button
+            v-if="isPlaying"
+            type="button"
+            @click="handleStop"
+          >
+            <Icon :icon="IconEnum.back" size="2rem"/>
+          </button>
+        </template>
+        <template #right>
+          <button
+            type="button"
+            @click="isMenuOpen = true"
+          >
+            <Icon :icon="IconEnum.more" size="2rem"/>
+          </button>
+        </template>
+      </TopBar>
+
       <Dashboard
         @grid="setGrid"
         @pieces="setPiecesCount"
       />
+
       <BottomBar
         class="bottom-bar--landscape"
         @start="handleStart"
         @check="handleCheck"
-        @back="handleStop"
       />
+      <Transition name="slide-down">
+        <Menu
+          v-if="isMenuOpen"
+          title="Menu"
+          class="app__menu"
+          @close="isMenuOpen = false"
+        />
+      </Transition>
     </div>
     <div class="app__grid">
       <Grid
@@ -150,7 +180,6 @@ const setGrid = (count: GridSizeEnum) => {
       class="bottom-bar--portrait"
       @start="handleStart"
       @check="handleCheck"
-      @back="handleStop"
     />
   </div>
 </template>
@@ -163,6 +192,7 @@ const setGrid = (count: GridSizeEnum) => {
   max-height: 100vh;
 
   &__panel {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -175,6 +205,13 @@ const setGrid = (count: GridSizeEnum) => {
     margin: auto;
     padding: 0.5rem;
   }
+
+  &__menu {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: slategray;
+  }
 }
 
 @media screen and (orientation: portrait) {
@@ -182,7 +219,7 @@ const setGrid = (count: GridSizeEnum) => {
     flex-direction: column;
 
     &__panel {
-      padding: 0.5rem 0.5rem 0;
+      margin: 0.5rem 0.5rem 0;
     }
 
     &__grid {
@@ -204,7 +241,7 @@ const setGrid = (count: GridSizeEnum) => {
     flex-direction: row;
 
     &__panel {
-      padding: 0.5rem 0 0.5rem 0.5rem;
+      margin: 0.5rem 0 0.5rem 0.5rem;
     }
 
     &__grid {
