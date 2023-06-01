@@ -48,7 +48,6 @@ export default () => {
 
     if (randomPiecesList.value.length === piecesCount.value) {
       positionPieces()
-      isSelectingPieces.value = false
     } else {
       setRandomPiecesList()
     }
@@ -87,6 +86,8 @@ export default () => {
       clearMarkedFields()
       clearRandomPiecesList()
       setRandomPiecesList()
+    } else {
+      isSelectingPieces.value = false
     }
     // markAndCheck(3000)
   }
