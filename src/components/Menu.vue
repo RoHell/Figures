@@ -23,10 +23,20 @@ const isTimingModel = computed({
 
 const timingValueModel = computed({
   get: (): number => timingValue.value,
-  set: (value) => {
+  set: (value: number) => {
     timingValue.value = value
   }
 })
+
+const validateTimingValue = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  let seconds = Number(target.value)
+  if (seconds > 999) {
+    timingValue.value = 999
+  } else if (seconds < 1) {
+    timingValue.value = 1
+  }
+}
 </script>
 
 <template>
@@ -52,9 +62,11 @@ const timingValueModel = computed({
         <label for="menu-timing" v-text="'Enable Timing (seconds)'" />
         <template v-if="isTimingOn">
           <input
-            v-model="timingValueModel"
+            v-model.number="timingValueModel"
             type="number"
-            :max="999"
+            max="999"
+            min="1"
+            @change="validateTimingValue"
             class="menu__input-timing-value"
           >
         </template>
