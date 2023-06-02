@@ -58,3 +58,8 @@ export interface ConfigInterface {
   name: ConfigNameEnum,
   label: ConfigNameEnum | string,
 }
+
+export enum GameModeEnum {
+  school = 'School',
+  quest = 'Quest',
+}

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
-import { IconEnum } from '../types'
+import { IconEnum, GameModeEnum } from '../types'
 
 import Icon from '../components/Icon.vue'
 import TopBar from '../components/TopBar.vue'
@@ -12,7 +12,7 @@ const emit = defineEmits<{
   (e: 'close'): void,
 }>()
 
-const { isTimingOn, timingValue } = useStatus()
+const { isTimingOn, timingValue, gameMode } = useStatus()
 
 const isTimingModel = computed({
   get: (): boolean => isTimingOn.value,
@@ -25,6 +25,13 @@ const timingValueModel = computed({
   get: (): number => timingValue.value,
   set: (value: number) => {
     timingValue.value = value
+  }
+})
+
+const gameModeModel = computed({
+  get: (): GameModeEnum => gameMode.value,
+  set: (value: GameModeEnum) => {
+    gameMode.value = value
   }
 })
 
@@ -53,13 +60,39 @@ const validateTimingValue = (event: Event) => {
     </TopBar>
 
     <div class="menu__content">
-      <div class="menu__option">
-        <input
-          v-model="isTimingModel"
-          id="menu-timing"
-          type="checkbox"
-        >
-        <label for="menu-timing" v-text="'Enable Timing (seconds)'" />
+      <div class="menu__option menu__option--radios">
+        <div class="menu__radio">
+          <input
+            v-model="gameModeModel"
+            type="radio"
+            id="menu-school-mode"
+            name="menu-game-mode"
+            :value="GameModeEnum.school"
+          >
+          <label for="menu-school-mode" v-text="GameModeEnum.school" />
+        </div>
+        <div class="menu__radio">
+          <input
+            v-model="gameModeModel"
+            type="radio"
+            id="menu-quest-mode"
+            name="menu-game-mode"
+            :value="GameModeEnum.quest"
+          >
+          <label for="menu-quest-mode" v-text="GameModeEnum.quest" />
+        </div>
+      </div>
+
+      <div class="menu__option menu__option--checkbox">
+        <div>
+          <input
+            v-model="isTimingModel"
+            id="menu-timing"
+            type="checkbox"
+          >
+          <label for="menu-timing" v-text="'Enable Timing (seconds)'" />
+        </div>
+
         <template v-if="isTimingOn">
           <input
             v-model.number="timingValueModel"
@@ -102,6 +135,16 @@ const validateTimingValue = (event: Event) => {
       align-items: center;
       min-height: 2rem;
       line-height: 1.2;
+
+      &--radios {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      &--checkbox {
+        gap: 2rem;
+      }
     }
 
     &__input-timing-value {
