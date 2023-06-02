@@ -27,7 +27,7 @@ const { isCounting } = useProgress()
         v-if="isPlaying"
         type="button"
         class="bottom-bar__check"
-        :disabled="!playerFieldCoordinates || isCounting"
+        :disabled="!playerFieldCoordinates"
         v-text="'check'"
         @click="emit('check')"
       />
