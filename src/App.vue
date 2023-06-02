@@ -75,6 +75,7 @@ const {
 } = useProgress()
 
 let checkResultTimeout: string | number | NodeJS.Timeout | undefined
+let markFieldsTimeout: string | number | NodeJS.Timeout | undefined
 
 const handleStart = () => {
   clearFields()
@@ -109,16 +110,16 @@ const markFields = () => {
 }
 
 const handleCheck = (timeout: number = 0) => {
-  setTimeout(() => {
+  clearTimeout(markFieldsTimeout)
+  markFieldsTimeout = setTimeout(() => {
     markFields()
     checkGameResult()
   }, timeout)
 }
 
 const checkGameResult = (timeout: number = 3000) => {
-  if (isCounting) {
-    clearTimeout(checkResultTimeout)
-  }
+  clearTimeout(checkResultTimeout)
+
   isChecking.value = true
   checkResultTimeout = setTimeout(() => {
     checkResult()
