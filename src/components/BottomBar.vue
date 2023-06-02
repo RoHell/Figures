@@ -2,6 +2,7 @@
 import {
   useStatus,
   useCoordinates,
+  useProgress,
 } from '../composables'
 
 const emit = defineEmits<{
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 
 const { isPlaying, isSelectingPieces } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
+const { isCounting } = useProgress()
 
 </script>
 
@@ -25,7 +27,7 @@ const { playerFieldCoordinates } = useCoordinates()
         v-if="isPlaying"
         type="button"
         class="bottom-bar__check"
-        :disabled="!playerFieldCoordinates"
+        :disabled="!playerFieldCoordinates || isCounting"
         v-text="'check'"
         @click="emit('check')"
       />

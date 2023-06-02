@@ -14,6 +14,7 @@ import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
 import Menu from './components/Menu.vue'
 import Icon from './components/Icon.vue'
+import ProgressBar from './components/ProgressBar.vue'
 
 import {
   useGrid,
@@ -22,6 +23,7 @@ import {
   useMarkedFields,
   usePlayer,
   useStatus,
+  useProgress,
 } from './composables'
 
 const {
@@ -61,12 +63,26 @@ const {
   isPlaying,
   isChecking,
   isMenuOpen,
+  isTimingOn,
+  timingValue,
 } = useStatus()
+
+const {
+  timoutProgress,
+  startCountdown,
+  resetProgress,
+  isCounting,
+} = useProgress()
 
 const handleStart = () => {
   clearFields()
   isPlaying.value = true
   setRandomPiecesList()
+  if (isTimingOn.value) {
+    startCountdown()
+    const timing = isCounting.value ? 0 : timingValue.value * 1000
+    handleCheck(timing)
+  }
 }
 
 const handleStop = () => {
@@ -74,30 +90,39 @@ const handleStop = () => {
   isPlaying.value = false
 }
 
+const checkResult = () => {
+  if (!playerFieldCoordinates.value || isPlayerCatched()) {
+    handleStop()
+  } else {
+    clearFields()
+    handleStart()
+  }
+}
+
+const markFields = () => {
+  randomPiecesList.value?.forEach((piece) => {
+    setPieceMovesCoordinates(piece)
+    setMarkedFields()
+  })
+}
+
 const handleCheck = (timeout: number = 0) => {
   setTimeout(() => {
-    randomPiecesList.value?.forEach((piece) => {
-      setPieceMovesCoordinates(piece)
-      setMarkedFields()
-    })
+    markFields()
     checkGameResult()
   }, timeout)
 }
 
 const checkGameResult = () => {
   isChecking.value = true
-  setTimeout(async () => {
-    if (!playerFieldCoordinates.value || isPlayerCatched()) {
-      await handleStop()
-    } else {
-      await clearFields()
-      handleStart()
-    }
+  setTimeout(() => {
+    checkResult()
     isChecking.value = false
   }, 3000)
 }
 
 const clearFields = () => {
+  resetProgress()
   clearMarkedFields()
   clearRandomPiecesList()
   clearPlayerField()
@@ -154,11 +179,17 @@ const setGrid = (count: GridSizeEnum) => {
         @pieces="setPiecesCount"
       />
 
-      <BottomBar
-        class="bottom-bar--landscape"
+      <div class="app__controls">
+        <BottomBar
         @start="handleStart"
         @check="handleCheck"
-      />
+        />
+        <ProgressBar
+          v-if="isTimingOn"
+          :progress="timoutProgress"
+        />
+      </div>
+
       <Transition name="slide-down">
         <Menu
           v-if="isMenuOpen"
@@ -167,7 +198,9 @@ const setGrid = (count: GridSizeEnum) => {
           @close="isMenuOpen = false"
         />
       </Transition>
+
     </div>
+
     <div class="app__grid">
       <Grid
         :cols="gridSize"
@@ -176,11 +209,6 @@ const setGrid = (count: GridSizeEnum) => {
       />
       <Pieces />
     </div>
-    <BottomBar
-      class="bottom-bar--portrait"
-      @start="handleStart"
-      @check="handleCheck"
-    />
   </div>
 </template>
 
@@ -198,6 +226,7 @@ const setGrid = (count: GridSizeEnum) => {
     flex: 1;
     gap: 1rem;
     min-width: 16rem;
+    padding: 0.5rem;
   }
 
   &__grid {
@@ -208,9 +237,16 @@ const setGrid = (count: GridSizeEnum) => {
 
   &__menu {
     position: absolute;
-    height: 100%;
+    left: 0;
+    top: 0;
+  }
+
+  &__controls {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    background-color: slategray;
+    margin-top: auto;
+    gap: 1rem;
   }
 }
 
@@ -218,20 +254,9 @@ const setGrid = (count: GridSizeEnum) => {
   .app {
     flex-direction: column;
 
-    &__panel {
-      margin: 0.5rem 0.5rem 0;
-    }
-
     &__grid {
       height: 100%;
       max-height: 100vw;
-    }
-
-    .bottom-bar {
-      padding: 0.5rem;
-      &--landscape {
-        display: none;
-      }
     }
   }
 }
@@ -240,21 +265,9 @@ const setGrid = (count: GridSizeEnum) => {
   .app {
     flex-direction: row;
 
-    &__panel {
-      margin: 0.5rem 0 0.5rem 0.5rem;
-    }
-
     &__grid {
       width: 100%;
       max-width: 100vh;
-    }
-
-    .bottom-bar {
-      margin-top: auto;
-
-      &--portrait {
-        display: none;
-      }
     }
   }
 }

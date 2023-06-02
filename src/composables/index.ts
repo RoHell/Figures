@@ -4,6 +4,7 @@ import useGrid from './useGrid'
 import useMarkedFields from './useMarkedFields'
 import usePlayer from './usePlayer'
 import useStatus from './useStatus'
+import useProgress from './useProgress'
 
 export {
   useCoordinates,
@@ -12,4 +13,5 @@ export {
   useMarkedFields,
   usePlayer,
   useStatus,
+  useProgress,
 }
