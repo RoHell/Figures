@@ -115,7 +115,7 @@ const handleCheck = (timeout: number = 0) => {
   }, timeout)
 }
 
-const checkGameResult = (timeout: number = 3000) => {
+const checkGameResult = () => {
   if (isCounting) {
     clearTimeout(checkResultTimeout)
   }
@@ -123,7 +123,7 @@ const checkGameResult = (timeout: number = 3000) => {
   checkResultTimeout = setTimeout(() => {
     checkResult()
     isChecking.value = false
-  }, timeout)
+  }, timingValue.value * 1000)
 }
 
 const clearFields = () => {
