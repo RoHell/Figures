@@ -11,7 +11,7 @@ const emit = defineEmits<{
   (e: 'back'): void,
 }>()
 
-const { isPlaying, isSelectingPieces } = useStatus()
+const { isPlaying, isSelectingPieces, isChecking } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
 const { isCounting } = useProgress()
 
@@ -27,7 +27,7 @@ const { isCounting } = useProgress()
         v-if="isPlaying"
         type="button"
         class="bottom-bar__check"
-        :disabled="!playerFieldCoordinates"
+        :disabled="!playerFieldCoordinates || isChecking"
         v-text="'check'"
         @click="emit('check')"
       />
