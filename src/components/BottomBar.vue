@@ -13,7 +13,6 @@ const emit = defineEmits<{
 
 const { isPlaying, isSelectingPieces, isChecking } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
-const { isCounting } = useProgress()
 
 </script>
 

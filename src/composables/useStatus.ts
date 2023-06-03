@@ -6,8 +6,8 @@ const isPlaying = ref(false)
 const isChecking = ref(false)
 const isMenuOpen = ref(false)
 const isSelectingPieces = ref(false)
-const isTimingOn = ref(false)
-const timingValue = ref(5)
+const isCountdownMode = ref(false)
+const countdownFrom = ref(5)
 const gameMode = ref(GameModeEnum.school)
 
 export default () => {
@@ -17,8 +17,8 @@ export default () => {
     isChecking,
     isMenuOpen,
     isSelectingPieces,
-    isTimingOn,
-    timingValue,
+    isCountdownMode,
+    countdownFrom,
     gameMode,
   }
 }

@@ -12,19 +12,19 @@ const emit = defineEmits<{
   (e: 'close'): void,
 }>()
 
-const { isTimingOn, timingValue, gameMode } = useStatus()
+const { isCountdownMode, countdownFrom, gameMode } = useStatus()
 
-const isTimingModel = computed({
-  get: (): boolean => isTimingOn.value,
+const isCountdownModel = computed({
+  get: (): boolean => isCountdownMode.value,
   set: (value: boolean) => {
-    isTimingOn.value = value
+    isCountdownMode.value = value
   }
 })
 
-const timingValueModel = computed({
-  get: (): number => timingValue.value,
+const countdownFromModel = computed({
+  get: (): number => countdownFrom.value,
   set: (value: number) => {
-    timingValue.value = value
+    countdownFrom.value = value
   }
 })
 
@@ -39,9 +39,9 @@ const validateTimingValue = (event: Event) => {
   const target = event.target as HTMLInputElement
   let seconds = Number(target.value)
   if (seconds > 999) {
-    timingValue.value = 999
+    countdownFrom.value = 999
   } else if (seconds < 1) {
-    timingValue.value = 1
+    countdownFrom.value = 1
   }
 }
 </script>
@@ -86,16 +86,16 @@ const validateTimingValue = (event: Event) => {
       <div class="menu__option menu__option--checkbox">
         <div>
           <input
-            v-model="isTimingModel"
+            v-model="isCountdownModel"
             id="menu-timing"
             type="checkbox"
           >
-          <label for="menu-timing" v-text="'Enable Timing (seconds)'" />
+          <label for="menu-timing" v-text="'Countdown (seconds)'" />
         </div>
 
-        <template v-if="isTimingOn">
+        <template v-if="isCountdownMode && (gameMode === GameModeEnum.school)">
           <input
-            v-model.number="timingValueModel"
+            v-model.number="countdownFromModel"
             type="number"
             max="999"
             min="1"
@@ -139,11 +139,24 @@ const validateTimingValue = (event: Event) => {
       &--radios {
         flex-direction: column;
         align-items: flex-start;
+        justify-content: center;
         gap: 0.5rem;
       }
 
       &--checkbox {
         gap: 2rem;
+        align-items: center;
+      }
+    }
+
+    &__radio {
+      display: flex;
+      align-items: center;
+      width: 100%;
+
+      label {
+        width: 100%;
+        text-align: start;
       }
     }
 

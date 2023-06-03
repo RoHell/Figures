@@ -63,15 +63,15 @@ const {
   isPlaying,
   isChecking,
   isMenuOpen,
-  isTimingOn,
-  timingValue,
+  isCountdownMode,
+  countdownFrom,
 } = useStatus()
 
 const {
-  timoutProgress,
+  countdownProgress,
   startCountdown,
   resetProgress,
-  isCounting,
+  isCountdownOn,
 } = useProgress()
 
 let checkResultTimeout: string | number | NodeJS.Timeout | undefined
@@ -81,10 +81,9 @@ const handleStart = () => {
   clearFields()
   isPlaying.value = true
   setRandomPiecesList()
-  if (isTimingOn.value) {
+  if (isCountdownMode.value) {
     startCountdown()
-    const timing = isCounting.value ? 0 : timingValue.value * 1000
-    handleCheck(timing)
+    handleCheck()
   }
 }
 
@@ -109,7 +108,8 @@ const markFields = () => {
   })
 }
 
-const handleCheck = (timeout: number = 0) => {
+const handleCheck = () => {
+  const timeout = isCountdownOn.value ? 0 : countdownFrom.value * 1000
   clearTimeout(markFieldsTimeout)
   markFieldsTimeout = setTimeout(() => {
     markFields()
@@ -117,14 +117,13 @@ const handleCheck = (timeout: number = 0) => {
   }, timeout)
 }
 
-const checkGameResult = (timeout: number = 3000) => {
-  clearTimeout(checkResultTimeout)
-
+const checkGameResult = () => {
   isChecking.value = true
+  clearTimeout(checkResultTimeout)
   checkResultTimeout = setTimeout(() => {
     checkResult()
     isChecking.value = false
-  }, timeout)
+  }, 3000)
 }
 
 const clearFields = () => {
@@ -191,8 +190,8 @@ const setGrid = (count: GridSizeEnum) => {
         @check="handleCheck"
         />
         <ProgressBar
-          v-if="isTimingOn"
-          :progress="timoutProgress"
+          v-if="isCountdownMode"
+          :progress="countdownProgress"
         />
       </div>
 

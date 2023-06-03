@@ -1,29 +1,37 @@
 import { computed, ref } from 'vue'
 
-import { useStatus } from '../composables'
+import { GameModeEnum } from '../types'
 
-const { timingValue } = useStatus()
+import { useStatus, usePieces } from '../composables'
 
-const timoutProgress = ref(1)
+const { countdownFrom, gameMode } = useStatus()
+const { piecesCount } = usePieces()
+
+const countdownProgress = ref(1)
 
 export default () => {
   const INTERVAL = 10
   let interval: string | number | NodeJS.Timer | undefined = undefined
 
-  const isCounting = computed(() => timoutProgress.value > 0 && timoutProgress.value < 1)
+  const isCountdownOn = computed(() => countdownProgress.value > 0 && countdownProgress.value < 1)
 
-  const countownTimer = () => {
-    const progressDecrement = INTERVAL / (timingValue.value * 1000)
-    if (timoutProgress.value <= 0) {
-      timoutProgress.value = 1
+  const countdownTimer = () => {
+    if (gameMode.value === GameModeEnum.quest) {
+      countdownFrom.value = piecesCount.value
+    }
+    const progressDecrement = INTERVAL / (countdownFrom.value * 1000)
+
+    if (countdownProgress.value <= 0) {
+      countdownProgress.value = 1
       clearInterval(interval)
     }
-    timoutProgress.value -= progressDecrement
+
+    countdownProgress.value -= progressDecrement
   }
 
   const startCountdown = () => {
     if (interval) { return }
-    interval = setInterval(countownTimer, INTERVAL)
+    interval = setInterval(countdownTimer, INTERVAL)
   }
 
   const stopCountdown = () => {
@@ -33,14 +41,14 @@ export default () => {
 
   const resetProgress = () => {
     stopCountdown()
-    timoutProgress.value = 1
+    countdownProgress.value = 1
   }
 
   return {
     startCountdown,
     stopCountdown,
     resetProgress,
-    timoutProgress,
-    isCounting
+    countdownProgress,
+    isCountdownOn
   }
 }
