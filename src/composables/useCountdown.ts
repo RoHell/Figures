@@ -2,18 +2,19 @@ import { computed, ref } from 'vue'
 
 import { GameModeEnum } from '../types'
 
-import { useStatus, usePieces } from '../composables'
+import { useStatus, usePieces } from '.'
 
 const { countdownFrom, gameMode } = useStatus()
 const { piecesCount } = usePieces()
 
-const countdownProgress = ref(1)
+const INITIAL_COUNTDOWN_VALUE = 1
+const countdownProgress = ref(INITIAL_COUNTDOWN_VALUE)
 
 export default () => {
   const INTERVAL = 10
   let interval: string | number | NodeJS.Timer | undefined = undefined
 
-  const isCountdownOn = computed(() => countdownProgress.value > 0 && countdownProgress.value < 1)
+  const isCountdownOn = computed(() => countdownProgress.value > 0 && countdownProgress.value < INITIAL_COUNTDOWN_VALUE)
 
   const countdownTimer = () => {
     if (gameMode.value === GameModeEnum.quest) {
@@ -22,7 +23,7 @@ export default () => {
     const progressDecrement = INTERVAL / (countdownFrom.value * 1000)
 
     if (countdownProgress.value <= 0) {
-      countdownProgress.value = 1
+      resetProgress()
       clearInterval(interval)
     }
 
@@ -40,8 +41,7 @@ export default () => {
   }
 
   const resetProgress = () => {
-    stopCountdown()
-    countdownProgress.value = 1
+    countdownProgress.value = INITIAL_COUNTDOWN_VALUE
   }
 
   return {

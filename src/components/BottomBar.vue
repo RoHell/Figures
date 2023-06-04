@@ -2,7 +2,6 @@
 import {
   useStatus,
   useCoordinates,
-  useProgress,
 } from '../composables'
 
 const emit = defineEmits<{

@@ -29,11 +29,7 @@ export default () => {
  
   const currentGridIndex = computed((): number => grids.value.findIndex(grid => grid.count === gridSize.value))
 
-  const currentGridCount = computed((): GridSizeEnum => {
-    return gridSize.value < grids.value[grids.value.length - 1]?.count
-      ? grids.value[currentGridIndex.value + 1]?.count
-      : grids.value[0].count
-  })
+  const isLastGrid = computed(() => currentGridIndex.value === (gridSizes.value.length - 1))
 
   const setGridSize = (cols: GridSizeEnum) => {
     gridSize.value = cols
@@ -55,7 +51,7 @@ export default () => {
     hasEmptyField,
     hasMarkedField,
     getGridElement,
-    currentGridCount,
+    isLastGrid,
     currentGridIndex,
     verifyEmptyField,
   }

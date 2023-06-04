@@ -84,7 +84,7 @@ const validateTimingValue = (event: Event) => {
       </div>
 
       <div class="menu__option menu__option--checkbox">
-        <div>
+        <div class="menu__checkbox">
           <input
             v-model="isCountdownModel"
             id="menu-timing"
@@ -144,15 +144,18 @@ const validateTimingValue = (event: Event) => {
       }
 
       &--checkbox {
-        gap: 2rem;
+        gap: 1rem;
         align-items: center;
+        text-align: start;
       }
     }
 
-    &__radio {
+    &__radio,
+    &__checkbox {
       display: flex;
       align-items: center;
       width: 100%;
+      gap: 0.25rem;
 
       label {
         width: 100%;

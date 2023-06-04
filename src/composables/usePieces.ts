@@ -13,7 +13,9 @@ import { useStatus } from '../composables'
 
 import { getRandomInt, arrayFromLength } from '../utils'
 
-const piecesCount = ref(1)
+const INITIAL_PIECES_COUNT = 1
+
+const piecesCount = ref(INITIAL_PIECES_COUNT)
 
 export default () => {
   const {
@@ -40,16 +42,16 @@ export default () => {
   const randomPiecesList = ref<PieceInterface[]>([])
   const selectedPiece = ref<PieceInterface>()
 
-  const setRandomPiecesList = () => {
+  const setRandomPiecesList = async () => {
     isSelectingPieces.value = true
     randomPiecesList.value = [...Array(piecesCount.value).keys()]
       .reduce((pieces: PieceInterface[], _) => [...pieces, getRandomPiece(pieces)] as PieceInterface[], [])
       .filter(Boolean)
 
     if (randomPiecesList.value.length === piecesCount.value) {
-      positionPieces()
+      await positionPieces()
     } else {
-      setRandomPiecesList()
+      await setRandomPiecesList()
     }
   }
 
@@ -70,7 +72,7 @@ export default () => {
     }
   }
 
-  const positionPieces = () => {
+  const positionPieces = async() => {
     randomPiecesList.value?.forEach((piece: PieceInterface) => {
       const { field, element, name } = piece
       if (field && element) {
@@ -84,12 +86,11 @@ export default () => {
     verifyEmptyField()
     if (!hasEmptyField.value || (hasEmptyField.value && !hasMarkedField.value)) {
       clearMarkedFields()
-      clearRandomPiecesList()
-      setRandomPiecesList()
+      await clearRandomPiecesList()
+      await setRandomPiecesList()
     } else {
       isSelectingPieces.value = false
     }
-    // markAndCheck(3000)
   }
 
   const clearRandomPiecesList = () => {
@@ -121,11 +122,13 @@ export default () => {
   const piecesRange = computed((): number[] => arrayFromLength(maxPiecesCount.value))
 
   return {
+    INITIAL_PIECES_COUNT,
     randomPiecesList,
     piecesCount,
     selectedPiece,
     maxPiecesCount,
     piecesRange,
+    isSelectingPieces,
     setRandomPiecesList,
     clearRandomPiecesList,
     getPieceElement,

@@ -23,12 +23,15 @@ import {
   useMarkedFields,
   usePlayer,
   useStatus,
-  useProgress,
+  useCountdown,
+  useQuest,
 } from './composables'
 
 const {
   gridSize,
   setGridSize,
+  INITIAL_GRID_SIZE,
+  isLastGrid,
 } = useGrid()
 
 const {
@@ -39,6 +42,7 @@ const {
   piecesCount,
   setPiecesCount,
   maxPiecesCount,
+  INITIAL_PIECES_COUNT,
 } = usePieces()
 
 const {
@@ -70,20 +74,37 @@ const {
 const {
   countdownProgress,
   startCountdown,
+  stopCountdown,
   resetProgress,
-  isCountdownOn,
-} = useProgress()
+} = useCountdown()
+
+const {
+  quest,
+  isQuestMode,
+} = useQuest()
 
 let checkResultTimeout: string | number | NodeJS.Timeout | undefined
 let markFieldsTimeout: string | number | NodeJS.Timeout | undefined
 
-const handleStart = () => {
+const handleStart = async() => {
   clearFields()
   isPlaying.value = true
-  setRandomPiecesList()
+  if (isQuestMode.value) {
+    await setGridSize(quest.grid)
+    await setPiecesCount(quest.pieces)
+    countdownFrom.value = piecesCount.value
+  } else {
+    countdownFrom.value = 5
+  }
+
+  await setRandomPiecesList()
+
   if (isCountdownMode.value) {
-    startCountdown()
-    handleCheck()
+    await startCountdown()
+
+    if (isQuestMode.value) {
+      handleCheck(countdownFrom.value * 1000)
+    }
   }
 }
 
@@ -97,6 +118,14 @@ const checkResult = () => {
     handleStop()
   } else {
     clearFields()
+    if (isQuestMode.value) {
+      if (quest.pieces === maxPiecesCount.value) {
+        quest.grid = isLastGrid.value ? INITIAL_GRID_SIZE : quest.grid + 1
+        quest.pieces = INITIAL_PIECES_COUNT
+      } else {
+        quest.pieces++
+      }
+    }
     handleStart()
   }
 }
@@ -108,9 +137,9 @@ const markFields = () => {
   })
 }
 
-const handleCheck = () => {
-  const timeout = isCountdownOn.value ? 0 : countdownFrom.value * 1000
+const handleCheck = (timeout: number = 0) => {
   clearTimeout(markFieldsTimeout)
+
   markFieldsTimeout = setTimeout(() => {
     markFields()
     checkGameResult()
@@ -120,6 +149,7 @@ const handleCheck = () => {
 const checkGameResult = () => {
   isChecking.value = true
   clearTimeout(checkResultTimeout)
+
   checkResultTimeout = setTimeout(() => {
     checkResult()
     isChecking.value = false
@@ -128,6 +158,9 @@ const checkGameResult = () => {
 
 const clearFields = () => {
   resetProgress()
+  stopCountdown()
+  clearTimeout(checkResultTimeout)
+  clearTimeout(markFieldsTimeout)
   clearMarkedFields()
   clearRandomPiecesList()
   clearPlayerField()
@@ -148,10 +181,15 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
 const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
 const setGrid = (count: GridSizeEnum) => {
-  setGridSize(count)
-
-  if (piecesCount.value > maxPiecesCount.value) {
-    setPiecesCount(maxPiecesCount.value)
+  if (isQuestMode.value) {
+    quest.grid = INITIAL_GRID_SIZE
+    quest.pieces = INITIAL_PIECES_COUNT
+    handleStart()
+  } else {
+    setGridSize(count)
+    if (piecesCount.value > maxPiecesCount.value) {
+      setPiecesCount(maxPiecesCount.value)
+    }
   }
 }
 </script>
@@ -186,8 +224,8 @@ const setGrid = (count: GridSizeEnum) => {
 
       <div class="app__controls">
         <BottomBar
-        @start="handleStart"
-        @check="handleCheck"
+          @start="handleStart"
+          @check="handleCheck"
         />
         <ProgressBar
           v-if="isCountdownMode"

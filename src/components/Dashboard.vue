@@ -5,6 +5,7 @@ import {
   useGrid,
   usePieces,
   useStatus,
+  useQuest,
 } from '../composables'
 
 import Icon from '../components/Icon.vue'
@@ -20,6 +21,7 @@ const emit = defineEmits<{
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
 const { isPlaying } = useStatus()
+const { isQuestMode } = useQuest()
 
 </script>
 
@@ -34,7 +36,7 @@ const { isPlaying } = useStatus()
           :class="{
             'dashboard__matrix--active': gridSize === grid.count
           }"
-          :disabled="isPlaying"
+          :disabled="(isPlaying && !isQuestMode) || (isQuestMode && gridSize <= grid.count)"
           @click="emit('grid', grid.count)"
         >
           <span class="dashboard__grid-name" v-text="grid.name" />

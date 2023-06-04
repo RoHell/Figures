@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useStatus } from '../composables'
+
 interface Props {
   title?: string
 }
@@ -10,6 +12,11 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   (e: 'back'): void,
 }>()
+
+const {
+  // isCountdownMode,
+  gameMode,
+} = useStatus()
 
 </script>
 
@@ -30,8 +37,12 @@ const emit = defineEmits<{
           v-if="title"
           v-text="title"
         />
-        <span v-else>
-          Game<em><b>bit</b></em>
+        <span v-else class="logo">
+          <span class="logo__game">Game</span>
+          <em class="logo__bit">
+            <b>bit</b>
+            <span class="logo__bit-mode" v-text="gameMode"/>
+          </em>
         </span>
       </p>
     </slot>
@@ -81,4 +92,18 @@ const emit = defineEmits<{
       right: 0;
     }
   }
+
+.logo__bit {
+  position: relative;
+
+  &-mode {
+    position: absolute;
+    bottom: 0;
+    left: 30%;
+    font-size: x-small;
+    color: white;
+    font-weight: 900;
+    -webkit-text-stroke: 1px black;
+  }
+}
 </style>
