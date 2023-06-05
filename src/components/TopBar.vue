@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { useStatus } from '../composables'
 
+import { IconEnum } from '../types'
+
+import Icon from '../components/Icon.vue'
+
 interface Props {
   title?: string
 }
@@ -14,7 +18,7 @@ const emit = defineEmits<{
 }>()
 
 const {
-  // isCountdownMode,
+  isCountdownMode,
   gameMode,
 } = useStatus()
 
@@ -42,6 +46,12 @@ const {
           <em class="logo__bit">
             <b>bit</b>
             <span class="logo__bit-mode" v-text="gameMode"/>
+            <Icon
+              v-if="isCountdownMode"
+              :icon="IconEnum.timer"
+              size="1rem"
+              class="logo__bit-timer"
+            />
           </em>
         </span>
       </p>
@@ -103,7 +113,22 @@ const {
     font-size: x-small;
     color: white;
     font-weight: 900;
-    -webkit-text-stroke: 1px black;
+    text-shadow:
+    -1px -1px 0 #000,
+     0   -1px 0 #000,
+     1px -1px 0 #000,
+     1px  0   0 #000,
+     1px  1px 0 #000,
+     0    1px 0 #000,
+    -1px  1px 0 #000,
+    -1px  0   0 #000;
+  }
+
+  &-timer {
+    position: absolute;
+    color: white;
+    margin: 0.25rem;
+    top: 0;
   }
 }
 </style>

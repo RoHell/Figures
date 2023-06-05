@@ -29,6 +29,7 @@ export enum IconEnum {
   settings = 'settings',
   back = 'back',
   grid = 'grid',
+  timer = 'timer',
 }
 
 export enum GridSizeEnum {
