@@ -68,7 +68,6 @@ const handleMouseUp = () => {
     :class="{
       'grid--is-checking': isChecking,
       'grid--is-selecting-pieces': isSelectingPieces,
-      'grid--is-not-playing': !isPlaying,
     }"
     :style="style"
   >
@@ -113,13 +112,8 @@ const handleMouseUp = () => {
   }
 
   &--is-checking,
-  &--is-not-playing,
   &--is-selecting-pieces {
     pointer-events: none;
-  }
-
-  &--is-not-playing {
-    opacity: 0.5;
   }
 }
 </style>

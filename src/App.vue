@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   GridSizeEnum,
+  GameModeEnum,
   type CoordinatesInterface,
   type PieceInterface,
 } from './types'
@@ -69,6 +70,7 @@ const {
   isMenuOpen,
   isCountdownMode,
   countdownFrom,
+  gameMode,
 } = useStatus()
 
 const {
@@ -92,7 +94,7 @@ const handleStart = async() => {
   if (isQuestMode.value) {
     await setGridSize(quest.grid)
     await setPiecesCount(quest.pieces)
-    countdownFrom.value = piecesCount.value
+    countdownFrom.value = piecesCount.value + 1
   } else {
     countdownFrom.value = 5
   }
@@ -102,20 +104,23 @@ const handleStart = async() => {
   if (isCountdownMode.value) {
     await startCountdown()
 
-    if (isQuestMode.value) {
-      handleCheck(countdownFrom.value * 1000)
-    }
+    handleCheck(countdownFrom.value * 1000)
   }
 }
 
 const handleStop = () => {
   clearFields()
   isPlaying.value = false
+  isChecking.value = false
 }
 
 const checkResult = () => {
-  if (!playerFieldCoordinates.value || isPlayerCatched()) {
+  const isSchoolCountdownMode = !isQuestMode.value && isCountdownMode.value
+  if (!playerFieldCoordinates.value || isPlayerCatched() || isSchoolCountdownMode) {
     handleStop()
+    if (isSchoolCountdownMode) {
+      setRandomPiecesList()
+    }
   } else {
     clearFields()
     if (isQuestMode.value) {
@@ -180,17 +185,51 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
 
 const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
-const setGrid = (count: GridSizeEnum) => {
-  if (isQuestMode.value) {
-    quest.grid = INITIAL_GRID_SIZE
+const setGrid = async(count: GridSizeEnum) => {
+  if (isQuestMode.value && !isCountdownMode.value) {
+    quest.grid = count
     quest.pieces = INITIAL_PIECES_COUNT
     handleStart()
   } else {
-    setGridSize(count)
+    await clearFields()
+    await setGridSize(count)
+
     if (piecesCount.value > maxPiecesCount.value) {
       setPiecesCount(maxPiecesCount.value)
     }
+
+    if (isPlaying.value) {
+      setRandomPiecesList()
+    }
   }
+}
+
+const setPieces = async(count: number) => {
+  if (isQuestMode.value && !isCountdownMode.value) {
+    quest.pieces = count
+    handleStart()
+  } else {
+    await clearFields()
+    await setPiecesCount(count)
+
+    if (isPlaying.value) {
+      setRandomPiecesList()
+    }
+  }
+}
+
+const handleGameModeChange = async(mode: GameModeEnum) => {
+  if (mode === gameMode.value) { return }
+
+  isPlaying.value = false
+  isChecking.value = false
+
+  await clearFields()
+  quest.grid = INITIAL_GRID_SIZE
+  quest.pieces = INITIAL_PIECES_COUNT
+  await setGridSize(quest.grid)
+  await setPiecesCount(quest.pieces)
+  gameMode.value = mode
 }
 </script>
 
@@ -198,15 +237,6 @@ const setGrid = (count: GridSizeEnum) => {
   <div class="app">
     <div class="app__panel">
       <TopBar>
-        <template #left>
-          <button
-            v-if="isPlaying"
-            type="button"
-            @click="handleStop"
-          >
-            <Icon :icon="IconEnum.back" size="2rem"/>
-          </button>
-        </template>
         <template #right>
           <button
             type="button"
@@ -219,13 +249,14 @@ const setGrid = (count: GridSizeEnum) => {
 
       <Dashboard
         @grid="setGrid"
-        @pieces="setPiecesCount"
+        @pieces="setPieces"
       />
 
       <div class="app__controls">
         <BottomBar
           @start="handleStart"
           @check="handleCheck"
+          @stop="handleStop"
         />
         <ProgressBar
           v-if="isCountdownMode"
@@ -239,6 +270,7 @@ const setGrid = (count: GridSizeEnum) => {
           title="Menu"
           class="app__menu"
           @close="isMenuOpen = false"
+          @game-mode="handleGameModeChange"
         />
       </Transition>
 

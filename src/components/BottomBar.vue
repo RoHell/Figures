@@ -7,7 +7,7 @@ import {
 const emit = defineEmits<{
   (e: 'start'): void,
   (e: 'check'): void,
-  (e: 'back'): void,
+  (e: 'stop'): void,
 }>()
 
 const { isPlaying, isSelectingPieces, isChecking } = useStatus()
@@ -22,10 +22,16 @@ const { playerFieldCoordinates } = useCoordinates()
     </div>
     <div class="bottom-bar__center">
       <button
-        v-if="isPlaying"
+        v-if="isChecking || (isPlaying && !playerFieldCoordinates)"
+        type="button"
+        class="bottom-bar__stop"
+        v-text="'stop'"
+        @click="emit('stop')"
+      />
+      <button
+        v-else-if="isPlaying"
         type="button"
         class="bottom-bar__check"
-        :disabled="!playerFieldCoordinates || isChecking"
         v-text="'check'"
         @click="emit('check')"
       />
@@ -55,7 +61,8 @@ const { playerFieldCoordinates } = useCoordinates()
     width: 100%;
 
     &__start,
-    &__check {
+    &__check,
+    &__stop {
       text-transform: uppercase;
       background-color: transparent;
       font-size: 1rem;
@@ -80,19 +87,6 @@ const { playerFieldCoordinates } = useCoordinates()
     &__left,
     &__right {
       flex: 1;
-    }
-
-    &__grid,
-    &__pieces,
-    &__back {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-      background-color: transparent;
-      outline: none;
     }
   }
 </style>

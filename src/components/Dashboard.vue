@@ -20,8 +20,16 @@ const emit = defineEmits<{
 
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
-const { isPlaying } = useStatus()
+const { isChecking, isPlaying } = useStatus()
 const { isQuestMode } = useQuest()
+
+const disableGrid = (count: GridSizeEnum) => {
+  return isChecking.value || (isQuestMode.value && count > gridSize.value)
+}
+
+const disablePieces = (count: number) => {
+  return isChecking.value || (isQuestMode.value && count > piecesCount.value)
+}
 
 </script>
 
@@ -36,7 +44,7 @@ const { isQuestMode } = useQuest()
           :class="{
             'dashboard__matrix--active': gridSize === grid.count
           }"
-          :disabled="(isPlaying && !isQuestMode) || (isQuestMode && gridSize <= grid.count)"
+          :disabled="disableGrid(grid.count)"
           @click="emit('grid', grid.count)"
         >
           <span class="dashboard__grid-name" v-text="grid.name" />
@@ -56,7 +64,7 @@ const { isQuestMode } = useQuest()
           :class="{
             'dashboard__pieces--active': count <= piecesCount
           }"
-          :disabled="isPlaying"
+          :disabled="disablePieces(count)"
           @click="emit('pieces', count)"
         >
           <Icon :icon="IconEnum.pawn"/>

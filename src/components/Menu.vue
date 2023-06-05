@@ -10,6 +10,7 @@ import { useStatus } from '../composables'
 
 const emit = defineEmits<{
   (e: 'close'): void,
+  (e: 'game-mode', mode: GameModeEnum): void,
 }>()
 
 const { isCountdownMode, countdownFrom, gameMode } = useStatus()
@@ -31,13 +32,15 @@ const countdownFromModel = computed({
 const gameModeModel = computed({
   get: (): GameModeEnum => gameMode.value,
   set: (value: GameModeEnum) => {
-    gameMode.value = value
+    emit('game-mode', value)
   }
 })
 
 const validateTimingValue = (event: Event) => {
   const target = event.target as HTMLInputElement
-  let seconds = Number(target.value)
+
+  const seconds = Number(target.value)
+
   if (seconds > 999) {
     countdownFrom.value = 999
   } else if (seconds < 1) {

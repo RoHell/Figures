@@ -7,8 +7,8 @@ import { useStatus, usePieces } from '.'
 const { countdownFrom, gameMode } = useStatus()
 const { piecesCount } = usePieces()
 
-const INITIAL_COUNTDOWN_VALUE = 1
-const countdownProgress = ref(INITIAL_COUNTDOWN_VALUE)
+const INITIAL_COUNTDOWN_VALUE: number = 1
+const countdownProgress = ref<number>(INITIAL_COUNTDOWN_VALUE)
 
 export default () => {
   const INTERVAL = 10
@@ -18,7 +18,7 @@ export default () => {
 
   const countdownTimer = () => {
     if (gameMode.value === GameModeEnum.quest) {
-      countdownFrom.value = piecesCount.value
+      countdownFrom.value = piecesCount.value + 1
     }
     const progressDecrement = INTERVAL / (countdownFrom.value * 1000)
 
@@ -49,6 +49,6 @@ export default () => {
     stopCountdown,
     resetProgress,
     countdownProgress,
-    isCountdownOn
+    isCountdownOn,
   }
 }
