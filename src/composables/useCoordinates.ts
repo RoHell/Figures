@@ -14,7 +14,7 @@ const allPiecesMovesCoordinates = ref<CoordinatesInterface[]>([])
 const playerFieldCoordinates = ref<CoordinatesInterface | null>(null)
 
 export default () => {
-const { gridSize } = useGrid()
+  const { gridSize } = useGrid()
 
   const offset = computed((): number[] => arrayFromLength(gridSize.value - 1))
 

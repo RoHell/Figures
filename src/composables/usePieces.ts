@@ -102,6 +102,7 @@ export default () => {
       piece.field?.classList.remove('grid__field--piece')
       piece.field.innerHTML = ''
     })
+    randomPiecesList.value = []
   }
 
   const getRandomPieceName = (): PieceEnum => Object.values(PieceEnum)[getRandomInt(Object.values(PieceEnum).length)]
