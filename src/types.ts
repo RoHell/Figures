@@ -10,6 +10,11 @@ export interface PieceInterface {
   element: Element
 }
 
+export interface PieceMovesCoordinates {
+  origin: CoordinatesInterface,
+  movesCoordinates: CoordinatesInterface[],
+}
+
 export enum PieceEnum {
   bishop = 'bishop',
   rook = 'rook',

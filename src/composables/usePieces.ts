@@ -4,12 +4,16 @@ import {
   IconEnum,
   PieceEnum,
   type PieceInterface,
+  type CoordinatesInterface,
+  type PieceMovesCoordinates,
 } from '../types'
 
-import useGrid from './useGrid'
-import useCoordinates from './useCoordinates'
-import useMarkedFields from './useMarkedFields'
-import { useStatus } from '../composables'
+import {
+  useStatus,
+  useGrid,
+  useCoordinates,
+  useMarkedFields,
+} from '../composables'
 
 import { getRandomInt, arrayFromLength } from '../utils'
 
@@ -30,6 +34,10 @@ export default () => {
   const {
     setPieceMovesCoordinates,
     isCoordinatesTaken,
+    playerFieldCoordinates,
+    piecesMovesCoordinates,
+    clearPiecesMovesCoordinates,
+    isSameCoordinates,
   } = useCoordinates()
 
   const {
@@ -41,6 +49,7 @@ export default () => {
   
   const randomPiecesList = ref<PieceInterface[]>([])
   const selectedPiece = ref<PieceInterface>()
+  const killerPieces = ref<PieceMovesCoordinates[]>([])
 
   const setRandomPiecesList = async () => {
     isSelectingPieces.value = true
@@ -72,7 +81,31 @@ export default () => {
     }
   }
 
+  const markKillerField = () => {
+    killerPieces.value = [...piecesMovesCoordinates.value]
+      .filter((pieceCoords) => {
+        return pieceCoords.movesCoordinates.some((pieceMovesCoordinates: CoordinatesInterface) => {
+          return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
+        })
+    })
+
+    killerPieces.value.forEach((piece: any) => {
+      const field = getGridElement(piece.origin)
+      field.classList.add('grid__field--killer')
+    })
+  }
+
+  const clearKillerField = () => {
+    killerPieces.value.forEach((piece: any) => {
+      const field = getGridElement(piece.origin)
+      field.classList.remove('grid__field--killer')
+    })
+    killerPieces.value = []
+    clearPiecesMovesCoordinates()
+  }
+
   const positionPieces = async() => {
+    
     randomPiecesList.value?.forEach((piece: PieceInterface) => {
       const { field, element, name } = piece
       if (field && element) {
@@ -87,6 +120,7 @@ export default () => {
     if (!hasEmptyField.value || (hasEmptyField.value && !hasMarkedField.value)) {
       clearMarkedFields()
       await clearRandomPiecesList()
+      await clearKillerField()
       await setRandomPiecesList()
     } else {
       isSelectingPieces.value = false
@@ -134,5 +168,7 @@ export default () => {
     clearRandomPiecesList,
     getPieceElement,
     setPiecesCount,
+    markKillerField,
+    clearKillerField,
   }
 }

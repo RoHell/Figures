@@ -44,6 +44,8 @@ const {
   setPiecesCount,
   maxPiecesCount,
   INITIAL_PIECES_COUNT,
+  markKillerField,
+  clearKillerField,
 } = usePieces()
 
 const {
@@ -148,6 +150,7 @@ const handleCheck = (timeout: number = 0) => {
   markFieldsTimeout = setTimeout(() => {
     markFields()
     checkGameResult()
+    markKillerField()
   }, timeout)
 }
 
@@ -157,6 +160,7 @@ const checkGameResult = () => {
 
   checkResultTimeout = setTimeout(() => {
     checkResult()
+    clearKillerField()
     isChecking.value = false
   }, 3000)
 }

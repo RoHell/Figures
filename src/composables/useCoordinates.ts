@@ -4,14 +4,18 @@ import {
   IconEnum,
   type CoordinatesInterface,
   type PieceInterface,
+  type PieceMovesCoordinates,
 } from '../types'
 
 import { arrayFromLength } from '../utils'
 
-import useGrid from './useGrid'
+import {
+  useGrid,
+} from '../composables'
 
 const allPiecesMovesCoordinates = ref<CoordinatesInterface[]>([])
 const playerFieldCoordinates = ref<CoordinatesInterface | null>(null)
+const piecesMovesCoordinates = ref<PieceMovesCoordinates[]>([])
 
 export default () => {
   const { gridSize } = useGrid()
@@ -35,7 +39,8 @@ export default () => {
     }
   }
 
-  const setBishopMovesCoordinates = ({ x, y }: CoordinatesInterface) => {
+  const setBishopMovesCoordinates = (coordinates: CoordinatesInterface) => {
+    const { x, y } = coordinates
     const movesCoordinates = offset.value?.reduce(
       (coords: CoordinatesInterface[], offset: number) => {
         coords = [
@@ -49,10 +54,11 @@ export default () => {
       },
       []
     )
-    setAllPieceMovesCoordinates(movesCoordinates)
+    setAllPieceMovesCoordinates({ origin: coordinates, movesCoordinates })
   }
   
-  const setRookMovesCoordinates = ({ x, y }: CoordinatesInterface) => {
+  const setRookMovesCoordinates = (coordinates: CoordinatesInterface) => {
+    const { x, y } = coordinates
     const movesCoordinates = offset.value?.reduce(
       (coords: CoordinatesInterface[], offset: number) => {
         coords = [
@@ -66,7 +72,7 @@ export default () => {
       },
       []
     )
-    setAllPieceMovesCoordinates(movesCoordinates)
+    setAllPieceMovesCoordinates({ origin: coordinates, movesCoordinates })
   }
   
   const setQueenMovesCoordinates = (coordinates: CoordinatesInterface) => {
@@ -74,7 +80,8 @@ export default () => {
     setBishopMovesCoordinates(coordinates)
   }
   
-  const setKnightMovesCoordinates = ({ x, y }: CoordinatesInterface) => {
+  const setKnightMovesCoordinates = (coordinates: CoordinatesInterface) => {
+    const { x, y } = coordinates
     const movesCoordinates = [
       { x: x + 2, y: y - 1 },
       { x: x + 2, y: y + 1 },
@@ -85,14 +92,7 @@ export default () => {
       { x: x - 1, y: y - 2 },
       { x: x - 1, y: y + 2 },
     ]
-    setAllPieceMovesCoordinates(movesCoordinates)
-  }
-  
-  const setAllPieceMovesCoordinates = (movesCoordinates: CoordinatesInterface[]) => {
-    allPiecesMovesCoordinates.value = [
-      ...allPiecesMovesCoordinates.value,
-      ...movesCoordinates,
-    ]
+    setAllPieceMovesCoordinates({ origin: coordinates, movesCoordinates })
   }
 
   const isCoordinatesTaken = (piecesToCheck: PieceInterface[] = [], coord: CoordinatesInterface) => {
@@ -103,11 +103,32 @@ export default () => {
 
   const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA.x === elementB.x) && (elementA.y === elementB.y)
 
+  const setAllPieceMovesCoordinates = ({ origin, movesCoordinates }: PieceMovesCoordinates) => {
+    piecesMovesCoordinates.value = [
+      ...piecesMovesCoordinates.value,
+      {
+        origin,
+        movesCoordinates,
+      }
+    ]
+
+    allPiecesMovesCoordinates.value = [
+      ...allPiecesMovesCoordinates.value,
+      ...movesCoordinates,
+    ]
+  }
+
+  const clearPiecesMovesCoordinates = () => {
+    piecesMovesCoordinates.value = []
+  }
+
   return {
     setPieceMovesCoordinates,
     allPiecesMovesCoordinates,
     playerFieldCoordinates,
     isCoordinatesTaken,
     isSameCoordinates,
+    piecesMovesCoordinates,
+    clearPiecesMovesCoordinates,
   }
 }

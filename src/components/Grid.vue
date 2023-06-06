@@ -9,14 +9,6 @@ const { isPlaying, isChecking, isSelectingPieces } = useStatus()
 
 const { gridSize } = useGrid()
 
-interface Props {
-  cols?: number
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  cols: 4,
-})
-
 const emit = defineEmits<{
   (e: 'field', value: CoordinatesInterface): void
   (e: 'down', value: CoordinatesInterface): void
@@ -66,22 +58,25 @@ const handleMouseUp = () => {
   <div
     class="grid"
     :class="{
-      'grid--is-checking': isChecking,
-      'grid--is-selecting-pieces': isSelectingPieces,
+      'grid--disabled': isChecking || isSelectingPieces || !isPlaying,
     }"
     :style="style"
   >
     <div
       v-for="(_, index) in fieldsCount"
-      class="grid__field"
-      :data-x="getColumnIndex(index)"
-      :data-y="getRowIndex(index)"
-      @click="handleFieldSelect(index)"
-      @mousedown="handleMouseDown(index)"
-      @mouseup="handleMouseUp()"
-      @touchstart="handleMouseDown(index)"
-      @touchend="handleMouseUp()"
-    />
+      class="grid__field-wrapper"
+    >
+      <div
+        class="grid__field"
+        :data-x="getColumnIndex(index)"
+        :data-y="getRowIndex(index)"
+        @click="handleFieldSelect(index)"
+        @mousedown="handleMouseDown(index)"
+        @mouseup="handleMouseUp()"
+        @touchstart="handleMouseDown(index)"
+        @touchend="handleMouseUp()"
+      />
+    </div>
   </div>
 </template>
 
@@ -91,29 +86,57 @@ const handleMouseUp = () => {
   grid-template-columns: repeat(var(--cols), minmax(1rem, 1fr));
   grid-template-rows: repeat(var(--cols), minmax(1rem, 1fr));
 
-  &__field {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  &__field-wrapper {
     border: 1px solid white;
     padding: 0.5rem;
-    aspect-ratio: 1;
     cursor: pointer;
 
-    &--marked {
+    &:has(.grid__field--marked) {
       background-color: red;
       pointer-events: none;
     }
-
-    &--player {
+    
+    &:has(.grid__field--player) {
       background-color: lightslategray;
       pointer-events: none;
     }
   }
 
-  &--is-checking,
-  &--is-selecting-pieces {
+  &__field {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+
+    &--killer {
+      pointer-events: none;
+      animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
+      perspective: 1000px;
+    }
+  }
+
+  &--disabled {
     pointer-events: none;
+  }
+}
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
   }
 }
 </style>

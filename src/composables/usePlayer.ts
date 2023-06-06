@@ -26,12 +26,13 @@ export default () => {
 
   const isPlayerCatched = (): boolean => {
     if (!playerFieldCoordinates.value) { return false }
+
+    
   
-    return (
-      [...allPiecesMovesCoordinates.value].some((pieceMovesCoordinates: CoordinatesInterface): boolean => {
+    return [...allPiecesMovesCoordinates.value]
+      .some((pieceMovesCoordinates: CoordinatesInterface): boolean => {
         return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
       }) || false
-    )
   }
 
   const clearPlayerField = () => {
@@ -58,5 +59,6 @@ export default () => {
     isPlayerCatched,
     clearPlayerField,
     setPlayerField,
+    playerField,
   }
 }
