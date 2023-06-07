@@ -101,7 +101,7 @@ export default () => {
       .some(({ coordinates: { x, y } }) => x === coord?.x && y === coord?.y)
   }
 
-  const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA.x === elementB.x) && (elementA.y === elementB.y)
+  const isSameCoordinates = (elementA: CoordinatesInterface, elementB: CoordinatesInterface): boolean => (elementA?.x === elementB?.x) && (elementA?.y === elementB?.y)
 
   const setAllPieceMovesCoordinates = ({ origin, movesCoordinates }: PieceMovesCoordinates) => {
     piecesMovesCoordinates.value = [

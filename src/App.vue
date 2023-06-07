@@ -97,8 +97,6 @@ const handleStart = async() => {
     await setGridSize(quest.grid)
     await setPiecesCount(quest.pieces)
     countdownFrom.value = piecesCount.value + 1
-  } else {
-    countdownFrom.value = 5
   }
 
   await setRandomPiecesList()
