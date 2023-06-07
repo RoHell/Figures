@@ -33,7 +33,9 @@ export default () => {
         return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
       }) || false
 
+    if (isPlayerCaptured.value) {
       playerField.value?.classList.add('grid__field--killed')
+    }
   }
 
   const clearPlayerField = () => {
