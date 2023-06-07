@@ -77,6 +77,7 @@ const {
 } = useStatus()
 
 const {
+  INITIAL_COUNTDOWN_FROM_VALUE,
   countdownProgress,
   startCountdown,
   stopCountdown,
@@ -227,6 +228,7 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
   await clearFields()
   quest.grid = INITIAL_GRID_SIZE
   quest.pieces = INITIAL_PIECES_COUNT
+  countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
   await setGridSize(quest.grid)
   await setPiecesCount(quest.pieces)
   gameMode.value = mode

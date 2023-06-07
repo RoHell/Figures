@@ -7,7 +7,7 @@ const isChecking = ref(false)
 const isMenuOpen = ref(false)
 const isSelectingPieces = ref(false)
 const isCountdownMode = ref(false)
-const countdownFrom = ref(5)
+const countdownFrom = ref()
 const gameMode = ref(GameModeEnum.school)
 
 export default () => {

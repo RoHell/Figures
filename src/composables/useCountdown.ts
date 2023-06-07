@@ -8,7 +8,9 @@ const { countdownFrom, gameMode } = useStatus()
 const { piecesCount } = usePieces()
 
 const INITIAL_COUNTDOWN_VALUE: number = 1
+const INITIAL_COUNTDOWN_FROM_VALUE: number = 5
 const countdownProgress = ref<number>(INITIAL_COUNTDOWN_VALUE)
+countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
 
 export default () => {
   const INTERVAL = 10
@@ -50,5 +52,6 @@ export default () => {
     resetProgress,
     countdownProgress,
     isCountdownOn,
+    INITIAL_COUNTDOWN_FROM_VALUE,
   }
 }
