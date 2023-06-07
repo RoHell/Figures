@@ -61,7 +61,8 @@ const {
 } = useMarkedFields()
 
 const {
-  isPlayerCatched,
+  checkPlayerStatus,
+  isPlayerCaptured,
   setPlayerField,
   clearPlayerField,
 } = usePlayer()
@@ -114,15 +115,10 @@ const handleStop = () => {
   isChecking.value = false
 }
 
-const checkResult = () => {
-  const isSchoolCountdownMode = !isQuestMode.value && isCountdownMode.value
-  if (!playerFieldCoordinates.value || isPlayerCatched() || isSchoolCountdownMode) {
+const checkResult = async() => {
+  if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
     handleStop()
-    if (isSchoolCountdownMode) {
-      setRandomPiecesList()
-    }
   } else {
-    clearFields()
     if (isQuestMode.value) {
       if (quest.pieces === maxPiecesCount.value) {
         quest.grid = isLastGrid.value ? INITIAL_GRID_SIZE : quest.grid + 1
@@ -153,6 +149,8 @@ const handleCheck = (timeout: number = 0) => {
 }
 
 const checkGameResult = () => {
+  checkPlayerStatus()
+  const timeout = isPlayerCaptured.value ? 4000 : 3000
   isChecking.value = true
   clearTimeout(checkResultTimeout)
 
@@ -160,7 +158,7 @@ const checkGameResult = () => {
     checkResult()
     clearKillerField()
     isChecking.value = false
-  }, 3000)
+  }, timeout)
 }
 
 const clearFields = () => {
@@ -193,7 +191,7 @@ const setGrid = async(count: GridSizeEnum) => {
     quest.pieces = INITIAL_PIECES_COUNT
     handleStart()
   } else {
-    await clearFields()
+    await handleStop()
     await setGridSize(count)
 
     if (piecesCount.value > maxPiecesCount.value) {
@@ -211,7 +209,7 @@ const setPieces = async(count: number) => {
     quest.pieces = count
     handleStart()
   } else {
-    await clearFields()
+    await handleStop()
     await setPiecesCount(count)
 
     if (isPlaying.value) {

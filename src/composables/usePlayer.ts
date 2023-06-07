@@ -10,6 +10,7 @@ import useGrid from './useGrid'
 import usePieces from './usePieces'
 
 const PLAYER_FIGURE_NAME = IconEnum.pawn
+const isPlayerCaptured = ref(false)
 
 export default () => {
   const {
@@ -24,19 +25,20 @@ export default () => {
 
   const playerField = ref<HTMLElement | null>(null)
 
-  const isPlayerCatched = (): boolean => {
+  const checkPlayerStatus = () => {
     if (!playerFieldCoordinates.value) { return false }
 
-    
-  
-    return [...allPiecesMovesCoordinates.value]
+    isPlayerCaptured.value = [...allPiecesMovesCoordinates.value]
       .some((pieceMovesCoordinates: CoordinatesInterface): boolean => {
         return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
       }) || false
+
+      playerField.value?.classList.add('grid__field--killed')
   }
 
   const clearPlayerField = () => {
     if (playerField.value) {
+      playerField.value?.classList.remove('grid__field--killed')
       playerField.value.innerHTML = ''
       playerFieldCoordinates.value = null
       playerField.value = null
@@ -56,9 +58,10 @@ export default () => {
   }
 
   return {
-    isPlayerCatched,
+    checkPlayerStatus,
     clearPlayerField,
     setPlayerField,
     playerField,
+    isPlayerCaptured,
   }
 }

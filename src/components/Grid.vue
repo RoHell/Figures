@@ -107,13 +107,22 @@ const handleMouseUp = () => {
     align-items: center;
     justify-content: center;
     aspect-ratio: 1;
+    transition: all 1s ease-in-out 1s;
 
-    &--killer {
+    &--killer, &--killed {
       pointer-events: none;
-      animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
       transform: translate3d(0, 0, 0);
       backface-visibility: hidden;
       perspective: 1000px;
+    }
+
+    &--killer {
+      animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    &--killed {
+      animation: play-dead 5s cubic-bezier(.4,.1,.2,.97) both;
+      animation-delay: 0.25s;
     }
   }
 
@@ -137,6 +146,37 @@ const handleMouseUp = () => {
 
   40%, 60% {
     transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes play-dead {
+  1% {
+    transform: rotateZ(-15deg);
+  }
+  2% {
+    transform: translate3d(-10%, 0, 0) rotateZ(-15deg);
+  }
+  3% {
+    transform: translate3d(-15%, 0, 0) rotateZ(-12deg);
+  }
+
+  10% {
+    transform: translate3d(0, 0, 0)  rotateZ(90deg);
+  }
+
+  12% {
+    transform: translate3d(0, 25%, 0) rotateZ(90deg);
+    opacity: 1;
+  }
+
+  30% {
+    transform: translate3d(0, 25%, 0) rotateZ(90deg);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate3d(0, -400px, 0) rotateZ(0);
+    opacity: 0;
   }
 }
 </style>

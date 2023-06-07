@@ -81,31 +81,7 @@ export default () => {
     }
   }
 
-  const markKillerField = () => {
-    killerPieces.value = [...piecesMovesCoordinates.value]
-      .filter((pieceCoords) => {
-        return pieceCoords.movesCoordinates.some((pieceMovesCoordinates: CoordinatesInterface) => {
-          return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
-        })
-    })
-
-    killerPieces.value.forEach((piece: any) => {
-      const field = getGridElement(piece.origin)
-      field.classList.add('grid__field--killer')
-    })
-  }
-
-  const clearKillerField = () => {
-    killerPieces.value.forEach((piece: any) => {
-      const field = getGridElement(piece.origin)
-      field.classList.remove('grid__field--killer')
-    })
-    killerPieces.value = []
-    clearPiecesMovesCoordinates()
-  }
-
   const positionPieces = async() => {
-    
     randomPiecesList.value?.forEach((piece: PieceInterface) => {
       const { field, element, name } = piece
       if (field && element) {
@@ -155,6 +131,29 @@ export default () => {
   const maxPiecesCount = computed((): number => Math.floor(gridSize.value*gridSize.value / 3))
 
   const piecesRange = computed((): number[] => arrayFromLength(maxPiecesCount.value))
+
+  const markKillerField = () => {
+    killerPieces.value = [...piecesMovesCoordinates.value]
+      .filter((pieceCoords) => {
+        return pieceCoords.movesCoordinates.some((pieceMovesCoordinates: CoordinatesInterface) => {
+          return isSameCoordinates(pieceMovesCoordinates, playerFieldCoordinates.value as CoordinatesInterface)
+        })
+    })
+
+    killerPieces.value.forEach((piece: any) => {
+      const field = getGridElement(piece.origin)
+      field?.classList.add('grid__field--killer')
+    })
+  }
+
+  const clearKillerField = () => {
+    killerPieces.value.forEach((piece: any) => {
+      const field = getGridElement(piece.origin)
+      field?.classList.remove('grid__field--killer')
+    })
+    killerPieces.value = []
+    clearPiecesMovesCoordinates()
+  }
 
   return {
     INITIAL_PIECES_COUNT,
