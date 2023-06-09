@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import {
   useStatus,
   useCoordinates,
@@ -10,8 +11,18 @@ const emit = defineEmits<{
   (e: 'stop'): void,
 }>()
 
-const { isPlaying, isSelectingPieces, isChecking } = useStatus()
+const { isPlaying, isStartingGame, isChecking } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
+
+const handeleStart = () => {
+  isStartingGame.value = true
+  setTimeout(() => {
+    emit('start')
+    if (isPlaying.value) {
+      isStartingGame.value = false
+    }
+  }, 0)
+}
 
 </script>
 
@@ -38,8 +49,8 @@ const { playerFieldCoordinates } = useCoordinates()
       <button
         v-else
         type="button"
-        :disabled="isSelectingPieces"
-        @click="emit('start')"
+        :disabled="isStartingGame"
+        @click="handeleStart"
         class="bottom-bar__start"
         v-text="'start'"
       />

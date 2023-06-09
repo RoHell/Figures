@@ -5,7 +5,7 @@ import { type CoordinatesInterface } from '../types'
 
 import { useStatus, useGrid } from '../composables'
 
-const { isPlaying, isChecking, isSelectingPieces } = useStatus()
+const { isPlaying, isChecking, isStartingGame } = useStatus()
 
 const { gridSize } = useGrid()
 
@@ -58,7 +58,7 @@ const handleMouseUp = () => {
   <div
     class="grid"
     :class="{
-      'grid--disabled': isChecking || isSelectingPieces || !isPlaying,
+      'grid--disabled': isChecking || isStartingGame || !isPlaying,
     }"
     :style="style"
   >

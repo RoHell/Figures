@@ -9,7 +9,6 @@ import {
 } from '../types'
 
 import {
-  useStatus,
   useGrid,
   useCoordinates,
   useMarkedFields,
@@ -44,15 +43,12 @@ export default () => {
     setMarkedFields,
     clearMarkedFields,
   } = useMarkedFields()
-
-  const { isSelectingPieces } = useStatus()
   
   const randomPiecesList = ref<PieceInterface[]>([])
   const selectedPiece = ref<PieceInterface>()
   const killerPieces = ref<PieceMovesCoordinates[]>([])
 
   const setRandomPiecesList = async () => {
-    isSelectingPieces.value = true
     randomPiecesList.value = [...Array(piecesCount.value).keys()]
       .reduce((pieces: PieceInterface[], _) => [...pieces, getRandomPiece(pieces)] as PieceInterface[], [])
       .filter(Boolean)
@@ -98,8 +94,6 @@ export default () => {
       await clearRandomPiecesList()
       await clearKillerField()
       await setRandomPiecesList()
-    } else {
-      isSelectingPieces.value = false
     }
   }
 
@@ -162,7 +156,6 @@ export default () => {
     selectedPiece,
     maxPiecesCount,
     piecesRange,
-    isSelectingPieces,
     setRandomPiecesList,
     clearRandomPiecesList,
     getPieceElement,
