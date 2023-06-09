@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { IconEnum } from '../types'
+
+import Icon from '../components/Icon.vue'
+import BaseButton from '../components/BaseButton.vue'
+
 import {
   useStatus,
   useCoordinates,
 } from '../composables'
+import { computed } from 'vue';
 
 const emit = defineEmits<{
   (e: 'start'): void,
@@ -11,7 +16,7 @@ const emit = defineEmits<{
   (e: 'stop'): void,
 }>()
 
-const { isPlaying, isStartingGame, isChecking } = useStatus()
+const { isPlaying, isStartingGame, isChecking, isCountdownMode } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
 
 const handeleStart = () => {
@@ -24,40 +29,43 @@ const handeleStart = () => {
   }, 0)
 }
 
+const showStopButton = computed(() => isChecking.value || (isPlaying.value && !playerFieldCoordinates.value))
+
+const label = computed(() => {
+  if (showStopButton.value) {
+    return 'stop'
+  } else if (isPlaying.value) {
+    return 'check'
+  }
+  return 'start'
+})
+
+const handleClick = () => {
+  if (showStopButton.value) {
+    emit('stop')
+  } else if (isPlaying.value) {
+    emit('check')
+  } else {
+    handeleStart()
+  }
+}
+
 </script>
 
 <template>
   <div class="bottom-bar">
-    <div class="bottom-bar__left">
-      <slot name="left" />
-    </div>
-    <div class="bottom-bar__center">
-      <button
-        v-if="isChecking || (isPlaying && !playerFieldCoordinates)"
-        type="button"
-        class="button-base"
-        v-text="'stop'"
-        @click="emit('stop')"
+    <BaseButton
+      class="bottom-bar__center"
+      :label="label"
+      @click="handleClick"
+    >
+      <span v-text="label" />
+      <Icon
+        v-if="isCountdownMode"
+        :icon="IconEnum.timer"
+        :size="24"
       />
-      <button
-        v-else-if="isPlaying"
-        type="button"
-        class="button-base"
-        v-text="'check'"
-        @click="emit('check')"
-      />
-      <button
-        v-else
-        type="button"
-        :disabled="isStartingGame"
-        @click="handeleStart"
-        class="button-base"
-        v-text="'start'"
-      />
-    </div>
-    <div class="bottom-bar__right">
-      <slot name="right" />
-    </div>
+    </BaseButton>
   </div>
 </template>
 
@@ -71,21 +79,8 @@ const handeleStart = () => {
     gap: 1rem;
     width: 100%;
 
-    &__start,
-    &__check,
-    &__stop {
-      width: 5.25rem;
-      border: 2px solid;
-    }
-
-    &__left,
-    &__right,
     &__center {
       margin: auto;
-    }
-    
-    &__left,
-    &__right {
       flex: 1;
     }
   }

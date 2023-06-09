@@ -5,6 +5,7 @@ import { IconEnum, GameModeEnum } from '../types'
 
 import Icon from '../components/Icon.vue'
 import TopBar from '../components/TopBar.vue'
+import BaseButton from '../components/BaseButton.vue'
 
 import { useStatus } from '../composables'
 
@@ -108,12 +109,13 @@ const validateTimingValue = (event: Event) => {
         </template>
       </div>
     </div>
-
-    <button
-      class="menu__ok button-base"
-      v-text="'ok'"
+    
+    <BaseButton
+      class="menu__ok"
+      label="ok"
       @click="emit('close')"
     />
+    
   </div>
 </template>
 

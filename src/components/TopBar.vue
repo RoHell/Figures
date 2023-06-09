@@ -9,7 +9,7 @@ interface Props {
   title?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   title: '',
 })
 
@@ -85,18 +85,11 @@ const {
     &__left,
     &__right {
       position: absolute;
-      opacity: 0.7;
-      transition: opacity 0.2s;
       color: inherit;
-
-      &:hover {
-        opacity: 1;
-      }
     }
 
     &__left {
       left: 0;
-      
     }
 
     &__right {
