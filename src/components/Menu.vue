@@ -110,7 +110,7 @@ const validateTimingValue = (event: Event) => {
     </div>
 
     <button
-      class="menu__ok"
+      class="menu__ok button-base"
       v-text="'ok'"
       @click="emit('close')"
     />
@@ -124,7 +124,7 @@ const validateTimingValue = (event: Event) => {
     gap: 1rem;
     height: 100%;
     width: 100%;
-    background-color: slategray;
+    background-color: var(--active-background-color);
     padding: 0.5rem;
 
     &__content {
@@ -174,19 +174,7 @@ const validateTimingValue = (event: Event) => {
     }
 
     &__ok {
-      text-transform: uppercase;
-      background-color: transparent;
-      font-size: 1rem;
-      padding: 0.75rem;
-      width: 5.25rem;
-      border-radius: 0.25rem;
-      border: 2px solid white;
-      outline: none;
       margin: auto auto 0;
-      &:disabled {
-        border-color: rgba(white, 0.4);
-        pointer-events: none;
-      }
     }
   }
 

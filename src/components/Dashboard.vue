@@ -121,38 +121,23 @@ const disablePieces = (count: number) => {
   font-weight: 700;
   background-color: transparent;
   border: 1px solid;
-
-  &:disabled {
-    pointer-events: none;
-  }
 }
 
 .dashboard__matrix {
-  border-color: white;
   padding: 0.2rem;
-    
-  &:disabled {
-    border-color: rgba(white, 0.5);
-  }
 
   &--active {
-    background-color: slategray;
+    background-color: var(--active-background-color);
   }
 }
 
 .dashboard__pieces {
   border: none;
   padding: 0.25rem 0;
-  color: lightgray;
   border-radius: 0.25rem;
 
-  &:disabled {
-    opacity: 0.5;
-  }
-
   &--active {
-    color: white;
-    background-color: slategray;
+    background-color: var(--active-background-color);
   }
 }
 

@@ -35,14 +35,14 @@ const handeleStart = () => {
       <button
         v-if="isChecking || (isPlaying && !playerFieldCoordinates)"
         type="button"
-        class="bottom-bar__stop"
+        class="button-base"
         v-text="'stop'"
         @click="emit('stop')"
       />
       <button
         v-else-if="isPlaying"
         type="button"
-        class="bottom-bar__check"
+        class="button-base"
         v-text="'check'"
         @click="emit('check')"
       />
@@ -51,7 +51,7 @@ const handeleStart = () => {
         type="button"
         :disabled="isStartingGame"
         @click="handeleStart"
-        class="bottom-bar__start"
+        class="button-base"
         v-text="'start'"
       />
     </div>
@@ -74,19 +74,8 @@ const handeleStart = () => {
     &__start,
     &__check,
     &__stop {
-      text-transform: uppercase;
-      background-color: transparent;
-      font-size: 1rem;
-      padding: 0.75rem;
-      height: 100%;
       width: 5.25rem;
-      border-radius: 0.25rem;
-      border: 2px solid white;
-      outline: none;
-      &:disabled {
-        border-color: gray;
-        pointer-events: none;
-      }
+      border: 2px solid;
     }
 
     &__left,

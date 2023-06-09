@@ -43,9 +43,3 @@ const iconPath = {
     <path :d="iconPath[icon]" />
   </svg>
 </template>
-
-<style lang="scss" scoped>
-  svg {
-    width: fit-content;
-  }
-</style>

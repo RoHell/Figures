@@ -87,8 +87,8 @@ const handleMouseUp = () => {
   grid-template-rows: repeat(var(--cols), minmax(1rem, 1fr));
 
   &__field-wrapper {
-    border: 1px solid white;
-    padding: 0.5rem;
+    border: 1px solid;
+    margin: -0.5px;
     cursor: pointer;
 
     &:has(.grid__field--marked) {
@@ -108,6 +108,7 @@ const handleMouseUp = () => {
     justify-content: center;
     aspect-ratio: 1;
     transition: all 1s ease-in-out 1s;
+    padding: 5%;
 
     &--killer, &--killed {
       pointer-events: none;

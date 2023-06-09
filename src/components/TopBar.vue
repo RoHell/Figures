@@ -42,9 +42,9 @@ const {
           v-text="title"
         />
         <span v-else class="logo">
-          <span class="logo__game">Game</span>
+          Game
           <em class="logo__bit">
-            <b>bit</b>
+            bit
             <span class="logo__bit-mode" v-text="gameMode"/>
             <Icon
               v-if="isCountdownMode"
@@ -87,6 +87,7 @@ const {
       position: absolute;
       opacity: 0.7;
       transition: opacity 0.2s;
+      color: inherit;
 
       &:hover {
         opacity: 1;
@@ -103,32 +104,35 @@ const {
     }
   }
 
-.logo__bit {
-  position: relative;
-
-  &-mode {
-    position: absolute;
-    bottom: 0;
-    left: 30%;
-    font-size: x-small;
-    color: white;
+  .logo {
     font-weight: 900;
-    text-shadow:
-    -1px -1px 0 #000,
-     0   -1px 0 #000,
-     1px -1px 0 #000,
-     1px  0   0 #000,
-     1px  1px 0 #000,
-     0    1px 0 #000,
-    -1px  1px 0 #000,
-    -1px  0   0 #000;
-  }
 
-  &-timer {
-    position: absolute;
-    color: white;
-    margin: 0.25rem;
-    top: 0;
+    &__bit {
+      position: relative;
+      text-shadow: -3px 0 0 var(--background-color);
+      left: -10px;
+
+      &-mode {
+        position: absolute;
+        bottom: 0;
+        left: 30%;
+        font-size: x-small;
+        text-shadow:
+        -1px -1px 0 var(--background-color),
+        0   -1px 0 var(--background-color),
+        1px -1px 0 var(--background-color),
+        1px  0   0 var(--background-color),
+        1px  1px 0 var(--background-color),
+        0    1px 0 var(--background-color),
+        -1px  1px 0 var(--background-color),
+        -1px  0   0 var(--background-color);
+      }
+
+      &-timer {
+        position: absolute;
+        margin: 0.25rem;
+        top: 0;
+      }
+    }
   }
-}
 </style>

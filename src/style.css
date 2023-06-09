@@ -16,28 +16,12 @@
   --top-bar-height: 5rem;
   --bottom-bar-height: 3.75rem;
   --app-max-width: 50rem;
+  --active-background-color: slategray;
+  --background-color: #242424;
 }
 
 * {
   box-sizing: border-box;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 body {
@@ -55,16 +39,30 @@ h1 {
 }
 
 button {
-  padding: 0;
-  font-size: 1em;
+  text-transform: uppercase;
+  background-color: transparent;
+  font-size: 1rem;
   font-weight: 500;
   font-family: inherit;
-  background-color: transparent;
+  padding: 0;
   cursor: pointer;
   transition: border-color 0.25s;
   outline: none;
   text-transform: uppercase;
   border-color: transparent;
+  border-radius: 0.25rem;
+  color: inherit;
+}
+
+button:disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.button-base {
+  min-width: 10rem;
+  border: 2px solid;
+  padding: 0.75rem;
 }
 
 input {
@@ -83,12 +81,8 @@ input {
   :root {
     color: #213547;
     background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+    --active-background-color: lightgray;
+    --background-color: #ffffff;
   }
 }
 
