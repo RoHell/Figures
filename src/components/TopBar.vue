@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { useStatus } from '../composables'
 
-import { IconEnum } from '../types'
-
-import Icon from '../components/Icon.vue'
-
 interface Props {
   title?: string
 }
@@ -18,7 +14,6 @@ const emit = defineEmits<{
 }>()
 
 const {
-  isCountdownMode,
   gameMode,
 } = useStatus()
 
@@ -33,25 +28,13 @@ const {
       <slot name="left" />
     </div>
     <slot name="title">
-      <p
-        class="top-bar__title"
-        @click="emit('back')"
-      >
-        <span
-          v-if="title"
-          v-text="title"
-        />
+      <p class="top-bar__title" @click="emit('back')">
+        <span v-if="title" v-text="title" />
         <span v-else class="logo">
           Game
           <em class="logo__bit">
             bit
-            <span class="logo__bit-mode" v-text="gameMode"/>
-            <Icon
-              v-if="isCountdownMode"
-              :icon="IconEnum.timer"
-              size="1rem"
-              class="logo__bit-timer"
-            />
+            <span class="logo__bit-mode" v-text="gameMode" />
           </em>
         </span>
       </p>
@@ -119,12 +102,6 @@ const {
         0    1px 0 var(--background-color),
         -1px  1px 0 var(--background-color),
         -1px  0   0 var(--background-color);
-      }
-
-      &-timer {
-        position: absolute;
-        margin: 0.25rem;
-        top: 0;
       }
     }
   }

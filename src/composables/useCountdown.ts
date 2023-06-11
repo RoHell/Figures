@@ -38,6 +38,7 @@ export default () => {
   }
 
   const stopCountdown = () => {
+    resetProgress()
     clearInterval(interval)
     interval = undefined
   }

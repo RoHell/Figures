@@ -15,7 +15,6 @@ import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
 import Menu from './components/Menu.vue'
 import Icon from './components/Icon.vue'
-import ProgressBar from './components/ProgressBar.vue'
 
 import {
   useGrid,
@@ -78,10 +77,8 @@ const {
 
 const {
   INITIAL_COUNTDOWN_FROM_VALUE,
-  countdownProgress,
   startCountdown,
   stopCountdown,
-  resetProgress,
 } = useCountdown()
 
 const {
@@ -98,8 +95,8 @@ const handleStart = async() => {
   if (isQuestMode.value) {
     await setGridSize(quest.grid)
     await setPiecesCount(quest.pieces)
-    countdownFrom.value = piecesCount.value + 1
   }
+  countdownFrom.value = piecesCount.value + 1
 
   await setRandomPiecesList()
 
@@ -146,12 +143,13 @@ const handleCheck = (timeout: number = 0) => {
     markFields()
     checkGameResult()
     markKillerField()
+    stopCountdown()
   }, timeout)
 }
 
 const checkGameResult = () => {
   checkPlayerStatus()
-  const timeout = isPlayerCaptured.value ? 4000 : 3000
+  const timeout = isPlayerCaptured.value ? 4000 : 2000
   isChecking.value = true
   clearTimeout(checkResultTimeout)
 
@@ -163,7 +161,6 @@ const checkGameResult = () => {
 }
 
 const clearFields = () => {
-  resetProgress()
   stopCountdown()
   clearTimeout(checkResultTimeout)
   clearTimeout(markFieldsTimeout)
@@ -259,10 +256,6 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
           @start="handleStart"
           @check="handleCheck"
           @stop="handleStop"
-        />
-        <ProgressBar
-          v-if="isCountdownMode"
-          :progress="countdownProgress"
         />
       </div>
 

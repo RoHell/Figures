@@ -17,6 +17,7 @@ const emit = defineEmits<{
     type="button"
     class="base-button"
     @click="emit('click')"
+    v-bind="$attrs"
   >
     <slot>
       {{ label }}
@@ -30,17 +31,14 @@ const emit = defineEmits<{
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    gap: 1rem;
     border: 2px solid;
     min-width: 8rem;
     height: 3rem;
     padding: 0.75rem;
     border-radius: 0.25rem;
-
-    &__left,
-    &__right,
-    &__center {
-      margin: auto
+    
+    &:disabled {
+      opacity: 0.5;
     }
   }
 </style>

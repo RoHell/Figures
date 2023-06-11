@@ -107,14 +107,11 @@ const handleMouseUp = () => {
     align-items: center;
     justify-content: center;
     aspect-ratio: 1;
-    transition: all 1s ease-in-out 1s;
+    transition: all 1s ease-in-out;
     padding: 5%;
 
     &--killer, &--killed {
       pointer-events: none;
-      transform: translate3d(0, 0, 0);
-      backface-visibility: hidden;
-      perspective: 1000px;
     }
 
     &--killer {
@@ -129,55 +126,6 @@ const handleMouseUp = () => {
 
   &--disabled {
     pointer-events: none;
-  }
-}
-
-@keyframes shake {
-  10%, 90% {
-    transform: translate3d(-1px, 0, 0);
-  }
-  
-  20%, 80% {
-    transform: translate3d(2px, 0, 0);
-  }
-
-  30%, 50%, 70% {
-    transform: translate3d(-4px, 0, 0);
-  }
-
-  40%, 60% {
-    transform: translate3d(4px, 0, 0);
-  }
-}
-
-@keyframes play-dead {
-  1% {
-    transform: rotateZ(-15deg);
-  }
-  2% {
-    transform: translate3d(-10%, 0, 0) rotateZ(-15deg);
-  }
-  3% {
-    transform: translate3d(-15%, 0, 0) rotateZ(-12deg);
-  }
-
-  10% {
-    transform: translate3d(0, 0, 0)  rotateZ(90deg);
-  }
-
-  12% {
-    transform: translate3d(0, 25%, 0) rotateZ(90deg);
-    opacity: 1;
-  }
-
-  30% {
-    transform: translate3d(0, 25%, 0) rotateZ(90deg);
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: translate3d(0, -400px, 0) rotateZ(0);
-    opacity: 0;
   }
 }
 </style>

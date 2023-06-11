@@ -7,6 +7,7 @@ import BaseButton from '../components/BaseButton.vue'
 import {
   useStatus,
   useCoordinates,
+  useCountdown,
 } from '../composables'
 import { computed } from 'vue';
 
@@ -18,6 +19,7 @@ const emit = defineEmits<{
 
 const { isPlaying, isStartingGame, isChecking, isCountdownMode } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
+const { countdownProgress } = useCountdown()
 
 const handeleStart = () => {
   isStartingGame.value = true
@@ -40,6 +42,10 @@ const label = computed(() => {
   return 'start'
 })
 
+const style = computed(() => ({
+  '--countdown-progress': countdownProgress.value*100 + '%'
+}))
+
 const handleClick = () => {
   if (showStopButton.value) {
     emit('stop')
@@ -53,15 +59,16 @@ const handleClick = () => {
 </script>
 
 <template>
-  <div class="bottom-bar">
+  <div :style="style" class="bottom-bar">
     <BaseButton
-      class="bottom-bar__center"
-      :label="label"
+      class="bottom-bar__button"
+      :disabled="isStartingGame"
       @click="handleClick"
     >
-      <span v-text="label" />
+      <span class="button__label" v-text="label" />
       <Icon
         v-if="isCountdownMode"
+        class="button__icon"
         :icon="IconEnum.timer"
         :size="24"
       />
@@ -70,18 +77,20 @@ const handleClick = () => {
 </template>
 
 <style lang="scss" scoped>
-
-  
   .bottom-bar {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    gap: 1rem;
     width: 100%;
 
-    &__center {
+    &__button {
       margin: auto;
       flex: 1;
+      background: linear-gradient(90deg, var(--active-background-color) var(--countdown-progress), transparent var(--countdown-progress));
+    }
+
+    .button__label {
+      min-width: 4rem;
     }
   }
 </style>

@@ -14,19 +14,15 @@ const emit = defineEmits<{
   (e: 'game-mode', mode: GameModeEnum): void,
 }>()
 
-const { isCountdownMode, countdownFrom, gameMode } = useStatus()
+const {
+  isCountdownMode,
+  gameMode,
+} = useStatus()
 
 const isCountdownModel = computed({
   get: (): boolean => isCountdownMode.value,
   set: (value: boolean) => {
     isCountdownMode.value = value
-  }
-})
-
-const countdownFromModel = computed({
-  get: (): number => countdownFrom.value,
-  set: (value: number) => {
-    countdownFrom.value = value
   }
 })
 
@@ -36,18 +32,6 @@ const gameModeModel = computed({
     emit('game-mode', value)
   }
 })
-
-const validateTimingValue = (event: Event) => {
-  const target = event.target as HTMLInputElement
-
-  const seconds = Number(target.value)
-
-  if (seconds > 999) {
-    countdownFrom.value = 999
-  } else if (seconds < 1) {
-    countdownFrom.value = 1
-  }
-}
 </script>
 
 <template>
@@ -96,20 +80,9 @@ const validateTimingValue = (event: Event) => {
           >
           <label for="menu-timing" v-text="'Countdown (seconds)'" />
         </div>
-
-        <template v-if="isCountdownMode && (gameMode === GameModeEnum.school)">
-          <input
-            v-model.number="countdownFromModel"
-            type="number"
-            max="999"
-            min="1"
-            @change="validateTimingValue"
-            class="menu__input-timing-value"
-          >
-        </template>
       </div>
     </div>
-    
+
     <BaseButton
       class="menu__ok"
       label="ok"
@@ -168,27 +141,9 @@ const validateTimingValue = (event: Event) => {
       }
     }
 
-    &__input-timing-value {
-      margin-left: 2rem;
-      height: 2rem;
-      width: 2rem;
-      text-align: center;
-    }
-
     &__ok {
       margin: auto auto 0;
     }
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
-  input[type=number] {
-    -moz-appearance: textfield;
   }
 
 </styl>

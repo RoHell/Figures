@@ -13,9 +13,6 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --top-bar-height: 5rem;
-  --bottom-bar-height: 3.75rem;
-  --app-max-width: 50rem;
   --active-background-color: slategray;
   --background-color: #242424;
 }
@@ -111,4 +108,57 @@ TRANSITIONS
   transform: translateX(-100%);
   overflow: hidden;
   opacity: 0;
+}
+
+/* 
+ANIMATIONS
+*/
+
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  20%, 80% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@keyframes play-dead {
+  1% {
+    transform: rotateZ(-15deg);
+  }
+  2% {
+    transform: translate3d(-10%, 0, 0) rotateZ(-15deg);
+  }
+  3% {
+    transform: translate3d(-15%, 0, 0) rotateZ(-12deg);
+  }
+
+  10% {
+    transform: translate3d(0, 0, 0)  rotateZ(90deg);
+  }
+
+  12% {
+    transform: translate3d(0, 25%, 0) rotateZ(90deg);
+    opacity: 1;
+  }
+
+  30% {
+    transform: translate3d(0, 25%, 0) rotateZ(90deg);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: translate3d(0, -400px, 0) rotateZ(0);
+    opacity: 0;
+  }
 }

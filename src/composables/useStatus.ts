@@ -8,7 +8,7 @@ const isMenuOpen = ref(false)
 const isStartingGame = ref(false)
 const isCountdownMode = ref(false)
 const countdownFrom = ref()
-const gameMode = ref(GameModeEnum.school)
+const gameMode = ref(GameModeEnum.quest)
 
 export default () => {
 
