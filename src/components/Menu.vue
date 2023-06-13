@@ -12,6 +12,7 @@ import { useStatus } from '../composables'
 const emit = defineEmits<{
   (e: 'close'): void,
   (e: 'game-mode', mode: GameModeEnum): void,
+  (e: 'countdown', mode: boolean): void,
 }>()
 
 const {
@@ -22,7 +23,7 @@ const {
 const isCountdownModel = computed({
   get: (): boolean => isCountdownMode.value,
   set: (value: boolean) => {
-    isCountdownMode.value = value
+    emit('countdown', value)
   }
 })
 
@@ -78,7 +79,7 @@ const gameModeModel = computed({
             id="menu-timing"
             type="checkbox"
           >
-          <label for="menu-timing" v-text="'Countdown (seconds)'" />
+          <label for="menu-timing" v-text="'Countdown'" />
         </div>
       </div>
     </div>

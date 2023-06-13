@@ -20,15 +20,24 @@ const emit = defineEmits<{
 
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
-const { isChecking, isPlaying } = useStatus()
-const { isQuestMode } = useQuest()
+const { isChecking } = useStatus()
+const { isQuestMode, fetchStorageQuest, activeStorageQuest } = useQuest()
 
 const disableGrid = (count: GridSizeEnum) => {
-  return isChecking.value || (isQuestMode.value && count > gridSize.value)
+  fetchStorageQuest()
+  return isChecking.value || isNextElement({count, type: 'grid'})
 }
 
 const disablePieces = (count: number) => {
-  return isChecking.value || (isQuestMode.value && count > piecesCount.value)
+  fetchStorageQuest()
+  const { grid } = activeStorageQuest()
+  return isChecking.value || (isNextElement({count, type: 'pieces'}) && (gridSize.value >= grid))
+}
+
+const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' }) => {
+  const { grid, pieces } = activeStorageQuest()
+  const elementCount = type === 'grid' ? grid : pieces
+  return !!((isQuestMode.value && elementCount) && (count > elementCount))
 }
 
 </script>

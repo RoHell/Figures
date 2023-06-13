@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import { IconEnum } from '../types'
 
 import Icon from '../components/Icon.vue'
@@ -9,17 +11,20 @@ import {
   useCoordinates,
   useCountdown,
 } from '../composables'
-import { computed } from 'vue';
 
 const emit = defineEmits<{
   (e: 'start'): void,
   (e: 'check'): void,
   (e: 'stop'): void,
+  (e: 'continue'): void,
+  (e: 'new'): void,
 }>()
 
-const { isPlaying, isStartingGame, isChecking, isCountdownMode } = useStatus()
+const { isPlaying, isStartingGame, isChecking, isCountdownMode, showPromptActions } = useStatus()
 const { playerFieldCoordinates } = useCoordinates()
 const { countdownProgress } = useCountdown()
+
+
 
 const handeleStart = () => {
   isStartingGame.value = true
@@ -43,7 +48,7 @@ const label = computed(() => {
 })
 
 const style = computed(() => ({
-  '--countdown-progress': countdownProgress.value*100 + '%'
+  '--countdown-progress': `${countdownProgress.value * 100}%`
 }))
 
 const handleClick = () => {
@@ -56,19 +61,41 @@ const handleClick = () => {
   }
 }
 
+const handleContinue = () => {
+  emit('continue')
+}
+
+const handleNew = () => {
+  emit('new')
+}
+
 </script>
 
 <template>
   <div :style="style" class="bottom-bar">
+    <div v-if="showPromptActions" class="bottom-bar__prompt">
+      <BaseButton
+        label="continue"
+        class="prompt__continue"
+        @click="handleContinue"
+      />
+      <BaseButton
+        label="new"
+        class="prompt__new"
+        @click="handleNew"
+      />
+    </div>
+
     <BaseButton
-      class="bottom-bar__button"
+      v-else
+      class="bottom-bar__controls"
       :disabled="isStartingGame"
       @click="handleClick"
     >
-      <span class="button__label" v-text="label" />
+      <span class="controls__label" v-text="label" />
       <Icon
         v-if="isCountdownMode"
-        class="button__icon"
+        class="controls__icon"
         :icon="IconEnum.timer"
         :size="24"
       />
@@ -78,18 +105,26 @@ const handleClick = () => {
 
 <style lang="scss" scoped>
   .bottom-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
     width: 100%;
 
-    &__button {
+    &__prompt {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 1rem;
+    }
+
+    .prompt__new {
+      background-color: var(--active-background-color)
+    }
+
+    &__controls {
       margin: auto;
-      flex: 1;
+      width: 100%;
       background: linear-gradient(90deg, var(--active-background-color) var(--countdown-progress), transparent var(--countdown-progress));
     }
 
-    .button__label {
+    .controls__label {
       min-width: 4rem;
     }
   }

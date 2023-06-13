@@ -69,3 +69,8 @@ export enum GameModeEnum {
   school = 'School',
   quest = 'Quest',
 }
+
+export interface QuestInterface {
+  grid: GridSizeEnum,
+  pieces: number,
+}

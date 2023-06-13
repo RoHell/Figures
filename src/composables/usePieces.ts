@@ -102,6 +102,7 @@ export default () => {
       delete field?.dataset.piece_field
     })
     randomPiecesList.value?.forEach((piece) => {
+      if (!piece.field) { return }
       delete piece.field?.dataset.piece_field
       piece.field?.classList.remove('grid__field--piece')
       piece.field.innerHTML = ''

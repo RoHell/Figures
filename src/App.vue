@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+
 import {
   GridSizeEnum,
   GameModeEnum,
@@ -73,6 +75,8 @@ const {
   isCountdownMode,
   countdownFrom,
   gameMode,
+  showPromptActions,
+  isTempMode,
 } = useStatus()
 
 const {
@@ -84,6 +88,10 @@ const {
 const {
   quest,
   isQuestMode,
+  INITIAL_QUEST,
+  setStorageQuest,
+  fetchStorageQuest,
+  activeStorageQuest,
 } = useQuest()
 
 let checkResultTimeout: string | number | NodeJS.Timeout | undefined
@@ -93,8 +101,7 @@ const handleStart = async() => {
   clearFields()
   isPlaying.value = true
   if (isQuestMode.value) {
-    await setGridSize(quest.grid)
-    await setPiecesCount(quest.pieces)
+    await updateQuestState()
   }
   countdownFrom.value = piecesCount.value + 1
 
@@ -111,6 +118,7 @@ const handleStop = () => {
   clearFields()
   isPlaying.value = false
   isChecking.value = false
+  isTempMode.value = false
 }
 
 const checkResult = async() => {
@@ -118,15 +126,31 @@ const checkResult = async() => {
     handleStop()
   } else {
     if (isQuestMode.value) {
-      if (quest.pieces === maxPiecesCount.value) {
-        quest.grid = isLastGrid.value ? INITIAL_GRID_SIZE : quest.grid + 1
-        quest.pieces = INITIAL_PIECES_COUNT
+      await fetchStorageQuest()
+      if (quest.value?.pieces === maxPiecesCount.value) {
+        setStorageQuest({
+          grid: isLastGrid.value ? INITIAL_GRID_SIZE : quest.value.grid as number + 1,
+          pieces: INITIAL_PIECES_COUNT,
+        })
       } else {
-        quest.pieces++
+        setStorageQuest({
+          grid: quest.value.grid,
+          pieces: quest.value.pieces as number + 1,
+        })
       }
+      const { pieces, grid } = quest.value
+      await setGridSize(grid)
+      await setPiecesCount(pieces)
     }
     handleStart()
   }
+}
+
+const updateQuestState = async() => {
+  await fetchStorageQuest()
+  const { pieces, grid } = quest.value
+  setGridSize(grid)
+  setPiecesCount(pieces)
 }
 
 const markFields = () => {
@@ -184,52 +208,96 @@ const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
 const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
 const setGrid = async(count: GridSizeEnum) => {
-  if (isQuestMode.value && !isCountdownMode.value) {
-    quest.grid = count
-    quest.pieces = INITIAL_PIECES_COUNT
-    handleStart()
-  } else {
-    await handleStop()
-    await setGridSize(count)
+  if (count === gridSize.value) { return }
 
-    if (piecesCount.value > maxPiecesCount.value) {
-      setPiecesCount(maxPiecesCount.value)
+  await handleStop()
+
+  if (isQuestMode.value) {
+    await fetchStorageQuest()
+    if (count < quest.value.grid) {
+      isTempMode.value = true
+      await fetchStorageQuest()
+      setStorageQuest({
+        grid: count,
+        pieces: quest.value.pieces
+      })
     }
-
-    if (isPlaying.value) {
-      setRandomPiecesList()
+    await setPiecesCount(quest.value.pieces)
+  } else {
+    if (piecesCount.value > maxPiecesCount.value) {
+      await setPiecesCount(maxPiecesCount.value)
     }
   }
+
+  await setGridSize(count)
 }
 
 const setPieces = async(count: number) => {
-  if (isQuestMode.value && !isCountdownMode.value) {
-    quest.pieces = count
-    handleStart()
-  } else {
-    await handleStop()
-    await setPiecesCount(count)
+  await handleStop()
 
-    if (isPlaying.value) {
-      setRandomPiecesList()
+  if (isQuestMode.value) {
+    await fetchStorageQuest()
+    const { grid, pieces } = quest.value
+    if ((gridSize.value < grid) || (count < pieces)) {
+      isTempMode.value = true
+      setStorageQuest({
+        grid,
+        pieces: count,
+      })
     }
+
   }
+
+  await setPiecesCount(count)
 }
 
 const handleGameModeChange = async(mode: GameModeEnum) => {
   if (mode === gameMode.value) { return }
 
+  gameMode.value = mode
   isPlaying.value = false
   isChecking.value = false
 
   await clearFields()
-  quest.grid = INITIAL_GRID_SIZE
-  quest.pieces = INITIAL_PIECES_COUNT
   countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
-  await setGridSize(quest.grid)
-  await setPiecesCount(quest.pieces)
-  gameMode.value = mode
+  if (gameMode.value === GameModeEnum.school) {
+    await setGridSize(INITIAL_GRID_SIZE)
+    await setPiecesCount(INITIAL_PIECES_COUNT)
+  } else {
+    showPromptActions.value = true
+    updateQuestState()
+  }
 }
+
+const handleCountdownChange = async(mode: boolean) => {
+  isCountdownMode.value = mode
+  await handleStop()
+  const { grid, pieces } = activeStorageQuest()
+  setGridSize(grid)
+  setPiecesCount(pieces)
+}
+
+const handleContinue = async() => {
+  showPromptActions.value = false
+  await handleStop()
+  const { grid, pieces } = activeStorageQuest()
+  setGridSize(grid)
+  setPiecesCount(pieces)
+}
+
+const handleNew = async() => {
+  showPromptActions.value = false
+  setStorageQuest(INITIAL_QUEST)
+  await handleStop()
+  setGridSize(INITIAL_GRID_SIZE)
+  setPiecesCount(INITIAL_PIECES_COUNT)
+}
+
+onMounted(async() => {
+  if (isQuestMode.value) {
+    await updateQuestState()
+  }
+})
 </script>
 
 <template>
@@ -256,6 +324,8 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
           @start="handleStart"
           @check="handleCheck"
           @stop="handleStop"
+          @continue="handleContinue"
+          @new="handleNew"
         />
       </div>
 
@@ -266,6 +336,7 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
           class="app__menu"
           @close="isMenuOpen = false"
           @game-mode="handleGameModeChange"
+          @countdown="handleCountdownChange"
         />
       </Transition>
 
