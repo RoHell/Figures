@@ -16,7 +16,7 @@ const playerPiece = IconEnum.pawn
   <div class="pieces">
     <Icon
       :icon="playerPiece"
-      color="#00FF00"
+      color="goldenrod"
       :data-piece="playerPiece"
     />
     <div class="pieces__cpu">

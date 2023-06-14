@@ -100,12 +100,13 @@ let markFieldsTimeout: string | number | NodeJS.Timeout | undefined
 const handleStart = async() => {
   clearFields()
   isPlaying.value = true
-  if (isQuestMode.value) {
-    await updateAppWithStoredQuest()
-  }
   countdownFrom.value = piecesCount.value + 1
 
   await setRandomPiecesList()
+
+  if (isQuestMode.value) {
+    await updateAppWithStoredQuest()
+  }
 
   if (isCountdownMode.value) {
     await startCountdown()
@@ -245,7 +246,6 @@ const setPieces = async(count: number) => {
         pieces: count,
       })
     }
-
   }
 
   await setPiecesCount(count)
