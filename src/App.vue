@@ -101,7 +101,7 @@ const handleStart = async() => {
   clearFields()
   isPlaying.value = true
   if (isQuestMode.value) {
-    await updateQuestState()
+    await updateAppWithStoredQuest()
   }
   countdownFrom.value = piecesCount.value + 1
 
@@ -146,7 +146,7 @@ const checkResult = async() => {
   }
 }
 
-const updateQuestState = async() => {
+const updateAppWithStoredQuest = async() => {
   await fetchStorageQuest()
   const { pieces, grid } = quest.value
   setGridSize(grid)
@@ -265,7 +265,7 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
     await setPiecesCount(INITIAL_PIECES_COUNT)
   } else {
     showPromptActions.value = true
-    updateQuestState()
+    updateAppWithStoredQuest()
   }
 }
 
@@ -295,7 +295,7 @@ const handleNew = async() => {
 
 onMounted(async() => {
   if (isQuestMode.value) {
-    await updateQuestState()
+    await updateAppWithStoredQuest()
   }
 })
 </script>

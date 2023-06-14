@@ -32,11 +32,10 @@ const emit = defineEmits<{
     justify-content: center;
     font-weight: 700;
     border: 2px solid;
-    min-width: 8rem;
     height: 3rem;
     padding: 0.75rem;
     border-radius: 0.25rem;
-    
+
     &:disabled {
       opacity: 0.5;
     }

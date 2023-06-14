@@ -76,19 +76,19 @@ const handleNew = () => {
     <div v-if="showPromptActions" class="bottom-bar__prompt">
       <BaseButton
         label="continue"
-        class="prompt__continue"
+        class="bottom-bar__button prompt__continue"
         @click="handleContinue"
       />
       <BaseButton
         label="new"
-        class="prompt__new"
+        class="bottom-bar__button prompt__new"
         @click="handleNew"
       />
     </div>
 
     <BaseButton
       v-else
-      class="bottom-bar__controls"
+      class="bottom-bar__button bottom-bar__controls"
       :disabled="isStartingGame"
       @click="handleClick"
     >
@@ -114,13 +114,16 @@ const handleNew = () => {
       gap: 1rem;
     }
 
+    &__button {
+      width: 100%;
+    }
+
     .prompt__new {
       background-color: var(--active-background-color)
     }
 
     &__controls {
       margin: auto;
-      width: 100%;
       background: linear-gradient(90deg, var(--active-background-color) var(--countdown-progress), transparent var(--countdown-progress));
     }
 

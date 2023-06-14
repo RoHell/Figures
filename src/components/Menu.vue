@@ -144,6 +144,7 @@ const gameModeModel = computed({
 
     &__ok {
       margin: auto auto 0;
+      width: 100%;
     }
   }
 
