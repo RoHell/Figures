@@ -74,9 +74,9 @@ export default () => {
     return [...failedQuestStages.value].findIndex((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
   })
 
-  const isInitialStage = computed(() => {
-    const { grid, pieces, fails } = quest.value
-    return (grid === INITIAL_GRID_SIZE) && (pieces === INITIAL_PIECES_COUNT) && (fails === 0)
+  const isStageInProgress = computed(() => {
+    const { grid, pieces } = quest.value
+    return (grid !== INITIAL_GRID_SIZE) || (pieces !== INITIAL_PIECES_COUNT) || getStoredItem(LocalStorageEnum.QUEST_FAILS)
   })
 
   const setStorageQuest = async({ grid = INITIAL_GRID_SIZE, pieces = INITIAL_PIECES_COUNT }: QuestStageInterface) => {
@@ -140,6 +140,6 @@ export default () => {
     setStorageQuestFails,
     getStorageQuestFails,
     failedGrids,
-    isInitialStage,
+    isStageInProgress,
   }
 }
