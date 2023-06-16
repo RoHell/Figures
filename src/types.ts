@@ -70,7 +70,15 @@ export enum GameModeEnum {
   quest = 'Quest',
 }
 
-export interface QuestInterface {
+export interface QuestStageInterface {
   grid: GridSizeEnum,
   pieces: number,
+  fails?: number,
+}
+
+export enum LocalStorageEnum {
+  QUEST_TEMP = 'quest-temp',
+  QUEST_COUNTDOWN = 'quest-countdown',
+  QUEST = 'quest',
+  QUEST_FAILS = 'quest-fails',
 }

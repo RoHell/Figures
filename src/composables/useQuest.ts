@@ -2,87 +2,133 @@ import { computed, ref } from 'vue'
 
 import {
   GameModeEnum,
-  type QuestInterface
+  LocalStorageEnum,
+  type QuestStageInterface,
 } from '../types'
 
 import {
   useGrid,
   usePieces,
   useStatus,
+  useStorage,
 } from '.'
 
-export default () => {
-  const { INITIAL_GRID_SIZE } = useGrid()
-  
-  const { INITIAL_PIECES_COUNT } = usePieces()
-  
-  const INITIAL_QUEST = {
-    grid: INITIAL_GRID_SIZE,
-    pieces: INITIAL_PIECES_COUNT,
-  }
-  
-  const { gameMode, isCountdownMode, isTempMode } = useStatus()
+const { INITIAL_GRID_SIZE } = useGrid()
 
-  const quest = ref<QuestInterface>(INITIAL_QUEST)
+const { INITIAL_PIECES_COUNT } = usePieces()
+  
+const INITIAL_QUEST_STAGE: QuestStageInterface = {
+  grid: INITIAL_GRID_SIZE,
+  pieces: INITIAL_PIECES_COUNT,
+}
+
+const INITIAL_FAILED_STAGE: QuestStageInterface = {
+  ...INITIAL_QUEST_STAGE,
+  fails: 0,
+}
+
+const failedQuestStages = ref<QuestStageInterface[]>([INITIAL_FAILED_STAGE])
+
+export default () => {
+  
+  const {
+    gameMode,
+    isCountdownMode,
+    isTempMode,
+  } = useStatus()
+
+  const {
+    setStoredItem,
+    getStoredItem,
+    removeStoredItem,
+  } = useStorage()
+
+  const quest = ref<QuestStageInterface>(INITIAL_QUEST_STAGE)
+
 
   const isQuestMode = computed(() => gameMode.value === GameModeEnum.quest)
 
-  const activeStorageQuestKey = computed(() => isCountdownMode.value ? 'quest-countdown' : 'quest')
+  const activeStorageQuestKey = computed(() => isCountdownMode.value ? LocalStorageEnum.QUEST_COUNTDOWN : LocalStorageEnum.QUEST)
 
   const storedQuestKey = computed(() => {
     if (isTempMode.value) {
-      return 'quest-temp'
+      return LocalStorageEnum.QUEST_TEMP
     } else {
-      removeStoredItem('quest-temp')
+      removeStoredItem(LocalStorageEnum.QUEST_TEMP)
       return activeStorageQuestKey.value
     }
   })
 
-  const canContinue = computed(() => {
-    const { grid, pieces } = getParsedItem(storedQuestKey.value)
+  const canContinue = computed((): boolean => {
+    const { grid, pieces } = getStoredItem(storedQuestKey.value)
     return (grid > INITIAL_GRID_SIZE) || (pieces > INITIAL_PIECES_COUNT)
   })
 
-  const setStorageQuest = async({ grid = INITIAL_GRID_SIZE, pieces = INITIAL_PIECES_COUNT }: QuestInterface) => {
-    await localStorage.setItem(storedQuestKey.value, JSON.stringify({ grid, pieces }))
-    setQuest({ grid, pieces })
+  const failedQuestStage = computed((): QuestStageInterface | undefined => {
+    const { grid, pieces } = quest.value
+    return failedQuestStages.value.find((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
+  })
+
+  const failedQuestStageIndex = computed((): number => {
+    const { grid, pieces } = quest.value
+    return failedQuestStages.value.findIndex((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
+  })
+
+  const setStorageQuest = async({ grid = INITIAL_GRID_SIZE, pieces = INITIAL_PIECES_COUNT }: QuestStageInterface) => {
+    const quest = { grid, pieces }
+    await setStoredItem(storedQuestKey.value, quest)
+    setQuest(quest)
   }
 
+  const setStorageQuestFails = async(failedQuestStage: QuestStageInterface) => {
+    if (failedQuestStageIndex.value > -1) {
+      failedQuestStages.value.splice(failedQuestStageIndex.value, 1)
+    }
+    failedQuestStages.value = [...failedQuestStages.value, failedQuestStage]
+    await setStoredItem(LocalStorageEnum.QUEST_FAILS, failedQuestStages.value)
+  }
+
+  const getStorageQuestFails = async() => await getStoredItem(LocalStorageEnum.QUEST_FAILS)
+
   const fetchStorageQuest = async() => {
-    const storedQuest = await getParsedItem(storedQuestKey.value)
+    const storedQuest = await getStoredItem(storedQuestKey.value)
     if (storedQuest) {
       setQuest(storedQuest)
     } else {
-      setStorageQuest(INITIAL_QUEST)
+      setStorageQuest(INITIAL_QUEST_STAGE)
     }
   }
 
-  const setQuest = (questToSet: QuestInterface) => { 
+  const setQuest = (questToSet: QuestStageInterface) => { 
     quest.value = questToSet
   }
 
-  const activeStorageQuest = (): QuestInterface => getParsedItem(activeStorageQuestKey.value)
-
-  const getParsedItem = (key: 'quest-temp' | 'quest-countdown' | 'quest') => {
-    const storedItem = localStorage.getItem(key)
-    if (storedItem) {
-      return JSON.parse(storedItem)
-    }
+  const activeStorageQuest = (): QuestStageInterface => {
+    if (!getStoredItem(activeStorageQuestKey.value)) { setStorageQuest(INITIAL_QUEST_STAGE) }
+    return getStoredItem(activeStorageQuestKey.value)
   }
 
-  const removeStoredItem = (key: 'quest-temp' | 'quest-countdown' | 'quest') => localStorage.removeItem(key)
+  const failedGrids = computed(() => failedQuestStages.value.reduce((acc: any, stage) => {
+    acc[stage.grid] = stage.fails
+    return acc
+  }, {}))
 
   return {
     quest,
+    failedQuestStages,
     isQuestMode,
     canContinue,
-    INITIAL_QUEST,
+    INITIAL_QUEST_STAGE,
     activeStorageQuestKey,
     storedQuestKey,
+    failedQuestStage,
+    failedQuestStageIndex,
     setStorageQuest,
     fetchStorageQuest,
     activeStorageQuest,
     removeStoredItem,
-    getParsedItem,
+    setStorageQuestFails,
+    getStorageQuestFails,
+    failedGrids,
   }
 }

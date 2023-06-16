@@ -6,6 +6,7 @@ import usePlayer from './usePlayer'
 import useStatus from './useStatus'
 import useCountdown from './useCountdown'
 import useQuest from './useQuest'
+import useStorage from './useStorage'
 
 export {
   useCoordinates,
@@ -16,4 +17,5 @@ export {
   useStatus,
   useCountdown,
   useQuest,
+  useStorage,
 }

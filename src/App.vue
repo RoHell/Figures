@@ -27,6 +27,7 @@ import {
   useStatus,
   useCountdown,
   useQuest,
+  useStorage,
 } from './composables'
 
 const {
@@ -88,11 +89,19 @@ const {
 const {
   quest,
   isQuestMode,
-  INITIAL_QUEST,
+  INITIAL_QUEST_STAGE,
+  failedQuestStage,
   setStorageQuest,
   fetchStorageQuest,
   activeStorageQuest,
+  setStorageQuestFails,
+  failedGrids,
+  failedQuestStages,
 } = useQuest()
+
+const {
+  clearStorage,
+} = useStorage()
 
 let checkResultTimeout: string | number | NodeJS.Timeout | undefined
 let markFieldsTimeout: string | number | NodeJS.Timeout | undefined
@@ -122,27 +131,44 @@ const handleStop = () => {
   isTempMode.value = false
 }
 
-const checkResult = async() => {
+const handleQuestResult = async() => {
+  await fetchStorageQuest()
+  const { grid, pieces } = quest.value
+
+  if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
+    setStorageQuestFails({
+      grid: failedQuestStage.value?.grid || grid || INITIAL_GRID_SIZE,
+      pieces: failedQuestStage.value?.pieces || pieces || INITIAL_PIECES_COUNT,
+      fails: (failedQuestStage.value?.fails || 0) + 1
+    })
+    handleStop()
+  } else {
+    if (pieces === maxPiecesCount.value) {
+      if (isLastGrid.value) {
+        const failsCount = Object.values({...failedGrids.value}).reduce((a: any, b: any) => a + b, 0)
+        window.alert(`Good Job! You failed ${failsCount} times`)
+        showPromptActions.value = true
+      } else {
+        setStorageQuest({
+          grid: grid + 1,
+          pieces: INITIAL_PIECES_COUNT,
+        })
+      }
+    } else {
+      setStorageQuest({
+        grid,
+        pieces: pieces + 1,
+      })
+    }
+    await updateAppWithStoredQuest()
+    handleStart()
+  }
+}
+
+const handleSchoolResult = () => {
   if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
     handleStop()
   } else {
-    if (isQuestMode.value) {
-      await fetchStorageQuest()
-      if (quest.value?.pieces === maxPiecesCount.value) {
-        setStorageQuest({
-          grid: isLastGrid.value ? INITIAL_GRID_SIZE : quest.value.grid as number + 1,
-          pieces: INITIAL_PIECES_COUNT,
-        })
-      } else {
-        setStorageQuest({
-          grid: quest.value.grid,
-          pieces: quest.value.pieces as number + 1,
-        })
-      }
-      const { pieces, grid } = quest.value
-      await setGridSize(grid)
-      await setPiecesCount(pieces)
-    }
     handleStart()
   }
 }
@@ -179,7 +205,11 @@ const checkGameResult = () => {
   clearTimeout(checkResultTimeout)
 
   checkResultTimeout = setTimeout(() => {
-    checkResult()
+    if (isQuestMode.value) {
+      handleQuestResult()
+    } else {
+      handleSchoolResult()
+    }
     clearKillerField()
     isChecking.value = false
   }, timeout)
@@ -220,7 +250,7 @@ const setGrid = async(count: GridSizeEnum) => {
       await fetchStorageQuest()
       setStorageQuest({
         grid: count,
-        pieces: quest.value.pieces
+        pieces: quest.value.pieces,
       })
     }
     await setPiecesCount(quest.value.pieces)
@@ -287,10 +317,12 @@ const handleContinue = async() => {
 
 const handleNew = async() => {
   showPromptActions.value = false
-  setStorageQuest(INITIAL_QUEST)
+  setStorageQuest(INITIAL_QUEST_STAGE)
   await handleStop()
   setGridSize(INITIAL_GRID_SIZE)
   setPiecesCount(INITIAL_PIECES_COUNT)
+  clearStorage()
+  failedQuestStages.value = []
 }
 
 onMounted(async() => {

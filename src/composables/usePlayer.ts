@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import {
   IconEnum,
@@ -24,6 +24,8 @@ export default () => {
   const { getPieceElement } = usePieces()
 
   const playerField = ref<HTMLElement | null>(null)
+
+  const isPlayerFail = computed(() => !playerFieldCoordinates.value || isPlayerCaptured.value)
 
   const checkPlayerStatus = () => {
     if (!playerFieldCoordinates.value) { return false }
@@ -65,5 +67,6 @@ export default () => {
     setPlayerField,
     playerField,
     isPlayerCaptured,
+    isPlayerFail,
   }
 }

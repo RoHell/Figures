@@ -21,7 +21,7 @@ const emit = defineEmits<{
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
 const { isChecking } = useStatus()
-const { isQuestMode, fetchStorageQuest, activeStorageQuest } = useQuest()
+const { isQuestMode, failedGrids, fetchStorageQuest, activeStorageQuest } = useQuest()
 
 const disableGrid = (count: GridSizeEnum) => {
   fetchStorageQuest()
@@ -30,14 +30,15 @@ const disableGrid = (count: GridSizeEnum) => {
 
 const disablePieces = (count: number) => {
   fetchStorageQuest()
-  const { grid } = activeStorageQuest()
-  return isChecking.value || (isNextElement({count, type: 'pieces'}) && (gridSize.value >= grid))
+  const quest = activeStorageQuest()
+  if (!quest) { return }
+
+  return isChecking.value || (isNextElement({count, type: 'pieces'}) && (gridSize.value >= quest.grid))
 }
 
 const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' }) => {
-  const { grid, pieces } = activeStorageQuest()
-  const elementCount = type === 'grid' ? grid : pieces
-  return !!((isQuestMode.value && elementCount) && (count > elementCount))
+  const elementCount = activeStorageQuest()
+  return !!((isQuestMode.value && elementCount) && (count > elementCount[type]))
 }
 
 </script>
@@ -56,6 +57,14 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :disabled="disableGrid(grid.count)"
           @click="emit('grid', grid.count)"
         >
+          <div v-if="failedGrids?.[grid.count]" class="dashboard__killed">
+            <Icon
+              v-for="_ in failedGrids[grid.count]"
+              :icon="IconEnum.pawn"
+              :size="16"
+              class="dashboard__killed-icon"
+            />
+          </div>
           <span class="dashboard__grid-name" v-text="grid.name" />
       </button>
       </div>
@@ -110,7 +119,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
     &--grids {
       gap: 0.2rem;
-      grid-template-columns: repeat(auto-fill, minmax(2.8rem, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
     }
 
     &--pieces {
@@ -125,11 +134,14 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   font-size: smaller;
   font-weight: 700;
   background-color: transparent;
   border: 1px solid;
+}
+
+.dashboard__grid-name {
+  margin-top: auto;
 }
 
 .dashboard__matrix {
@@ -147,6 +159,17 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
   &--active {
     background-color: var(--active-background-color);
+  }
+}
+
+.dashboard__killed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  color: red;
+
+  &-icon {
+    transform: rotate(90deg);
   }
 }
 
