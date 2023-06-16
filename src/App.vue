@@ -97,6 +97,7 @@ const {
   setStorageQuestFails,
   failedGrids,
   failedQuestStages,
+  isInitialStage
 } = useQuest()
 
 const {
@@ -294,7 +295,9 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
     await setGridSize(INITIAL_GRID_SIZE)
     await setPiecesCount(INITIAL_PIECES_COUNT)
   } else {
-    showPromptActions.value = true
+    if (!isInitialStage.value) {
+      showPromptActions.value = true
+    }
     updateAppWithStoredQuest()
   }
 }

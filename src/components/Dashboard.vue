@@ -57,11 +57,9 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :disabled="disableGrid(grid.count)"
           @click="emit('grid', grid.count)"
         >
-          <div v-if="failedGrids?.[grid.count]" class="dashboard__killed">
-            <Icon
+          <div v-if="failedGrids?.[grid.count] && isQuestMode" class="dashboard__killed">
+            <div
               v-for="_ in failedGrids[grid.count]"
-              :icon="IconEnum.pawn"
-              :size="16"
               class="dashboard__killed-icon"
             />
           </div>
@@ -119,7 +117,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
     &--grids {
       gap: 0.2rem;
-      grid-template-columns: repeat(auto-fill, minmax(4rem, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(2.9rem, 1fr));
     }
 
     &--pieces {
@@ -165,11 +163,14 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 .dashboard__killed {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
-  color: red;
+  width: 100%;
+  gap: 0.2rem;
 
   &-icon {
-    transform: rotate(90deg);
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background-color: red;
   }
 }
 

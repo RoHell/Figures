@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, onBeforeMount, ref } from 'vue'
 
 import {
   GameModeEnum,
@@ -66,12 +66,17 @@ export default () => {
 
   const failedQuestStage = computed((): QuestStageInterface | undefined => {
     const { grid, pieces } = quest.value
-    return failedQuestStages.value.find((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
+    return [...failedQuestStages.value].find((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
   })
 
   const failedQuestStageIndex = computed((): number => {
     const { grid, pieces } = quest.value
-    return failedQuestStages.value.findIndex((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
+    return [...failedQuestStages.value].findIndex((stage: QuestStageInterface) => stage.grid === grid && stage.pieces === pieces)
+  })
+
+  const isInitialStage = computed(() => {
+    const { grid, pieces, fails } = quest.value
+    return (grid === INITIAL_GRID_SIZE) && (pieces === INITIAL_PIECES_COUNT) && (fails === 0)
   })
 
   const setStorageQuest = async({ grid = INITIAL_GRID_SIZE, pieces = INITIAL_PIECES_COUNT }: QuestStageInterface) => {
@@ -88,7 +93,7 @@ export default () => {
     await setStoredItem(LocalStorageEnum.QUEST_FAILS, failedQuestStages.value)
   }
 
-  const getStorageQuestFails = async() => await getStoredItem(LocalStorageEnum.QUEST_FAILS)
+  const getStorageQuestFails = () => getStoredItem(LocalStorageEnum.QUEST_FAILS)
 
   const fetchStorageQuest = async() => {
     const storedQuest = await getStoredItem(storedQuestKey.value)
@@ -108,10 +113,15 @@ export default () => {
     return getStoredItem(activeStorageQuestKey.value)
   }
 
-  const failedGrids = computed(() => failedQuestStages.value.reduce((acc: any, stage) => {
+  const failedGrids = computed(() => [...failedQuestStages.value].reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
     acc[stage.grid] = stage.fails
     return acc
   }, {}))
+
+  onBeforeMount(async() => {
+    const failedQuests = await getStoredItem(LocalStorageEnum.QUEST_FAILS) || [INITIAL_FAILED_STAGE]
+    failedQuestStages.value = failedQuests
+  })
 
   return {
     quest,
@@ -130,5 +140,6 @@ export default () => {
     setStorageQuestFails,
     getStorageQuestFails,
     failedGrids,
+    isInitialStage,
   }
 }
