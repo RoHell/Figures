@@ -332,6 +332,9 @@ onMounted(async() => {
   if (isQuestMode.value) {
     await updateAppWithStoredQuest()
   }
+  if (isStageInProgress.value) {
+    showPromptActions.value = true
+  }
 })
 </script>
 
