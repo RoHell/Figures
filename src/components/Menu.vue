@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, reactive } from 'vue';
 
 import { IconEnum, GameModeEnum } from '../types'
 
@@ -7,7 +7,7 @@ import Icon from '../components/Icon.vue'
 import TopBar from '../components/TopBar.vue'
 import BaseButton from '../components/BaseButton.vue'
 
-import { useStatus } from '../composables'
+import { useStatus, useQuest, useStorage } from '../composables'
 
 const emit = defineEmits<{
   (e: 'close'): void,
@@ -20,23 +20,28 @@ const {
   gameMode,
 } = useStatus()
 
-const isCountdownModel = computed({
-  get: (): boolean => isCountdownMode.value,
-  set: (value: boolean) => {
-    emit('countdown', value)
-  }
+const { isQuestMode } = useQuest()
+const { clearStorage } = useStorage()
+
+const model = reactive({
+  countdown: isCountdownMode.value,
+  gameMode: gameMode.value
 })
 
-const gameModeModel = computed({
-  get: (): GameModeEnum => gameMode.value,
-  set: (value: GameModeEnum) => {
-    emit('game-mode', value)
+const handleSubmit = () => {
+  if (model.countdown !== isCountdownMode.value) {
+    clearStorage()
+    emit('countdown', model.countdown)
+
   }
-})
+  if (model.gameMode !== gameMode.value) {
+    emit('game-mode', model.gameMode)
+  }
+}
 </script>
 
 <template>
-  <div class="menu">
+  <form class="menu">
     <TopBar title="Menu">
       <template #right>
         <button
@@ -52,7 +57,7 @@ const gameModeModel = computed({
       <div class="menu__option menu__option--radios">
         <div class="menu__radio">
           <input
-            v-model="gameModeModel"
+            v-model="model.gameMode"
             type="radio"
             id="menu-school-mode"
             name="menu-game-mode"
@@ -62,7 +67,7 @@ const gameModeModel = computed({
         </div>
         <div class="menu__radio">
           <input
-            v-model="gameModeModel"
+            v-model="model.gameMode"
             type="radio"
             id="menu-quest-mode"
             name="menu-game-mode"
@@ -75,22 +80,23 @@ const gameModeModel = computed({
       <div class="menu__option menu__option--checkbox">
         <div class="menu__checkbox">
           <input
-            v-model="isCountdownModel"
+            v-model="model.countdown"
             id="menu-timing"
             type="checkbox"
           >
-          <label for="menu-timing" v-text="'Countdown'" />
+          <label for="menu-timing" v-text="'Play with Countdown mode'" />
         </div>
+        <span v-if="isQuestMode && (model.countdown !== isCountdownMode)"><em>(toggling countdown mode will reset your current game. Are you sure?)</em></span>
       </div>
     </div>
 
     <BaseButton
       class="menu__ok"
       label="ok"
-      @click="emit('close')"
+      type="submit"
+      @click="handleSubmit"
     />
-    
-  </div>
+  </form>
 </template>
 
 <styl lang="scss" scoped>
@@ -123,9 +129,11 @@ const gameModeModel = computed({
       }
 
       &--checkbox {
+        flex-direction: column;
         gap: 1rem;
         align-items: center;
         text-align: start;
+
       }
     }
 

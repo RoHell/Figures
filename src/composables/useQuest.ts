@@ -48,7 +48,7 @@ export default () => {
 
   const isQuestMode = computed(() => gameMode.value === GameModeEnum.quest)
 
-  const activeStorageQuestKey = computed(() => isCountdownMode.value ? LocalStorageEnum.QUEST_COUNTDOWN : LocalStorageEnum.QUEST)
+  const activeStorageQuestKey = computed(() => LocalStorageEnum.QUEST)
 
   const storedQuestKey = computed(() => {
     if (isTempMode.value) {

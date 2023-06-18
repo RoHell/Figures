@@ -37,8 +37,8 @@ const disablePieces = (count: number) => {
 }
 
 const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' }) => {
-  const elementCount = activeStorageQuest()
-  return !!((isQuestMode.value && elementCount) && (count > elementCount[type]))
+  const activeQuest = activeStorageQuest()
+  return !!((isQuestMode.value && activeQuest) && (count > activeQuest[type]))
 }
 
 </script>

@@ -78,7 +78,6 @@ export interface QuestStageInterface {
 
 export enum LocalStorageEnum {
   QUEST_TEMP = 'quest-temp',
-  QUEST_COUNTDOWN = 'quest-countdown',
   QUEST = 'quest',
   QUEST_FAILS = 'quest-fails',
 }

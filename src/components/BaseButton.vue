@@ -14,7 +14,6 @@ const emit = defineEmits<{
 
 <template>
   <button
-    type="button"
     class="base-button"
     @click="emit('click')"
     v-bind="$attrs"
