@@ -293,6 +293,7 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
   await clearFields()
   countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
   if (gameMode.value === GameModeEnum.school) {
+    showPromptActions.value = false
     await setGridSize(INITIAL_GRID_SIZE)
     await setPiecesCount(INITIAL_PIECES_COUNT)
   } else {
