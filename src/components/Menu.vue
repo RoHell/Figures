@@ -105,6 +105,7 @@ const handleSubmit = () => {
     width: 100%;
     background-color: var(--active-background-color);
     padding: 0.5rem;
+    z-index: 10;
 
     &__content {
       display: flex;
