@@ -148,11 +148,11 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   font-weight: 700;
   background-color: transparent;
   border: 1px solid;
+  gap: 0.25rem;
+  padding: 0.2rem;
 }
 
 .dashboard__matrix {
-  padding: 0.2rem;
-
   &--active {
     background-color: var(--active-background-color);
   }
@@ -160,7 +160,6 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
 .dashboard__pieces {
   border: none;
-  padding: 0.125rem;
   border-radius: 0.25rem;
 
   &--active {
@@ -187,8 +186,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   }
 
   &--pieces {
-    padding: 0.25rem 0.125rem 0.125rem;
-    gap: 00.125rem;
+    gap: 0.125rem;
   }
 
   &--grid {
