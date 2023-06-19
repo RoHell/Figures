@@ -95,7 +95,7 @@ const {
   fetchStorageQuest,
   activeStorageQuest,
   setStorageQuestFails,
-  failedGrids,
+  totalFailsCount,
   failedQuestStages,
   isStageInProgress,
   resetFailedQuestStages,
@@ -147,8 +147,7 @@ const handleQuestResult = async() => {
   } else {
     if (pieces === maxPiecesCount.value) {
       if (isLastGrid.value) {
-        const failsCount = Object.values({...failedGrids.value}).reduce((a: any, b: any) => a + b, 0)
-        window.alert(`Good Job! You failed ${failsCount} times`)
+        window.alert(`Good Job! You failed ${totalFailsCount.value} times`)
         showPromptActions.value = true
       } else {
         setStorageQuest({

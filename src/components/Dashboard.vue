@@ -21,7 +21,13 @@ const emit = defineEmits<{
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
 const { isChecking } = useStatus()
-const { isQuestMode, failedGrids, fetchStorageQuest, activeStorageQuest } = useQuest()
+const {
+  isQuestMode,
+  fetchStorageQuest,
+  activeStorageQuest,
+  getGridFails,
+  getGridPieceFails,
+} = useQuest()
 
 const disableGrid = (count: GridSizeEnum) => {
   fetchStorageQuest()
@@ -57,9 +63,9 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :disabled="disableGrid(grid.count)"
           @click="emit('grid', grid.count)"
         >
-          <div v-if="failedGrids?.[grid.count] && isQuestMode" class="dashboard__killed">
+          <div v-if="getGridFails(grid.count) && isQuestMode" class="dashboard__killed">
             <div
-              v-for="_ in failedGrids[grid.count]"
+              v-for="_ in getGridFails(grid.count)"
               class="dashboard__killed-icon"
             />
           </div>
@@ -83,7 +89,13 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :disabled="disablePieces(count)"
           @click="emit('pieces', count)"
         >
-          <Icon :icon="IconEnum.pawn"/>
+          <div v-if="getGridPieceFails(gridSize, count) && isQuestMode" class="dashboard__killed dashboard__killed--pieces">
+            <div
+              v-for="_ in getGridPieceFails(gridSize, count)"
+              class="dashboard__killed-icon"
+            />
+          </div>
+          <Icon :icon="IconEnum.pawn" class="dashboard__piece-icon"/>
       </button>
       </div>
     </section>
@@ -152,7 +164,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
 .dashboard__pieces {
   border: none;
-  padding: 0.25rem 0;
+  padding: 0.125rem;
   border-radius: 0.25rem;
 
   &--active {
@@ -160,17 +172,27 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   }
 }
 
+.dashboard__piece-icon {
+  z-index: 10;
+}
+
 .dashboard__killed {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(0.25rem, 1fr));
   width: 100%;
   gap: 0.2rem;
 
   &-icon {
-    width: 0.375rem;
-    height: 0.375rem;
+    width: 0.25rem;
+    height: 0.25rem;
     border-radius: 50%;
     background-color: red;
+    padding: 0.125rem;
+  }
+
+  &--pieces {
+    padding: 0.125rem;
+    gap: 00.125rem;
   }
 }
 

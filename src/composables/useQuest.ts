@@ -2,6 +2,7 @@ import { computed, onBeforeMount, ref } from 'vue'
 
 import {
   GameModeEnum,
+  GridSizeEnum,
   LocalStorageEnum,
   type QuestStageInterface,
 } from '../types'
@@ -113,10 +114,21 @@ export default () => {
     return getStoredItem(activeStorageQuestKey.value)
   }
 
-  const failedGrids = computed(() => [...failedQuestStages.value].reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
-    acc[stage.grid] = stage.fails
+  const totalFailsCount = computed((): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
+    acc = acc + stage.fails
     return acc
-  }, {}))
+  }, 0))
+
+  const getGridFails = (grid: GridSizeEnum): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface) => {
+    if (stage.grid === grid) {
+      acc = acc + (stage.fails || 0)
+    }
+    return acc
+  }, 0)
+
+  const getGridPieceFails = (grid: GridSizeEnum, pieceNumber: number): number => failedQuestStages.value.find((stage: QuestStageInterface) => {
+    return (stage.grid === grid) && (stage.pieces === pieceNumber)
+  })?.fails || 0
 
   const resetFailedQuestStages = async() => {
     failedQuestStages.value = await getStoredItem(LocalStorageEnum.QUEST_FAILS) || [INITIAL_FAILED_STAGE]
@@ -136,7 +148,7 @@ export default () => {
     storedQuestKey,
     failedQuestStage,
     failedQuestStageIndex,
-    failedGrids,
+    totalFailsCount,
     isStageInProgress,
     setStorageQuest,
     fetchStorageQuest,
@@ -145,5 +157,7 @@ export default () => {
     setStorageQuestFails,
     getStorageQuestFails,
     resetFailedQuestStages,
+    getGridFails,
+    getGridPieceFails,
   }
 }
