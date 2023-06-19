@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, reactive } from 'vue';
+import { reactive } from 'vue';
 
 import { IconEnum, GameModeEnum } from '../types'
 
@@ -21,7 +21,6 @@ const {
 } = useStatus()
 
 const { isQuestMode } = useQuest()
-const { clearStorage } = useStorage()
 
 const model = reactive({
   countdown: isCountdownMode.value,
@@ -30,18 +29,17 @@ const model = reactive({
 
 const handleSubmit = () => {
   if (model.countdown !== isCountdownMode.value) {
-    clearStorage()
     emit('countdown', model.countdown)
-
   }
   if (model.gameMode !== gameMode.value) {
     emit('game-mode', model.gameMode)
   }
+  emit('close')
 }
 </script>
 
 <template>
-  <form class="menu">
+  <form @submit.prevent="handleSubmit" class="menu">
     <TopBar title="Menu">
       <template #right>
         <button
@@ -94,7 +92,6 @@ const handleSubmit = () => {
       class="menu__ok"
       label="ok"
       type="submit"
-      @click="handleSubmit"
     />
   </form>
 </template>

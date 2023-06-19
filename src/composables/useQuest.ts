@@ -118,9 +118,12 @@ export default () => {
     return acc
   }, {}))
 
+  const resetFailedQuestStages = async() => {
+    failedQuestStages.value = await getStoredItem(LocalStorageEnum.QUEST_FAILS) || [INITIAL_FAILED_STAGE]
+  }
+
   onBeforeMount(async() => {
-    const failedQuests = await getStoredItem(LocalStorageEnum.QUEST_FAILS) || [INITIAL_FAILED_STAGE]
-    failedQuestStages.value = failedQuests
+    await resetFailedQuestStages()
   })
 
   return {
@@ -133,13 +136,14 @@ export default () => {
     storedQuestKey,
     failedQuestStage,
     failedQuestStageIndex,
+    failedGrids,
+    isStageInProgress,
     setStorageQuest,
     fetchStorageQuest,
     activeStorageQuest,
     removeStoredItem,
     setStorageQuestFails,
     getStorageQuestFails,
-    failedGrids,
-    isStageInProgress,
+    resetFailedQuestStages,
   }
 }

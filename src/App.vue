@@ -97,7 +97,8 @@ const {
   setStorageQuestFails,
   failedGrids,
   failedQuestStages,
-  isStageInProgress
+  isStageInProgress,
+  resetFailedQuestStages,
 } = useQuest()
 
 const {
@@ -303,8 +304,10 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
 }
 
 const handleCountdownChange = async(mode: boolean) => {
-  isCountdownMode.value = mode
+  await clearStorage()
+  await resetFailedQuestStages()
   await handleStop()
+  isCountdownMode.value = mode
   const { grid, pieces } = activeStorageQuest()
   setGridSize(grid)
   setPiecesCount(pieces)
