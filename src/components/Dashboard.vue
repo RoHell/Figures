@@ -63,13 +63,13 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :disabled="disableGrid(grid.count)"
           @click="emit('grid', grid.count)"
         >
-          <div v-if="getGridFails(grid.count) && isQuestMode" class="dashboard__killed">
+          <span class="dashboard__grid-name" v-text="grid.name" />
+          <div v-if="getGridFails(grid.count) && isQuestMode" class="dashboard__killed dashboard__killed--grid">
             <div
               v-for="_ in getGridFails(grid.count)"
               class="dashboard__killed-icon"
             />
           </div>
-          <span class="dashboard__grid-name" v-text="grid.name" />
       </button>
       </div>
     </section>
@@ -89,13 +89,13 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :disabled="disablePieces(count)"
           @click="emit('pieces', count)"
         >
+          <Icon :icon="IconEnum.pawn" class="dashboard__piece-icon"/>
           <div v-if="getGridPieceFails(gridSize, count) && isQuestMode" class="dashboard__killed dashboard__killed--pieces">
             <div
               v-for="_ in getGridPieceFails(gridSize, count)"
               class="dashboard__killed-icon"
             />
           </div>
-          <Icon :icon="IconEnum.pawn" class="dashboard__piece-icon"/>
       </button>
       </div>
     </section>
@@ -150,10 +150,6 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   border: 1px solid;
 }
 
-.dashboard__grid-name {
-  margin-top: auto;
-}
-
 .dashboard__matrix {
   padding: 0.2rem;
 
@@ -191,8 +187,12 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   }
 
   &--pieces {
-    padding: 0.125rem;
+    padding: 0.25rem 0.125rem 0.125rem;
     gap: 00.125rem;
+  }
+
+  &--grid {
+    margin-top: auto;
   }
 }
 
