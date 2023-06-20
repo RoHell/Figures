@@ -268,15 +268,14 @@ const setGrid = async(count: GridSizeEnum) => {
 
 const setPieces = async(count: number) => {
   if (isQuestMode.value) {
-    const { pieces } = activeStorageQuest()
-    if ((count < pieces)) {
+    if (isActiveQuest.value) {
+      isTempMode.value = false
+    } else {
       isTempMode.value = true
       await setStorageQuest({
         grid: gridSize.value,
         pieces: count,
       })
-    } else {
-      isTempMode.value = false
     }
   }
   await setPiecesCount(count)
