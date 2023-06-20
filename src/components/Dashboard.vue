@@ -6,6 +6,7 @@ import {
   usePieces,
   useStatus,
   useQuest,
+  useCountdown,
 } from '../composables'
 
 import Icon from '../components/Icon.vue'
@@ -20,7 +21,8 @@ const emit = defineEmits<{
 
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
-const { isChecking, showPromptActions } = useStatus()
+const { isChecking, showPromptActions, isPlaying } = useStatus()
+const { isCountdownOn } = useCountdown()
 const {
   isQuestMode,
   fetchStorageQuest,
@@ -51,11 +53,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
 <template>
   <div
-    class="dashboard"
-    :class="{
-      'dashboard--disabled': showPromptActions
-    }"
-  >
+    class="dashboard">
     <section class="dashboard__section">
       <span class="dashboard__section-title">grids</span>
       <div class="dashboard__section-content dashboard__section-content--grids">
@@ -65,7 +63,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :class="{
             'dashboard__matrix--active': gridSize === grid.count
           }"
-          :disabled="disableGrid(grid.count)"
+          :disabled="disableGrid(grid.count) || showPromptActions || isCountdownOn"
           @click="emit('grid', grid.count)"
         >
           <span class="dashboard__grid-name" v-text="grid.name" />
@@ -91,7 +89,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
           :class="{
             'dashboard__pieces--active': count <= piecesCount
           }"
-          :disabled="disablePieces(count)"
+          :disabled="disablePieces(count) || showPromptActions || isCountdownOn"
           @click="emit('pieces', count)"
         >
           <Icon :icon="IconEnum.pawn" class="dashboard__piece-icon"/>
