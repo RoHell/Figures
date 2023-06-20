@@ -84,7 +84,7 @@ const handleSubmit = () => {
           >
           <label for="menu-timing" v-text="'Play with Countdown mode'" />
         </div>
-        <span v-if="isQuestMode && (model.countdown !== isCountdownMode)"><em>(toggling countdown mode will reset your current game. Are you sure?)</em></span>
+        <!-- <span v-if="isQuestMode && (model.countdown !== isCountdownMode)"><em>(toggling countdown mode will reset your current game. Are you sure?)</em></span> -->
       </div>
     </div>
 

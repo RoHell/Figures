@@ -308,8 +308,6 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
 }
 
 const handleCountdownChange = async(mode: boolean) => {
-  await clearStorage()
-  await resetFailedQuestStages()
   await handleStop()
   isTempMode.value = false
   isCountdownMode.value = mode
