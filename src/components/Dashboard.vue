@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const { gridSize, grids } = useGrid()
 const { piecesRange, piecesCount } = usePieces()
-const { isChecking } = useStatus()
+const { isChecking, showPromptActions } = useStatus()
 const {
   isQuestMode,
   fetchStorageQuest,
@@ -50,7 +50,12 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 </script>
 
 <template>
-  <div class="dashboard">
+  <div
+    class="dashboard"
+    :class="{
+      'dashboard--disabled': showPromptActions
+    }"
+  >
     <section class="dashboard__section">
       <span class="dashboard__section-title">grids</span>
       <div class="dashboard__section-content dashboard__section-content--grids">
@@ -110,6 +115,11 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
   gap: 1rem;
   align-items: center;
   overflow: auto;
+
+  &--disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
 }
 
 .dashboard__section {

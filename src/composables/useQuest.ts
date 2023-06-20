@@ -60,6 +60,13 @@ export default () => {
     }
   })
 
+  const isActiveQuest = computed(() => {
+    const { grid, pieces } = quest.value
+    const { grid: activeGrid, pieces: activePieces } = activeStorageQuest()
+
+    return (grid === activeGrid) && (pieces === activePieces)
+  })
+
   const canContinue = computed((): boolean => {
     const { grid, pieces } = getStoredItem(storedQuestKey.value)
     return (grid > INITIAL_GRID_SIZE) || (pieces > INITIAL_PIECES_COUNT)
@@ -150,6 +157,7 @@ export default () => {
     failedQuestStageIndex,
     totalFailsCount,
     isStageInProgress,
+    isActiveQuest,
     setStorageQuest,
     fetchStorageQuest,
     activeStorageQuest,

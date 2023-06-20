@@ -98,6 +98,7 @@ const {
   totalFailsCount,
   failedQuestStages,
   isStageInProgress,
+  isActiveQuest,
   resetFailedQuestStages,
 } = useQuest()
 
@@ -118,7 +119,7 @@ const handleStart = async() => {
   if (isQuestMode.value) {
     await updateAppWithStoredQuest()
   }
-
+  
   if (isCountdownMode.value) {
     await startCountdown()
 
@@ -130,12 +131,15 @@ const handleStop = () => {
   clearFields()
   isPlaying.value = false
   isChecking.value = false
-  isTempMode.value = false
 }
 
 const handleQuestResult = async() => {
   await fetchStorageQuest()
   const { grid, pieces } = quest.value
+
+  if (isTempMode.value && isActiveQuest.value) {
+    isTempMode.value = false
+  }
 
   if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
     setStorageQuestFails({
@@ -241,11 +245,8 @@ const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
 const setGrid = async(count: GridSizeEnum) => {
   if (count === gridSize.value) { return }
-
-  await handleStop()
   
   if (isQuestMode.value) {
-    await fetchStorageQuest()
     await setGridSize(count)
     if (count < quest.value.grid) {
       isTempMode.value = true
@@ -253,30 +254,31 @@ const setGrid = async(count: GridSizeEnum) => {
         grid: count,
         pieces: maxPiecesCount.value,
       })
-    }
-    await setPiecesCount(quest.value.pieces)
-  } else {
-    if (piecesCount.value > maxPiecesCount.value) {
       await setPiecesCount(maxPiecesCount.value)
+    } else {
+      isTempMode.value = false
+      await fetchStorageQuest()
+      await setPiecesCount(quest.value.pieces)
     }
+  } else {
+    await setGridSize(count)
+    await setPiecesCount(INITIAL_PIECES_COUNT)
   }
 }
 
 const setPieces = async(count: number) => {
-  await handleStop()
-
   if (isQuestMode.value) {
-    await fetchStorageQuest()
-    const { grid, pieces } = quest.value
-    if ((gridSize.value < grid) || (count < pieces)) {
+    const { pieces } = activeStorageQuest()
+    if ((count < pieces)) {
       isTempMode.value = true
-      setStorageQuest({
-        grid,
+      await setStorageQuest({
+        grid: gridSize.value,
         pieces: count,
       })
+    } else {
+      isTempMode.value = false
     }
   }
-
   await setPiecesCount(count)
 }
 
@@ -286,6 +288,7 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
   gameMode.value = mode
   isPlaying.value = false
   isChecking.value = false
+  isTempMode.value = false
 
   await clearFields()
   countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
@@ -305,6 +308,7 @@ const handleCountdownChange = async(mode: boolean) => {
   await clearStorage()
   await resetFailedQuestStages()
   await handleStop()
+  isTempMode.value = false
   isCountdownMode.value = mode
   const { grid, pieces } = activeStorageQuest()
   setGridSize(grid)
@@ -314,6 +318,7 @@ const handleCountdownChange = async(mode: boolean) => {
 const handleContinue = async() => {
   showPromptActions.value = false
   await handleStop()
+  isTempMode.value = false
   const { grid, pieces } = activeStorageQuest()
   setGridSize(grid)
   setPiecesCount(pieces)
@@ -323,6 +328,7 @@ const handleNew = async() => {
   showPromptActions.value = false
   setStorageQuest(INITIAL_QUEST_STAGE)
   await handleStop()
+  isTempMode.value = false
   setGridSize(INITIAL_GRID_SIZE)
   setPiecesCount(INITIAL_PIECES_COUNT)
   clearStorage()
