@@ -252,6 +252,7 @@ const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
 const setGrid = async(count: GridSizeEnum) => {
   if (count === gridSize.value) { return }
+  await handleStop()
   await setGridSize(count)
   if (isQuestMode.value) {
     if (count < quest.value.grid) {
@@ -272,6 +273,7 @@ const setGrid = async(count: GridSizeEnum) => {
 }
 
 const setPieces = async(count: number) => {
+  await handleStop()
   if (isQuestMode.value) {
       const { pieces } = await activeStorageQuest()
     if (isActiveQuest.value && count === pieces) {
