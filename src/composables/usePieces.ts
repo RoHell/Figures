@@ -48,7 +48,10 @@ export default () => {
   const selectedPiece = ref<PieceInterface>()
   const killerPieces = ref<PieceMovesCoordinates[]>([])
 
-  const setRandomPiecesList = async () => {
+  const setRandomPiecesList = async() => {
+    await clearMarkedFields()
+    await clearRandomPiecesList()
+    await clearKillerField()
     randomPiecesList.value = [...Array(piecesCount.value).keys()]
       .reduce((pieces: PieceInterface[], _) => [...pieces, getRandomPiece(pieces)] as PieceInterface[], [])
       .filter(Boolean)
@@ -88,20 +91,17 @@ export default () => {
       setPieceMovesCoordinates(piece)
     })
     setMarkedFields({ addMarkedClass: false })
-    verifyEmptyField()
+    await verifyEmptyField()
     if (!hasEmptyField.value || (hasEmptyField.value && !hasMarkedField.value)) {
-      clearMarkedFields()
-      await clearRandomPiecesList()
-      await clearKillerField()
       await setRandomPiecesList()
     }
   }
 
-  const clearRandomPiecesList = () => {
+  const clearRandomPiecesList = async() => {
     Array.from(gridFields.value).forEach((field: HTMLElement) => {
       delete field?.dataset.piece_field
     })
-    randomPiecesList.value?.forEach((piece) => {
+    await randomPiecesList.value?.forEach((piece) => {
       if (!piece.field) { return }
       delete piece.field?.dataset.piece_field
       piece.field?.classList.remove('grid__field--piece')

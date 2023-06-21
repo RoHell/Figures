@@ -118,7 +118,7 @@ const handleNew = () => {
       width: 100%;
     }
 
-    .prompt__new {
+    .prompt__continue {
       background-color: var(--active-background-color)
     }
 

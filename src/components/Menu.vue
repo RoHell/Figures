@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive } from 'vue';
+import { reactive } from 'vue'
 
 import { IconEnum, GameModeEnum } from '../types'
 
@@ -7,7 +7,7 @@ import Icon from '../components/Icon.vue'
 import TopBar from '../components/TopBar.vue'
 import BaseButton from '../components/BaseButton.vue'
 
-import { useStatus, useQuest, useStorage } from '../composables'
+import { useStatus } from '../composables'
 
 const emit = defineEmits<{
   (e: 'close'): void,
@@ -18,9 +18,8 @@ const emit = defineEmits<{
 const {
   isCountdownMode,
   gameMode,
+  showStatistics,
 } = useStatus()
-
-const { isQuestMode } = useQuest()
 
 const model = reactive({
   countdown: isCountdownMode.value,
@@ -86,6 +85,12 @@ const handleSubmit = () => {
         </div>
         <!-- <span v-if="isQuestMode && (model.countdown !== isCountdownMode)"><em>(toggling countdown mode will reset your current game. Are you sure?)</em></span> -->
       </div>
+
+      <BaseButton
+        label="show statistics"
+        type="button"
+        @click="showStatistics = true"
+      />
     </div>
 
     <BaseButton
@@ -96,7 +101,7 @@ const handleSubmit = () => {
   </form>
 </template>
 
-<styl lang="scss" scoped>
+<style lang="scss" scoped>
   .menu {
     display: flex;
     flex-direction: column;
@@ -151,7 +156,9 @@ const handleSubmit = () => {
     &__ok {
       margin: auto auto 0;
       width: 100%;
+      background-color: var(--button-bg-color);
+      color: var(--button-text-color);
+      border-color: var(--button-bg-color);
     }
   }
-
-</styl>
+</style>

@@ -17,6 +17,7 @@ import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
 import Menu from './components/Menu.vue'
 import Icon from './components/Icon.vue'
+import Statistics from './components/Statistics.vue'
 
 import {
   useGrid,
@@ -78,6 +79,7 @@ const {
   gameMode,
   showPromptActions,
   isTempMode,
+  showStatistics,
 } = useStatus()
 
 const {
@@ -89,17 +91,14 @@ const {
 const {
   quest,
   isQuestMode,
-  INITIAL_QUEST_STAGE,
   failedQuestStage,
   setStorageQuest,
   fetchStorageQuest,
   activeStorageQuest,
   setStorageQuestFails,
-  totalFailsCount,
   failedQuestStages,
   isStageInProgress,
   isActiveQuest,
-  resetFailedQuestStages,
 } = useQuest()
 
 const {
@@ -110,10 +109,10 @@ let checkResultTimeout: string | number | NodeJS.Timeout | undefined
 let markFieldsTimeout: string | number | NodeJS.Timeout | undefined
 
 const handleStart = async() => {
-  clearFields()
   isPlaying.value = true
   countdownFrom.value = piecesCount.value + 1
-
+  
+  await clearFields()
   await setRandomPiecesList()
 
   if (isQuestMode.value) {
@@ -127,8 +126,8 @@ const handleStart = async() => {
   }
 }
 
-const handleStop = () => {
-  clearFields()
+const handleStop = async() => {
+  await clearFields()
   isPlaying.value = false
   isChecking.value = false
 }
@@ -147,11 +146,11 @@ const handleQuestResult = async() => {
       pieces: failedQuestStage.value?.pieces || pieces || INITIAL_PIECES_COUNT,
       fails: (failedQuestStage.value?.fails || 0) + 1
     })
-    handleStop()
+    await handleStop()
   } else {
     if (pieces === maxPiecesCount.value) {
       if (isLastGrid.value) {
-        window.alert(`Good Job! You failed ${totalFailsCount.value} times`)
+        showStatistics.value = true
         showPromptActions.value = true
       } else {
         setStorageQuest({
@@ -166,13 +165,16 @@ const handleQuestResult = async() => {
       })
     }
     await updateAppWithStoredQuest()
+    if (isActiveQuest.value) {
+      isTempMode.value = false
+    }
     handleStart()
   }
 }
 
-const handleSchoolResult = () => {
+const handleSchoolResult = async() => {
   if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
-    handleStop()
+    await handleStop()
   } else {
     handleStart()
   }
@@ -183,6 +185,11 @@ const updateAppWithStoredQuest = async() => {
   const { pieces, grid } = quest.value
   setGridSize(grid)
   setPiecesCount(pieces)
+}
+
+const setInitialAppState = async() => {
+  await setGridSize(INITIAL_GRID_SIZE)
+  await setPiecesCount(INITIAL_PIECES_COUNT)
 }
 
 const markFields = () => {
@@ -220,13 +227,13 @@ const checkGameResult = () => {
   }, timeout)
 }
 
-const clearFields = () => {
-  stopCountdown()
-  clearTimeout(checkResultTimeout)
-  clearTimeout(markFieldsTimeout)
-  clearMarkedFields()
-  clearRandomPiecesList()
-  clearPlayerField()
+const clearFields = async() => {
+  await stopCountdown()
+  await clearTimeout(checkResultTimeout)
+  await clearTimeout(markFieldsTimeout)
+  await clearMarkedFields()
+  await clearRandomPiecesList()
+  await clearPlayerField()
 }
 
 const handleMouseDown = (fieldCoordinates: CoordinatesInterface) => {
@@ -245,10 +252,9 @@ const handleMouseUp = () => selectedPiece.value && clearMarkedFields()
 
 const setGrid = async(count: GridSizeEnum) => {
   if (count === gridSize.value) { return }
-  
+  await setGridSize(count)
   if (isQuestMode.value) {
-    await setGridSize(count)
-    if (count < activeStorageQuest().grid) {
+    if (count < quest.value.grid) {
       isTempMode.value = true
       await setStorageQuest({
         grid: count,
@@ -261,7 +267,6 @@ const setGrid = async(count: GridSizeEnum) => {
       await setPiecesCount(quest.value.pieces)
     }
   } else {
-    await setGridSize(count)
     await setPiecesCount(INITIAL_PIECES_COUNT)
   }
 }
@@ -286,19 +291,17 @@ const setPieces = async(count: number) => {
 }
 
 const handleGameModeChange = async(mode: GameModeEnum) => {
+  await handleStop()
+
   if (mode === gameMode.value) { return }
 
   gameMode.value = mode
-  isPlaying.value = false
-  isChecking.value = false
-  isTempMode.value = false
-
-  await clearFields()
+  
   countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
+
   if (gameMode.value === GameModeEnum.school) {
     showPromptActions.value = false
-    await setGridSize(INITIAL_GRID_SIZE)
-    await setPiecesCount(INITIAL_PIECES_COUNT)
+    await setInitialAppState()
   } else {
     if (isStageInProgress.value) {
       showPromptActions.value = true
@@ -309,11 +312,7 @@ const handleGameModeChange = async(mode: GameModeEnum) => {
 
 const handleCountdownChange = async(mode: boolean) => {
   await handleStop()
-  isTempMode.value = false
   isCountdownMode.value = mode
-  const { grid, pieces } = activeStorageQuest()
-  setGridSize(grid)
-  setPiecesCount(pieces)
 }
 
 const handleContinue = async() => {
@@ -326,12 +325,10 @@ const handleContinue = async() => {
 }
 
 const handleNew = async() => {
-  showPromptActions.value = false
-  setStorageQuest(INITIAL_QUEST_STAGE)
   await handleStop()
   isTempMode.value = false
-  setGridSize(INITIAL_GRID_SIZE)
-  setPiecesCount(INITIAL_PIECES_COUNT)
+  showPromptActions.value = false
+  setInitialAppState()
   clearStorage()
   failedQuestStages.value = []
 }
@@ -375,17 +372,15 @@ onMounted(async() => {
         />
       </div>
 
-      <Transition name="slide-down">
+      <Transition name="slide-left">
         <Menu
           v-if="isMenuOpen"
-          title="Menu"
           class="app__menu"
           @close="isMenuOpen = false"
           @game-mode="handleGameModeChange"
           @countdown="handleCountdownChange"
         />
       </Transition>
-
     </div>
 
     <div class="app__grid">
@@ -396,6 +391,13 @@ onMounted(async() => {
       />
       <Pieces />
     </div>
+    <Transition name="slide-left">
+      <Statistics
+        v-if="showStatistics"
+        class="app__statistics"
+        @close="showStatistics = false"
+      />
+    </Transition>
   </div>
 </template>
 
@@ -423,6 +425,12 @@ onMounted(async() => {
   }
 
   &__menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  &__statistics {
     position: absolute;
     left: 0;
     top: 0;

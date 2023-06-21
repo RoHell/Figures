@@ -85,7 +85,7 @@ const {
 
     &__bit {
       position: relative;
-      text-shadow: -3px 0 0 var(--background-color);
+      text-shadow: -3px 0 0 var(--text-shadow-color);
       left: -10px;
 
       &-mode {
@@ -94,14 +94,14 @@ const {
         left: 30%;
         font-size: x-small;
         text-shadow:
-        -1px -1px 0 var(--background-color),
-        0   -1px 0 var(--background-color),
-        1px -1px 0 var(--background-color),
-        1px  0   0 var(--background-color),
-        1px  1px 0 var(--background-color),
-        0    1px 0 var(--background-color),
-        -1px  1px 0 var(--background-color),
-        -1px  0   0 var(--background-color);
+        -1px -1px 0 var(--text-shadow-color),
+        0   -1px 0 var(--text-shadow-color),
+        1px -1px 0 var(--text-shadow-color),
+        1px  0   0 var(--text-shadow-color),
+        1px  1px 0 var(--text-shadow-color),
+        0    1px 0 var(--text-shadow-color),
+        -1px  1px 0 var(--text-shadow-color),
+        -1px  0   0 var(--text-shadow-color);
       }
     }
   }

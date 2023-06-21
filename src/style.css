@@ -14,7 +14,10 @@
   -webkit-text-size-adjust: 100%;
 
   --active-background-color: slategray;
-  --background-color: #242424;
+  --text-shadow-color: #242424;
+  --button-bg-color: rgba(255, 255, 255, 0.87);
+  --button-text-color: #213547;
+  --bg-color: ##242424;
 }
 
 * {
@@ -78,7 +81,10 @@ input {
     color: #213547;
     background-color: #ffffff;
     --active-background-color: lightgray;
-    --background-color: #ffffff;
+    --text-shadow-color: #ffffff;
+    --button-bg-color: slategray;
+    --button-text-color: #ffffff;
+    --bg-color: #ffffff;
   }
 }
 
@@ -98,13 +104,13 @@ TRANSITIONS
 }
 
 /* Slide down transition */
-.slide-down-enter-active,
-.slide-down-leave-active {
+.slide-left-enter-active,
+.slide-left-leave-active {
   transition: all 0.2s ease-in-out;
 }
 
-.slide-down-enter-from,
-.slide-down-leave-to {
+.slide-left-enter-from,
+.slide-left-leave-to {
   transform: translateX(-100%);
   overflow: hidden;
   opacity: 0;
