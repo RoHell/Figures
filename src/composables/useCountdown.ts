@@ -5,15 +5,16 @@ import { GameModeEnum } from '../types'
 import { useStatus, usePieces } from '.'
 
 const { countdownFrom, gameMode } = useStatus()
-const { piecesCount } = usePieces()
 
+const INTERVAL = 10
 const INITIAL_COUNTDOWN_VALUE: number = 1
 const INITIAL_COUNTDOWN_FROM_VALUE: number = 5
 const countdownProgress = ref<number>(INITIAL_COUNTDOWN_VALUE)
 countdownFrom.value = INITIAL_COUNTDOWN_FROM_VALUE
 
 export default () => {
-  const INTERVAL = 10
+  const { piecesCount } = usePieces()
+  
   let interval: string | number | NodeJS.Timer | undefined = undefined
 
   const isCountdownOn = computed(() => countdownProgress.value > 0 && countdownProgress.value < INITIAL_COUNTDOWN_VALUE)

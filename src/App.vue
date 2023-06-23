@@ -4,11 +4,12 @@ import { onMounted } from 'vue'
 import {
   GridSizeEnum,
   GameModeEnum,
+  IconEnum,
   type CoordinatesInterface,
   type PieceInterface,
 } from './types'
 
-import { IconEnum } from './types'
+import { getParsedProxy } from './utils'
 
 import Pieces from './components/Pieces.vue'
 import Grid from './components/Grid.vue'
@@ -47,8 +48,9 @@ const {
   setPiecesCount,
   maxPiecesCount,
   INITIAL_PIECES_COUNT,
-  markKillerField,
+  setKillerPieces,
   clearKillerField,
+  killerNames,
 } = usePieces()
 
 const {
@@ -141,11 +143,15 @@ const handleQuestResult = async() => {
   }
 
   if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
-    setStorageQuestFails({
+    const storedKillers = failedQuestStage.value ? getParsedProxy(failedQuestStage.value)?.killers : []
+    const failedQuest = {
       grid: failedQuestStage.value?.grid || grid || INITIAL_GRID_SIZE,
       pieces: failedQuestStage.value?.pieces || pieces || INITIAL_PIECES_COUNT,
-      fails: (failedQuestStage.value?.fails || 0) + 1
-    })
+      fails: (failedQuestStage.value?.fails || 0) + 1,
+      killers: [...storedKillers, ...killerNames.value]
+    }
+    setStorageQuestFails(failedQuest)
+    clearKillerField()
     await handleStop()
   } else {
     if (pieces === maxPiecesCount.value) {
@@ -192,12 +198,7 @@ const setInitialAppState = async() => {
   await setPiecesCount(INITIAL_PIECES_COUNT)
 }
 
-const markFields = () => {
-  randomPiecesList.value?.forEach((piece) => {
-    setPieceMovesCoordinates(piece)
-    setMarkedFields()
-  })
-}
+const markFields = () => randomPiecesList.value?.forEach(() => setMarkedFields())
 
 const handleCheck = (timeout: number = 0) => {
   clearTimeout(markFieldsTimeout)
@@ -205,7 +206,7 @@ const handleCheck = (timeout: number = 0) => {
   markFieldsTimeout = setTimeout(() => {
     markFields()
     checkGameResult()
-    markKillerField()
+    setKillerPieces()
     stopCountdown()
   }, timeout)
 }
@@ -222,7 +223,6 @@ const checkGameResult = () => {
     } else {
       handleSchoolResult()
     }
-    clearKillerField()
     isChecking.value = false
   }, timeout)
 }
@@ -330,9 +330,9 @@ const handleNew = async() => {
   await handleStop()
   isTempMode.value = false
   showPromptActions.value = false
+  failedQuestStages.value = []
   setInitialAppState()
   clearStorage()
-  failedQuestStages.value = []
 }
 
 onMounted(async() => {

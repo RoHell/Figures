@@ -13,6 +13,7 @@ const emit = defineEmits<{
 
 const {
   totalFailsCount,
+  killersList,
 } = useQuest()
 </script>
 
@@ -28,20 +29,23 @@ const {
         </button>
       </template>
     </TopBar>
-    <div class="statistics__content">
-      <div>Good Job!</div>
-      <div
-        v-if="totalFailsCount"
-        v-text="`Altought, you have failed ${totalFailsCount} times`"
-      />
-    </div>
+    <h2>Good Job!</h2>
+    <section class="statistics__content">
+      <div v-if="totalFailsCount">
+        <h3>TOTAL FAILS</h3>
+        {{ totalFailsCount }}
+      </div>
+      <div v-if="killersList.length">
+        <h3>KILLERS</h3>
+        {{ killersList }}
+      </div>
+    </section>
     <BaseButton
       class="statistics__close"
       label="close"
       type="button"
       @click="emit('close')"
     />
-    <!-- <canvas id="canvas"></canvas> -->
   </div>
 </template>
 

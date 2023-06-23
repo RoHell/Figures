@@ -29,7 +29,7 @@ export default () => {
     getGridElement,
     verifyEmptyField,
   } = useGrid()
-
+  
   const {
     setPieceMovesCoordinates,
     isCoordinatesTaken,
@@ -38,7 +38,7 @@ export default () => {
     clearPiecesMovesCoordinates,
     isSameCoordinates,
   } = useCoordinates()
-
+  
   const {
     setMarkedFields,
     clearMarkedFields,
@@ -119,15 +119,17 @@ export default () => {
 
   const getPieceElement = (name: IconEnum | string): HTMLElement => document.querySelector(`[data-piece="${name}"`) as HTMLElement
 
-  const setPiecesCount = (count: number) => {
-    piecesCount.value = count
-  }
+  const setPiecesCount = (count: number) =>  piecesCount.value = count
 
   const maxPiecesCount = computed((): number => Math.floor(gridSize.value*gridSize.value / 3))
 
   const piecesRange = computed((): number[] => arrayFromLength(maxPiecesCount.value))
 
-  const markKillerField = () => {
+  const killerFields = computed(() => killerPieces.value.map(piece => getGridElement(piece.origin)))
+
+  const killerNames = computed((): PieceEnum[] => killerFields.value.map(field => field?.dataset.piece_field as PieceEnum))
+
+  const setKillerPieces = () => {
     killerPieces.value = [...piecesMovesCoordinates.value]
       .filter((pieceCoords) => {
         return pieceCoords.movesCoordinates.some((pieceMovesCoordinates: CoordinatesInterface) => {
@@ -135,15 +137,17 @@ export default () => {
         })
     })
 
-    killerPieces.value.forEach((piece: any) => {
-      const field = getGridElement(piece.origin)
+    markKillerFields()
+  }
+
+  const markKillerFields = () => {
+    killerFields.value.forEach((field: any) => {
       field?.classList.add('grid__field--killer')
     })
   }
 
   const clearKillerField = () => {
-    killerPieces.value.forEach((piece: any) => {
-      const field = getGridElement(piece.origin)
+    killerFields.value.forEach((field: any) => {
       field?.classList.remove('grid__field--killer')
     })
     killerPieces.value = []
@@ -157,11 +161,12 @@ export default () => {
     selectedPiece,
     maxPiecesCount,
     piecesRange,
+    killerNames,
     setRandomPiecesList,
     clearRandomPiecesList,
     getPieceElement,
     setPiecesCount,
-    markKillerField,
+    setKillerPieces,
     clearKillerField,
   }
 }

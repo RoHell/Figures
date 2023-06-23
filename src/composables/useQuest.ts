@@ -1,11 +1,16 @@
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 import {
   GameModeEnum,
   GridSizeEnum,
   LocalStorageEnum,
+  PieceEnum,
   type QuestStageInterface,
 } from '../types'
+
+import {
+  getParsedProxy
+} from '../utils'
 
 import {
   useGrid,
@@ -14,38 +19,37 @@ import {
   useStorage,
 } from '.'
 
-const { INITIAL_GRID_SIZE } = useGrid()
-
-const { INITIAL_PIECES_COUNT } = usePieces()
-  
-const INITIAL_QUEST_STAGE: QuestStageInterface = {
-  grid: INITIAL_GRID_SIZE,
-  pieces: INITIAL_PIECES_COUNT,
-}
-
-const INITIAL_FAILED_STAGE: QuestStageInterface = {
-  ...INITIAL_QUEST_STAGE,
-  fails: 0,
-}
-
-const failedQuestStages = ref<QuestStageInterface[]>([INITIAL_FAILED_STAGE])
+const failedQuestStages = ref<QuestStageInterface[]>([])
 
 export default () => {
-  
   const {
     gameMode,
-    isCountdownMode,
     isTempMode,
   } = useStatus()
-
+  
   const {
     setStoredItem,
     getStoredItem,
     removeStoredItem,
   } = useStorage()
+  
+  const { INITIAL_GRID_SIZE } = useGrid()
+  
+  const { INITIAL_PIECES_COUNT } = usePieces()
+  
+  const INITIAL_QUEST_STAGE: QuestStageInterface = {
+    grid: INITIAL_GRID_SIZE,
+    pieces: INITIAL_PIECES_COUNT,
+  }
+  
+  const INITIAL_FAILED_STAGE: QuestStageInterface = {
+    ...INITIAL_QUEST_STAGE,
+    fails: 0,
+    killers: [],
+  }
+
 
   const quest = ref<QuestStageInterface>(INITIAL_QUEST_STAGE)
-
 
   const isQuestMode = computed(() => gameMode.value === GameModeEnum.quest)
 
@@ -101,7 +105,7 @@ export default () => {
     await setStoredItem(LocalStorageEnum.QUEST_FAILS, failedQuestStages.value)
   }
 
-  const getStorageQuestFails = () => getStoredItem(LocalStorageEnum.QUEST_FAILS)
+  const getStorageQuestFails = async() => await getStoredItem(LocalStorageEnum.QUEST_FAILS)
 
   const fetchStorageQuest = async() => {
     const storedQuest = await getStoredItem(storedQuestKey.value)
@@ -126,6 +130,11 @@ export default () => {
     return acc
   }, 0))
 
+  const killersList = computed((): PieceEnum[] => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
+    acc = [...acc, ...getParsedProxy(stage.killers)]
+    return acc
+  }, []))
+
   const getGridFails = (grid: GridSizeEnum): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface) => {
     if (stage.grid === grid) {
       acc = acc + (stage.fails || 0)
@@ -141,7 +150,7 @@ export default () => {
     failedQuestStages.value = await getStoredItem(LocalStorageEnum.QUEST_FAILS) || [INITIAL_FAILED_STAGE]
   }
 
-  onBeforeMount(async() => {
+  onMounted(async() => {
     await resetFailedQuestStages()
   })
 
@@ -158,6 +167,7 @@ export default () => {
     totalFailsCount,
     isStageInProgress,
     isActiveQuest,
+    killersList,
     setStorageQuest,
     fetchStorageQuest,
     activeStorageQuest,

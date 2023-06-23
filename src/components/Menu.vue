@@ -85,11 +85,11 @@ const handleSubmit = () => {
         </div>
       </div>
 
-      <!-- <BaseButton
+      <BaseButton
         label="show statistics"
         type="button"
         @click="showStatistics = true"
-      /> -->
+      />
     </div>
 
     <BaseButton

@@ -74,10 +74,37 @@ export interface QuestStageInterface {
   grid: GridSizeEnum,
   pieces: number,
   fails?: number,
+  killers?: PieceEnum[]
 }
 
 export enum LocalStorageEnum {
   QUEST_TEMP = 'quest-temp',
   QUEST = 'quest',
   QUEST_FAILS = 'quest-fails',
+  QUEST_LOGS = 'quest-logs',
+}
+
+export enum QuestLogsEnum {
+  KILLERS = 'killers',
+  TIME = 'time',
+  COUNTDOWN_TIME = 'countdown-time',
+  FAILS = 'fails',
+}
+
+export interface QuestLogStorageInterface {
+  [QuestLogsEnum.KILLERS]?: PieceEnum[],
+  [QuestLogsEnum.TIME]?: Date[],
+  [QuestLogsEnum.COUNTDOWN_TIME]?: Date[],
+  [QuestLogsEnum.FAILS]?: QuestStageInterface[],
+}
+
+export interface QuestLog {
+  name: QuestLogsEnum,
+  value: QuestLogValueType,
+}
+
+export type QuestLogValueType = PieceEnum | Date | QuestStageInterface
+
+export type QuestStorageType = {
+  [n in QuestLogsEnum]?: QuestLogValueType[]
 }

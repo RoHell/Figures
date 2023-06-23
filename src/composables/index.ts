@@ -7,6 +7,7 @@ import useStatus from './useStatus'
 import useCountdown from './useCountdown'
 import useQuest from './useQuest'
 import useStorage from './useStorage'
+import useLogs from './useLogs'
 
 export {
   useCoordinates,
@@ -18,4 +19,5 @@ export {
   useCountdown,
   useQuest,
   useStorage,
+  useLogs,
 }
