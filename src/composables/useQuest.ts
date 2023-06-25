@@ -6,6 +6,7 @@ import {
   LocalStorageEnum,
   PieceEnum,
   type QuestStageInterface,
+  type KillersType,
 } from '../types'
 
 import {
@@ -130,10 +131,21 @@ export default () => {
     return acc
   }, 0))
 
+  const unsetDecision = computed((): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
+    acc = acc + stage.unset
+    return acc
+  }, 0))
+
   const killersList = computed((): PieceEnum[] => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
     acc = [...acc, ...getParsedProxy(stage.killers)]
     return acc
   }, []))
+
+  const killersMap = computed(() => killersList.value.reduce((acc: KillersType, killer: PieceEnum) => {
+    const killers = acc[killer] ? Number(getParsedProxy(acc[killer])) : 0
+    acc[killer] = killers + 1
+    return acc
+  }, {} as KillersType))
 
   const getGridFails = (grid: GridSizeEnum): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface) => {
     if (stage.grid === grid) {
@@ -168,6 +180,8 @@ export default () => {
     isStageInProgress,
     isActiveQuest,
     killersList,
+    killersMap,
+    unsetDecision,
     setStorageQuest,
     fetchStorageQuest,
     activeStorageQuest,

@@ -144,11 +144,13 @@ const handleQuestResult = async() => {
 
   if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
     const storedKillers = failedQuestStage.value ? getParsedProxy(failedQuestStage.value)?.killers : []
+    const unset = !playerFieldCoordinates.value ? (failedQuestStage.value?.unset || 0) + 1 : failedQuestStage.value?.unset
     const failedQuest = {
       grid: failedQuestStage.value?.grid || grid || INITIAL_GRID_SIZE,
       pieces: failedQuestStage.value?.pieces || pieces || INITIAL_PIECES_COUNT,
       fails: (failedQuestStage.value?.fails || 0) + 1,
-      killers: [...storedKillers, ...killerNames.value]
+      killers: [...storedKillers, ...killerNames.value],
+      unset,
     }
     setStorageQuestFails(failedQuest)
     clearKillerField()
@@ -373,16 +375,6 @@ onMounted(async() => {
           @new="handleNew"
         />
       </div>
-
-      <Transition name="slide-left">
-        <Menu
-          v-if="isMenuOpen"
-          class="app__menu"
-          @close="isMenuOpen = false"
-          @game-mode="handleGameModeChange"
-          @countdown="handleCountdownChange"
-        />
-      </Transition>
     </div>
 
     <div class="app__grid">
@@ -393,6 +385,16 @@ onMounted(async() => {
       />
       <Pieces />
     </div>
+
+    <Transition name="slide-left">
+      <Menu
+        v-if="isMenuOpen"
+        class="app__menu"
+        @close="isMenuOpen = false"
+        @game-mode="handleGameModeChange"
+        @countdown="handleCountdownChange"
+      />
+    </Transition>
     <Transition name="slide-left">
       <Statistics
         v-if="showStatistics"

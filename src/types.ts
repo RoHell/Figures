@@ -74,7 +74,8 @@ export interface QuestStageInterface {
   grid: GridSizeEnum,
   pieces: number,
   fails?: number,
-  killers?: PieceEnum[]
+  killers?: PieceEnum[],
+  unset?: number,
 }
 
 export enum LocalStorageEnum {
@@ -107,4 +108,8 @@ export type QuestLogValueType = PieceEnum | Date | QuestStageInterface
 
 export type QuestStorageType = {
   [n in QuestLogsEnum]?: QuestLogValueType[]
+}
+
+export type KillersType = {
+  [key in PieceEnum]: number
 }
