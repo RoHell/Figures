@@ -144,7 +144,7 @@ const handleQuestResult = async() => {
 
   if (!playerFieldCoordinates.value || isPlayerCaptured.value) {
     const storedKillers = failedQuestStage.value ? getParsedProxy(failedQuestStage.value)?.killers : []
-    const unset = !playerFieldCoordinates.value ? (failedQuestStage.value?.unset || 0) + 1 : failedQuestStage.value?.unset
+    const unset = !playerFieldCoordinates.value ? (failedQuestStage.value?.unset || 0) + 1 : (failedQuestStage.value?.unset || 0)
     const failedQuest = {
       grid: failedQuestStage.value?.grid || grid || INITIAL_GRID_SIZE,
       pieces: failedQuestStage.value?.pieces || pieces || INITIAL_PIECES_COUNT,

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 
 import { IconEnum, GameModeEnum } from '../types'
 
@@ -25,12 +25,16 @@ const {
   totalFailsCount,
   killersList,
   killersMap,
-  unsetDecision,
+  unsetDecisionsCount,
 } = useQuest()
 
 const model = reactive({
   countdown: isCountdownMode.value,
   gameMode: gameMode.value
+})
+
+const isOptionChanged = computed(() => {
+  return (isCountdownMode.value !== model.countdown) || (gameMode.value !== model.gameMode)
 })
 
 const handleSubmit = () => {
@@ -95,6 +99,13 @@ const handleSubmit = () => {
             </div>
           </div>
         </div>
+
+        <BaseButton
+          class="menu__ok"
+          label="I confirm changes"
+          type="submit"
+          :disabled="!isOptionChanged"
+        />
       </section>
 
       <section class="content-section">
@@ -109,17 +120,17 @@ const handleSubmit = () => {
               </div>
             </div>
 
-            <div class="section-element">
-              <div class="section-element__title">Wrong decisions: </div>
+            <div class="section-element section-element--sub">
+              <div class="section-element__title">- Wrong decisions: </div>
               <div class="section-element__content">
-                <b>{{ totalFailsCount - unsetDecision }}</b>
+                <b>{{ totalFailsCount - unsetDecisionsCount }}</b>
               </div>
             </div>
 
-            <div class="section-element">
-              <div class="section-element__title">No decisions: </div>
+            <div class="section-element section-element--sub">
+              <div class="section-element__title">- No decisions: </div>
               <div class="section-element__content">
-                <b>{{ unsetDecision }}</b>
+                <b>{{ unsetDecisionsCount }}</b>
               </div>
             </div>
             
@@ -143,12 +154,6 @@ const handleSubmit = () => {
         </div>
       </section>
     </div>
-
-    <BaseButton
-      class="menu__ok"
-      label="ok"
-      type="submit"
-    />
   </form>
 </template>
 
@@ -166,8 +171,9 @@ const handleSubmit = () => {
     &__content {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 2rem;
       overflow: auto;
+      height: 100%;
     }
 
     &__option {
@@ -184,8 +190,6 @@ const handleSubmit = () => {
       }
 
       &--checkbox {
-        flex-direction: column;
-        gap: 1rem;
         align-items: center;
         text-align: start;
 
@@ -206,7 +210,7 @@ const handleSubmit = () => {
     }
 
     &__ok {
-      margin: auto auto 0;
+      margin-top: 1rem;
       width: 100%;
       background-color: var(--active-background-color);
     }
@@ -228,8 +232,7 @@ const handleSubmit = () => {
     &__title {
       font-weight: 900;
       margin-bottom: 0.5rem;
-      text-decoration: underline;
-      letter-spacing: 0.25rem;
+      letter-spacing: 0.125rem;
       text-transform: uppercase;
     }
   }
@@ -240,7 +243,6 @@ const handleSubmit = () => {
     gap: 0.5rem;
 
     &__title {
-      text-transform: uppercase;
     }
 
     &__content {
@@ -252,6 +254,10 @@ const handleSubmit = () => {
     &__killer {
       display: flex;
       align-items: center;
+    }
+
+    &--sub {
+      margin-left: 1rem;
     }
   }
 

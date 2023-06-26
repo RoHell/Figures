@@ -47,6 +47,7 @@ export default () => {
     ...INITIAL_QUEST_STAGE,
     fails: 0,
     killers: [],
+    unset: 0,
   }
 
 
@@ -126,17 +127,17 @@ export default () => {
     return getStoredItem(activeStorageQuestKey.value)
   }
 
-  const totalFailsCount = computed((): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
-    acc = acc + stage.fails
+  const totalFailsCount = computed((): number => failedQuestStages.value.reduce((acc: number = 0, stage: QuestStageInterface = INITIAL_FAILED_STAGE) => {
+    acc = acc + Number(stage.fails)
     return acc
   }, 0))
 
-  const unsetDecision = computed((): number => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
-    acc = acc + stage.unset
+  const unsetDecisionsCount = computed((): number => failedQuestStages.value.reduce((acc: number = 0, stage: QuestStageInterface = INITIAL_FAILED_STAGE) => {
+    acc = acc + Number(stage.unset)
     return acc
   }, 0))
 
-  const killersList = computed((): PieceEnum[] => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_QUEST_STAGE) => {
+  const killersList = computed((): PieceEnum[] => failedQuestStages.value.reduce((acc: any, stage: QuestStageInterface = INITIAL_FAILED_STAGE) => {
     acc = [...acc, ...getParsedProxy(stage.killers)]
     return acc
   }, []))
@@ -181,7 +182,7 @@ export default () => {
     isActiveQuest,
     killersList,
     killersMap,
-    unsetDecision,
+    unsetDecisionsCount,
     setStorageQuest,
     fetchStorageQuest,
     activeStorageQuest,
