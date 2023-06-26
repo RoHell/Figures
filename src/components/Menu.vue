@@ -26,6 +26,8 @@ const {
   killersList,
   killersMap,
   unsetDecisionsCount,
+  isQuestMode,
+  isStageInProgress,
 } = useQuest()
 
 const model = reactive({
@@ -108,10 +110,10 @@ const handleSubmit = () => {
         />
       </section>
 
-      <section class="content-section">
+      <section v-if="model.gameMode === GameModeEnum.quest" class="content-section">
         <h2 class="content-section__title" v-text="'Statistics'" />
         <div class="content-section__wrapper" >
-          <template v-if="totalFailsCount || killersList.length">
+          <template v-if="isStageInProgress">
 
             <div class="section-element">
               <div class="section-element__title">Total fails: </div>
@@ -149,7 +151,7 @@ const handleSubmit = () => {
 
           </template>
           <div v-else>
-            You have nothing to show. Start to play.
+            Start quest to show statistics.
           </div>
         </div>
       </section>
@@ -220,7 +222,6 @@ const handleSubmit = () => {
     display: flex;
     flex-direction: column;
     text-align: start;
-    flex: 1;
 
     &__wrapper {
       display: flex;
@@ -265,6 +266,9 @@ const handleSubmit = () => {
 @media screen and (orientation: landscape) {
   .menu__content {
     flex-direction: row;
+    .content-section {
+      flex: 1;
+    }
   }
 }
 </style>

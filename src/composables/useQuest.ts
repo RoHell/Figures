@@ -49,8 +49,7 @@ export default () => {
     killers: [],
     unset: 0,
   }
-
-
+  
   const quest = ref<QuestStageInterface>(INITIAL_QUEST_STAGE)
 
   const isQuestMode = computed(() => gameMode.value === GameModeEnum.quest)
@@ -89,11 +88,11 @@ export default () => {
   })
 
   const isStageInProgress = computed(() => {
-    const { grid, pieces } = quest.value
-    return (grid !== INITIAL_GRID_SIZE) || (pieces !== INITIAL_PIECES_COUNT) || getStoredItem(LocalStorageEnum.QUEST_FAILS)
+    const { grid, pieces } = getStoredItem(storedQuestKey.value)
+    return getStoredItem(LocalStorageEnum.QUEST_FAILS) || !(grid === INITIAL_GRID_SIZE && pieces === INITIAL_PIECES_COUNT)
   })
 
-  const setStorageQuest = async({ grid = INITIAL_GRID_SIZE, pieces = INITIAL_PIECES_COUNT }: QuestStageInterface) => {
+  const setStorageQuest = async({ grid, pieces }: QuestStageInterface) => {
     const quest = { grid, pieces }
     await setStoredItem(storedQuestKey.value, quest)
     setQuest(quest)
