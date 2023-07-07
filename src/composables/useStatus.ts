@@ -11,7 +11,7 @@ const countdownFrom = ref()
 const gameMode = ref(GameModeEnum.quest)
 const showPromptActions = ref(false)
 const isTempMode = ref(false)
-const showStatistics = ref(false)
+const showSummary = ref(false)
 
 export default () => {
 
@@ -25,6 +25,6 @@ export default () => {
     gameMode,
     showPromptActions,
     isTempMode,
-    showStatistics,
+    showSummary,
   }
 }

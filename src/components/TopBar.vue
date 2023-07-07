@@ -29,7 +29,10 @@ const {
     </div>
     <slot name="title">
       <p class="top-bar__title" @click="emit('back')">
-        <span v-if="title" v-text="title" />
+        <slot v-if="title || $slots.title" name="title" >
+          {{ title }}
+        </slot>
+
         <span v-else class="logo">
           Game
           <em class="logo__bit">
@@ -60,7 +63,7 @@ const {
       font-size: xx-large;
       text-transform: uppercase;
       flex: 1;
-      font-weight: 500;
+      font-weight: 900;
       margin: auto;
       text-align: center;
     }

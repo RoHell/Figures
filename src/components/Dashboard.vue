@@ -137,7 +137,7 @@ const isNextElement = ({ count, type}: { count: number, type: 'grid' | 'pieces' 
 
     &--grids {
       gap: 0.2rem;
-      grid-template-columns: repeat(auto-fill, minmax(2.9rem, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(2.9rem, 1fr));
     }
 
     &--pieces {

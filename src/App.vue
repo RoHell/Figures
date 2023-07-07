@@ -18,7 +18,7 @@ import TopBar from './components/TopBar.vue'
 import BottomBar from './components/BottomBar.vue'
 import Menu from './components/Menu.vue'
 import Icon from './components/Icon.vue'
-import Statistics from './components/Statistics.vue'
+import Summary from './components/Summary.vue'
 
 import {
   useGrid,
@@ -81,7 +81,7 @@ const {
   gameMode,
   showPromptActions,
   isTempMode,
-  showStatistics,
+  showSummary,
 } = useStatus()
 
 const {
@@ -158,7 +158,7 @@ const handleQuestResult = async() => {
   } else {
     if (pieces === maxPiecesCount.value) {
       if (isLastGrid.value) {
-        showStatistics.value = true
+        showSummary.value = true
         showPromptActions.value = true
       } else {
         setStorageQuest({
@@ -396,10 +396,10 @@ onMounted(async() => {
       />
     </Transition>
     <Transition name="slide-left">
-      <Statistics
-        v-if="showStatistics"
-        class="app__statistics"
-        @close="showStatistics = false"
+      <Summary
+        v-if="showSummary"
+        class="app__summary"
+        @close="showSummary = false"
       />
     </Transition>
   </div>
@@ -428,13 +428,8 @@ onMounted(async() => {
     padding: 0.5rem;
   }
 
-  &__menu {
-    position: absolute;
-    left: 0;
-    top: 0;
-  }
-
-  &__statistics {
+  &__menu,
+  &__summary {
     position: absolute;
     left: 0;
     top: 0;

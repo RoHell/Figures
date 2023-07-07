@@ -6,6 +6,7 @@ import { IconEnum, GameModeEnum } from '../types'
 import Icon from '../components/Icon.vue'
 import TopBar from '../components/TopBar.vue'
 import BaseButton from '../components/BaseButton.vue'
+import Statistics from '../components/Statistics.vue'
 
 import { useStatus, useQuest } from '../composables'
 
@@ -18,7 +19,7 @@ const emit = defineEmits<{
 const {
   isCountdownMode,
   gameMode,
-  showStatistics,
+  showSummary,
 } = useStatus()
 
 const {
@@ -104,7 +105,7 @@ const handleSubmit = () => {
 
         <BaseButton
           class="menu__ok"
-          label="I confirm changes"
+          label="Confirm and play"
           type="submit"
           :disabled="!isOptionChanged"
         />
@@ -113,43 +114,7 @@ const handleSubmit = () => {
       <section v-if="model.gameMode === GameModeEnum.quest" class="content-section">
         <h2 class="content-section__title" v-text="'Statistics'" />
         <div class="content-section__wrapper" >
-          <template v-if="isStageInProgress">
-
-            <div class="section-element">
-              <div class="section-element__title">Total fails: </div>
-              <div class="section-element__content">
-                <b>{{ totalFailsCount }}</b>
-              </div>
-            </div>
-
-            <div class="section-element section-element--sub">
-              <div class="section-element__title">- Wrong decisions: </div>
-              <div class="section-element__content">
-                <b>{{ totalFailsCount - unsetDecisionsCount }}</b>
-              </div>
-            </div>
-
-            <div class="section-element section-element--sub">
-              <div class="section-element__title">- No decisions: </div>
-              <div class="section-element__content">
-                <b>{{ unsetDecisionsCount }}</b>
-              </div>
-            </div>
-            
-            <div v-if="killersList.length" class="section-element">
-              <div class="section-element__title">Killers: </div>
-              <div class="section-element__content">
-                <div
-                  v-for="(value, key) in killersMap"
-                  class="section-element__killer"
-                >
-                  <Icon :icon="IconEnum[key]" :size="30"/>
-                  <span> x <b>{{ value }}</b></span>
-                </div>
-              </div>
-            </div>
-
-          </template>
+          <Statistics v-if="isStageInProgress" />
           <div v-else>
             Start quest to show statistics.
           </div>
@@ -235,30 +200,6 @@ const handleSubmit = () => {
       margin-bottom: 0.5rem;
       letter-spacing: 0.125rem;
       text-transform: uppercase;
-    }
-  }
-
-  .section-element {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-
-    &__title {
-    }
-
-    &__content {
-      font-size: large;
-      display: flex;
-      gap: 1rem;
-    }
-
-    &__killer {
-      display: flex;
-      align-items: center;
-    }
-
-    &--sub {
-      margin-left: 1rem;
     }
   }
 
